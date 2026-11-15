@@ -4,292 +4,452 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>NFC Playlist Plus v0.5</title>
+<meta name="theme-color" content="#080d19">
+<title>NFC Playlist Plus v0.7</title>
 
 <style>
 :root {
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family: Inter, system-ui, -apple-system, sans-serif;
   color-scheme: dark;
-  background: #0b1220;
-  color: #edf2ff;
+  background: #080d19;
+  color: #f0f5ff;
 }
-
 * { box-sizing: border-box; }
-
 body {
-  max-width: 780px;
+  margin: 0;
+  padding: 20px 15px 60px;
+  background:
+    radial-gradient(ellipse at 50% -15%, #1d3761 0%, transparent 55%),
+    #080d19;
+  min-height: 100vh;
+}
+.app { max-width: 780px; margin: auto; }
+header { text-align: center; margin: 18px 0 25px; }
+.logo {
+  width: 60px;
+  height: 60px;
   margin: auto;
-  padding: 18px;
+  border-radius: 18px;
+  display: grid;
+  place-items: center;
+  font-size: 30px;
+  background: linear-gradient(135deg, #3569ff, #873cff);
+  box-shadow: 0 10px 35px #4265ff44;
 }
-
-h1 { margin-bottom: 4px; }
-
-p, small { color: #aab9d2; }
-
-section {
-  background: #172238;
-  border: 1px solid #31415d;
-  border-radius: 16px;
-  padding: 18px;
-  margin: 16px 0;
+h1 { font-size: 27px; margin: 13px 0 5px; }
+h2 { font-size: 17px; margin: 0 0 17px; }
+.muted { color: #8f9eb8; }
+.subtitle { font-size: 13px; }
+.card {
+  background: #141e31;
+  border: 1px solid #293a55;
+  border-radius: 19px;
+  padding: 20px;
+  margin: 15px 0;
 }
-
-button {
-  background: #76a3ff;
-  color: #091428;
-  border: 0;
-  border-radius: 9px;
-  padding: 11px 15px;
-  margin: 4px;
-  cursor: pointer;
-  font: inherit;
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.badge {
+  padding: 7px 12px;
+  border-radius: 30px;
+  font-size: 12px;
   font-weight: 700;
+  background: #28344b;
+  color: #b5c4e0;
 }
-
-button.secondary {
-  background: #304767;
+.badge.connected {
+  background: #123e31;
+  color: #65e6aa;
+}
+.badge.emulating {
+  background: #124632;
+  color: #6bf0ac;
+}
+.badge.delay {
+  background: #4c3718;
+  color: #ffd27e;
+}
+.badge.error {
+  background: #51232e;
+  color: #ff9ba6;
+}
+button {
+  border: 0;
+  border-radius: 12px;
+  padding: 13px 18px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 750;
+  cursor: pointer;
   color: white;
+  background: #33435e;
+  transition: transform .12s, opacity .12s;
 }
-
-button.danger {
-  background: #e56d76;
-  color: #210b10;
+button:active { transform: scale(.97); }
+button:disabled { opacity: .35; cursor: not-allowed; }
+.primary {
+  background: linear-gradient(135deg, #477dff, #7254fa);
+  box-shadow: 0 5px 22px #416bff33;
 }
-
-button:disabled {
-  opacity: .4;
-  cursor: not-allowed;
+.danger { background: #a9394a; }
+.green { background: #147d59; }
+.buttons { display: flex; flex-wrap: wrap; gap: 8px; }
+.player {
+  text-align: center;
+  padding: 27px 19px;
+  background:
+    radial-gradient(circle at 50% 25%, #23446c 0%, transparent 65%),
+    #141e31;
 }
-
-input[type=number] {
-  width: 85px;
-  background: #0b1424;
+.nfc-icon {
+  width: 83px;
+  height: 83px;
+  display: grid;
+  place-items: center;
+  margin: 12px auto 20px;
+  border-radius: 50%;
+  background: #23416a;
+  border: 2px solid #426da8;
+  font-size: 39px;
+  transition: .3s;
+}
+.nfc-icon.pulse {
+  animation: pulse 1.6s infinite;
+  border-color: #55e5a0;
+}
+@keyframes pulse {
+  0%,100% { box-shadow: 0 0 0 0 #42e9a52e; }
+  50% { box-shadow: 0 0 0 17px #42e9a500; }
+}
+.phase {
+  font-size: 12px;
+  letter-spacing: 1.5px;
+  font-weight: 800;
+  color: #83aaff;
+}
+.tag-name {
+  font-size: 49px;
+  font-weight: 850;
+  letter-spacing: -2px;
+  margin: 8px 0;
+}
+.uid {
+  font-family: ui-monospace, monospace;
+  color: #a6b9d6;
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+.timer {
+  font-size: 59px;
+  font-weight: 800;
+  letter-spacing: -2px;
+  font-variant-numeric: tabular-nums;
+  margin: 20px 0 5px;
+}
+.timer-label { font-size: 12px; color: #91a2bf; }
+.progress {
+  height: 10px;
+  background: #273550;
+  border-radius: 30px;
+  overflow: hidden;
+  margin: 18px 0 9px;
+}
+.progress > div {
+  width: 0%;
+  height: 100%;
+  background: linear-gradient(90deg, #477dff, #6ee8be);
+  transition: width .1s linear;
+}
+.next {
+  margin-top: 17px;
+  font-size: 13px;
+  color: #b4c4de;
+}
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.stat {
+  background: #141e31;
+  border: 1px solid #293a55;
+  border-radius: 15px;
+  padding: 15px 8px;
+  text-align: center;
+}
+.stat strong { display: block; font-size: 24px; }
+.stat span { color: #8e9fbb; font-size: 12px; }
+.settings {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 13px;
+}
+.setting {
+  background: #0e1727;
+  border: 1px solid #2b3a54;
+  padding: 13px;
+  border-radius: 12px;
+}
+.setting label {
+  display: block;
+  font-size: 12px;
+  color: #a9bad6;
+  margin-bottom: 9px;
+}
+.setting input {
+  width: 100%;
+  background: #1d2a41;
   color: white;
-  border: 1px solid #52637d;
-  padding: 9px;
+  border: 1px solid #405472;
   border-radius: 8px;
+  padding: 11px;
+  font-size: 16px;
 }
-
-input[type=file] { max-width: 100%; }
-
-label {
-  display: inline-block;
-  margin: 9px 12px 9px 0;
+.switch-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 17px;
 }
-
-pre {
-  white-space: pre-wrap;
-  word-break: break-word;
-  background: #0b1424;
+.switch-row input { width: 18px; height: 18px; }
+.playlist {
+  max-height: 370px;
+  overflow-y: auto;
+}
+.tag-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
   padding: 12px;
-  max-height: 330px;
+  border-radius: 11px;
+  margin-bottom: 6px;
+  background: #0e1727;
+  border: 1px solid transparent;
+}
+.tag-row.active {
+  background: #1b3555;
+  border-color: #487de8;
+}
+.tag-number {
+  background: #273651;
+  color: #a5b8d7;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+.tag-info { flex: 1; min-width: 0; }
+.tag-info strong { display: block; }
+.tag-info small {
+  color: #8294b2;
+  font-family: monospace;
+  font-size: 11px;
+  overflow-wrap: anywhere;
+}
+.tag-state { font-size: 11px; color: #6de7ad; }
+.log {
+  background: #090f1b;
+  color: #a5b9d6;
+  border-radius: 12px;
+  padding: 13px;
+  max-height: 230px;
   overflow: auto;
   font-size: 12px;
+  font-family: monospace;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
-
-#tags {
-  max-height: 320px;
-  overflow: auto;
+.note { font-size: 12px; line-height: 1.6; color: #9eafc9; }
+footer {
+  text-align: center;
+  color: #61728d;
+  font-size: 12px;
+  margin-top: 24px;
 }
-
-table {
-  width: 100%;
-  border-collapse: collapse;
+@media(max-width:440px) {
+  .tag-name { font-size: 43px; }
+  .timer { font-size: 52px; }
+  .card { padding: 16px; }
+  button { padding: 12px 14px; }
 }
-
-td, th {
-  border-bottom: 1px solid #30405b;
-  padding: 9px 6px;
-  text-align: left;
-  font-size: .85rem;
-}
-
-.active { background: #294c71; }
-
-.warn { color: #ffcf8a; }
-
-.good { color: #85e4b0; }
-
-#now {
-  font-size: 1.15rem;
-  font-weight: 700;
-}
-
-.progress {
-  background: #0b1424;
-  border-radius: 10px;
-  height: 12px;
-  overflow: hidden;
-  margin-top: 12px;
-}
-
-#progressBar {
-  background: #76a3ff;
-  height: 100%;
-  width: 0%;
-  transition: width .2s;
-}
-
-.controls {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-}
-
-.statusline {
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
 </style>
 </head>
 
 <body>
+<div class="app">
 
-<h1>📡 NFC Playlist Plus</h1>
-<p>Chameleon Ultra · UID Playlist Controller · v0.5</p>
+<header>
+  <div class="logo">📡</div>
+  <h1>NFC Playlist Plus</h1>
+  <div class="muted subtitle">
+    Chameleon Ultra · Automatic NFC Playlist · v0.7
+  </div>
+</header>
 
-<section>
-  <h2>Bluetooth Connection</h2>
-
-  <div class="controls">
-    <button id="connect">Connect</button>
-    <button id="disconnect" class="secondary" disabled>
-      Disconnect
-    </button>
-    <button id="inspect" class="secondary" disabled>
-      Inspect Slot
-    </button>
+<section class="card">
+  <div class="row">
+    <div>
+      <strong>Chameleon Ultra</strong>
+      <div class="muted subtitle" id="deviceInfo">
+        Not connected
+      </div>
+    </div>
+    <span class="badge" id="connectionBadge">
+      Disconnected
+    </span>
   </div>
 
-  <p>Status: <strong id="status">Disconnected</strong></p>
-  <p>Active slot: <strong id="slot">Unknown</strong></p>
-  <p>Current UID: <strong id="deviceUID">Unknown</strong></p>
+  <div class="buttons" style="margin-top:17px">
+    <button class="primary" id="connect">Connect</button>
+    <button id="disconnect" disabled>Disconnect</button>
+    <button id="inspect" disabled>Inspect Slot</button>
+  </div>
 
-  <small>
-    Use Chrome on your MacBook or a compatible Web Bluetooth
-    browser. Keep the browser awake during playback.
-  </small>
+  <p class="note" id="slotInfo">
+    Connect to inspect the active NFC slot.
+  </p>
 </section>
 
-<section>
-  <h2>1. Import NFC Playlist</h2>
+<section class="card player">
+  <div class="row">
+    <span class="badge" id="phaseBadge">Idle</span>
+    <span class="muted subtitle" id="tagCounter">
+      0 / 28
+    </span>
+  </div>
 
-  <p>
-    Import your Chameleon Ultra GUI JSON containing
-    your 28 NTAG215 profiles.
-  </p>
+  <div class="nfc-icon" id="nfcIcon">◉</div>
 
-  <input
-    id="file"
-    type="file"
-    accept=".json,application/json"
-  >
+  <div class="phase" id="phaseText">
+    READY TO PLAY
+  </div>
 
-  <p id="loaded">No playlist imported.</p>
+  <div class="tag-name" id="tagName">—</div>
+  <div class="uid" id="tagUID">
+    No active playlist tag
+  </div>
 
-  <div id="tags"></div>
+  <div class="timer" id="countdown">00:00</div>
+  <div class="timer-label" id="timerLabel">
+    Waiting to start
+  </div>
+
+  <div class="progress">
+    <div id="phaseProgress"></div>
+  </div>
+
+  <div class="row">
+    <small class="muted" id="phaseDetail">
+      Connect to begin
+    </small>
+    <small class="muted" id="percentage">0%</small>
+  </div>
+
+  <div class="next" id="nextTag">
+    Next: 1f1
+  </div>
 </section>
 
-<section>
-  <h2>2. Playback Settings</h2>
+<div class="stats">
+  <div class="stat">
+    <strong id="totalTags">28</strong>
+    <span>Total tags</span>
+  </div>
+  <div class="stat">
+    <strong id="completed">0</strong>
+    <span>Completed</span>
+  </div>
+  <div class="stat">
+    <strong id="currentPosition">0</strong>
+    <span>Current</span>
+  </div>
+</div>
 
-  <label>
-    Emulation time (seconds)
-    <input
-      id="duration"
-      type="number"
-      min="1"
-      max="3600"
-      value="10"
-    >
-  </label>
+<section class="card">
+  <h2>Playback Controls</h2>
 
-  <label>
-    Delay between tags (seconds)
-    <input
-      id="gap"
-      type="number"
-      min="0"
-      max="3600"
-      value="2"
-    >
-  </label>
-
-  <p>
-    <label>
-      <input type="checkbox" id="loop">
-      Loop playlist automatically
-    </label>
-  </p>
-
-  <p class="warn">
-    Experimental: This controller changes the active
-    slot's NFC anticollision identity only.
-    It does not load complete NTAG215 memory.
-    Back up your test slot before proceeding.
-  </p>
-
-  <label>
-    <input type="checkbox" id="consent">
-    I have backed up the active slot and understand
-    it will be modified.
-  </label>
-</section>
-
-<section>
-  <h2>3. Test & Playback</h2>
-
-  <div class="controls">
-    <button id="test" class="secondary" disabled>
-      🧪 Test First UID
-    </button>
-
-    <button id="start" disabled>
+  <div class="buttons">
+    <button class="primary" id="start" disabled>
       ▶ Start Playlist
     </button>
-
-    <button id="stop" class="danger" disabled>
+    <button id="pause" disabled>⏸ Pause</button>
+    <button class="danger" id="stop" disabled>
       ■ Stop
     </button>
-
-    <button id="next" class="secondary" disabled>
-      ⏭ Next
-    </button>
-
-    <button id="restore" class="secondary" disabled>
+    <button id="next" disabled>⏭ Next</button>
+    <button id="restore" disabled>
       ↶ Restore Identity
     </button>
   </div>
 
-  <p id="now">Not playing</p>
+  <p class="note">
+    Pause freezes the playlist timer, not the hardware
+    NFC field. Stop leaves the current identity loaded.
+  </p>
+</section>
 
-  <div class="progress">
-    <div id="progressBar"></div>
+<section class="card">
+  <h2>Playback Settings</h2>
+
+  <div class="settings">
+    <div class="setting">
+      <label for="duration">Emulation time (seconds)</label>
+      <input id="duration" type="number"
+             min="1" max="3600" value="10">
+    </div>
+    <div class="setting">
+      <label for="gap">Delay between tags (seconds)</label>
+      <input id="gap" type="number"
+             min="0" max="3600" value="2">
+    </div>
   </div>
 
-  <p id="counter">0 / 0</p>
+  <label class="switch-row">
+    <input type="checkbox" id="loop">
+    Loop playlist after the final tag
+  </label>
 
-  <small>
-    Stop leaves the currently loaded UID active.
-    Restore Identity attempts to restore the original
-    UID, ATQA and SAK captured during this connection.
-  </small>
+  <p class="note">
+    The 28 profiles are built in. No JSON import required.
+    This version changes the UID identity only and does
+    not reproduce full NTAG215 memory.
+  </p>
 </section>
 
-<section>
-  <h2>Activity Log</h2>
-
-  <button id="clearLog" class="secondary">
-    Clear Log
-  </button>
-
-  <pre id="log">Ready. Connect your device and import JSON.</pre>
+<section class="card">
+  <div class="row">
+    <h2>Playlist</h2>
+    <span class="badge">28 tags loaded</span>
+  </div>
+  <div class="playlist" id="playlist"></div>
 </section>
 
-<!-- Buffer polyfill required by Chameleon Ultra SDK -->
+<section class="card">
+  <div class="row">
+    <h2>Activity Log</h2>
+    <button id="clearLog">Clear</button>
+  </div>
+  <div class="log" id="log">
+    NFC Playlist Plus v0.7 ready.
+  </div>
+</section>
+
+<footer>
+  NFC Playlist Plus · Chameleon Ultra · v0.7
+</footer>
+
+</div>
+
+<!-- Buffer library -->
 <script src="https://cdn.jsdelivr.net/npm/buffer@6.0.3/index.js"></script>
 
 <!-- Chameleon Ultra SDK -->
@@ -299,723 +459,708 @@ td, th {
 <script>
 "use strict";
 
+// All 28 profiles are embedded.
+// Each entry contains its name and seven-byte UID.
+const RAW_TAGS = [
+  ["1f1","04 73 71 2F 37 02 89"],
+  ["1f2","04 B3 57 F2 36 02 89"],
+  ["1f3","04 01 AB 45 46 02 89"],
+  ["2f1","04 83 BC 07 35 02 89"],
+  ["2f2","04 A1 F6 E7 45 02 89"],
+  ["2f3","04 E1 99 4B 46 02 89"],
+  ["3f1","04 11 08 22 46 02 89"],
+  ["3f2","04 73 FE EF 36 02 89"],
+  ["3f3","04 A3 92 A3 36 02 89"],
+  ["4f1","04 01 59 69 46 02 89"],
+  ["4f2","04 11 F7 D6 45 02 89"],
+  ["4f3","04 01 BA 07 46 02 89"],
+  ["5f1","04 83 47 0A 37 02 89"],
+  ["5f2","04 13 0D 16 37 02 89"],
+  ["5f3","04 73 2F 07 35 02 89"],
+  ["6f1","04 B3 C5 A2 36 02 89"],
+  ["6f2","04 B1 B8 2E 46 02 89"],
+  ["6f3","04 A1 3C 55 46 02 89"],
+  ["7f1","04 53 10 9E 36 02 89"],
+  ["7f2","04 B3 82 31 37 02 89"],
+  ["7f3","04 93 5A 42 34 02 89"],
+  ["8f1","04 33 BA 0C 35 02 89"],
+  ["8f2","04 43 1C F3 36 02 89"],
+  ["8f3","04 F1 A3 4F 46 02 89"],
+  ["Lg1","04 73 9B 0F 35 02 89"],
+  ["Lg2","04 11 51 DD 45 02 89"],
+  ["Lg3","04 93 85 CC 36 02 89"],
+  ["Lg4","04 73 FB AD 36 02 89"]
+];
+
+const profiles = RAW_TAGS.map(([name,uid]) => ({
+  name, uid
+}));
+
 const $ = id => document.getElementById(id);
+const sdk = window.ChameleonUltraJS || {};
+const BufferClass =
+  sdk.Buffer || window.buffer?.Buffer || window.Buffer;
 
 let ultra = null;
-let profiles = [];
+let connected = false;
+let busy = false;
+let running = false;
+let paused = false;
+let skip = false;
+let position = 0;
+let completedCount = 0;
+
 let originalIdentity = null;
 let originalSlot = null;
+let sessionIdentity = null;
 
-let running = false;
-let busy = false;
-let position = 0;
-let skipRequested = false;
-let cancelWait = null;
-let playbackPromise = null;
-let commandQueue = Promise.resolve();
-
-const sdk = window.ChameleonUltraJS || {};
-
-const BufferClass =
-  sdk.Buffer ||
-  window.buffer?.Buffer ||
-  window.Buffer ||
-  null;
+let phase = "idle";
+let phaseEnd = 0;
+let remainingMs = 0;
+let phaseTotalMs = 0;
+let waitResolve = null;
+let activeWait = null;
+let loopPromise = null;
+let queue = Promise.resolve();
 
 function log(message) {
-  const output = $('log');
-
-  output.textContent +=
-    '\n' +
-    new Date().toLocaleTimeString() +
-    ' ' +
-    message;
-
-  output.scrollTop = output.scrollHeight;
+  const el = $('log');
+  el.textContent +=
+    "\n" + new Date().toLocaleTimeString() +
+    "  " + message;
+  el.scrollTop = el.scrollHeight;
 }
 
-function makeBuffer(value) {
-  if (!BufferClass || typeof BufferClass.from !== 'function') {
-    throw new Error(
-      'Buffer library unavailable. Check CDN scripts.'
-    );
+function hex(bytes) {
+  return Array.from(bytes || [])
+    .map(n => Number(n).toString(16).padStart(2,"0"))
+    .join(" ").toUpperCase();
+}
+
+function toBuffer(value) {
+  if (!BufferClass?.from) {
+    throw new Error("Buffer constructor unavailable");
   }
 
-  return BufferClass.from(value);
-}
-
-function hex(value) {
-  return Array.from(value || [])
-    .map(byte =>
-      Number(byte).toString(16).padStart(2, '0')
-    )
-    .join(' ')
-    .toUpperCase();
-}
-
-function hexToBuffer(value) {
-  const clean = value.replace(/\s+/g, '').trim();
-
-  if (
-    clean.length % 2 !== 0 ||
-    !/^[0-9a-f]*$/i.test(clean)
-  ) {
-    throw new Error('Invalid hexadecimal value: ' + value);
+  const clean = value.replace(/\s+/g,"");
+  if (clean.length % 2 || !/^[0-9a-f]*$/i.test(clean)) {
+    throw new Error("Invalid hexadecimal bytes");
   }
 
-  return makeBuffer(clean.match(/.{2}/g)?.map(
-    pair => parseInt(pair, 16)
-  ) || []);
+  const values = clean.match(/.{2}/g) || [];
+  return BufferClass.from(
+    values.map(x => parseInt(x,16))
+  );
 }
 
-function normalizeHex(value) {
-  return hex(hexToBuffer(value));
-}
-
-function serialize(command) {
-  const task = commandQueue.then(command);
-  commandQueue = task.catch(() => {});
+function serial(fn) {
+  const task = queue.then(fn);
+  queue = task.catch(() => {});
   return task;
 }
 
-function setBusy(value) {
-  busy = value;
-  updateControls();
+function formatTime(ms) {
+  const sec = Math.max(0,Math.ceil(ms/1000));
+  const m = Math.floor(sec/60);
+  const s = sec%60;
+  return String(m).padStart(2,"0") + ":" +
+         String(s).padStart(2,"0");
 }
 
 function updateControls() {
-  const connected = !!ultra;
-  const ready = connected && !running && !busy;
-  const allowed = $('consent').checked;
-
   $('connect').disabled = connected || busy;
-  $('disconnect').disabled = !ready;
-  $('inspect').disabled = !ready;
-
-  $('test').disabled =
-    !ready || !allowed || profiles.length === 0;
-
-  $('start').disabled =
-    !ready || !allowed || profiles.length === 0;
-
+  $('disconnect').disabled = !connected || running || busy;
+  $('inspect').disabled = !connected || running || busy;
+  $('start').disabled = !connected || running || busy;
+  $('pause').disabled = !running;
   $('stop').disabled = !running;
   $('next').disabled = !running;
-
   $('restore').disabled =
-    !ready || !originalIdentity;
-
-  $('file').disabled = running || busy;
+    !connected || running || busy || !originalIdentity;
   $('duration').disabled = running;
   $('gap').disabled = running;
 }
 
-function showProgress() {
-  const total = profiles.length;
+function setPhase(name, detail) {
+  phase = name;
+  const badge = $('phaseBadge');
+  badge.className = "badge";
 
-  $('counter').textContent =
-    total ? `${Math.min(position + 1, total)} / ${total}` : '0 / 0';
+  const icon = $('nfcIcon');
+  icon.classList.remove("pulse");
 
-  const percent = total
-    ? Math.min((position + 1) / total * 100, 100)
-    : 0;
+  if (name === "emulating") {
+    badge.textContent = "● Emulating";
+    badge.classList.add("emulating");
+    icon.classList.add("pulse");
+    $('phaseText').textContent = "EMULATING NFC TAG";
+    $('timerLabel').textContent = "Emulation time remaining";
+  } else if (name === "delay") {
+    badge.textContent = "● Delay";
+    badge.classList.add("delay");
+    $('phaseText').textContent = "WAITING FOR NEXT TAG";
+    $('timerLabel').textContent = "Delay time remaining";
+  } else if (name === "loading") {
+    badge.textContent = "Loading";
+    $('phaseText').textContent = "UPDATING DEVICE";
+    $('timerLabel').textContent = "Waiting for Bluetooth";
+  } else if (name === "paused") {
+    badge.textContent = "Paused";
+    $('phaseText').textContent = "PLAYLIST PAUSED";
+    $('timerLabel').textContent = "Time remaining";
+  } else if (name === "finished") {
+    badge.textContent = "Completed";
+    $('phaseText').textContent = "PLAYLIST COMPLETED";
+    $('timerLabel').textContent = "Finished";
+  } else if (name === "error") {
+    badge.textContent = "Error";
+    badge.classList.add("error");
+    $('phaseText').textContent = "PLAYBACK ERROR";
+    $('timerLabel').textContent = "Stopped";
+  } else {
+    badge.textContent = "Idle";
+    $('phaseText').textContent = "READY TO PLAY";
+    $('timerLabel').textContent = "Waiting to start";
+  }
 
-  $('progressBar').style.width = percent + '%';
+  $('phaseDetail').textContent = detail || "";
+}
 
-  document.querySelectorAll('#tags tr').forEach(
-    row => row.classList.remove('active')
+function showTag() {
+  const tag = profiles[position];
+  $('tagName').textContent = tag.name;
+  $('tagUID').textContent = tag.uid;
+  $('tagCounter').textContent =
+    (position+1) + " / " + profiles.length;
+  $('currentPosition').textContent = position+1;
+  $('completed').textContent = completedCount;
+
+  const nextIndex = position+1;
+
+  $('nextTag').textContent =
+    nextIndex < profiles.length
+      ? "Up next: " + profiles[nextIndex].name
+      : ($('loop').checked
+          ? "Up next: " + profiles[0].name
+          : "Final tag in playlist");
+
+  document.querySelectorAll(".tag-row").forEach(
+    row => row.classList.remove("active")
   );
 
-  const active = $('tag-' + position);
-
+  const active = $('tag-'+position);
   if (active) {
-    active.classList.add('active');
-    active.scrollIntoView({
-      block: 'nearest',
-      behavior: 'smooth'
-    });
+    active.classList.add("active");
+    active.scrollIntoView({block:"nearest"});
   }
 }
 
-function renderProfiles() {
-  const container = $('tags');
+function renderPlaylist() {
+  const container = $('playlist');
   container.replaceChildren();
 
-  const table = document.createElement('table');
+  profiles.forEach((tag,i) => {
+    const row = document.createElement("div");
+    row.className = "tag-row";
+    row.id = "tag-"+i;
 
-  const heading = document.createElement('tr');
+    const number = document.createElement("div");
+    number.className = "tag-number";
+    number.textContent = i+1;
 
-  ['#', 'Name', 'UID'].forEach(value => {
-    const th = document.createElement('th');
-    th.textContent = value;
-    heading.appendChild(th);
+    const info = document.createElement("div");
+    info.className = "tag-info";
+
+    const name = document.createElement("strong");
+    name.textContent = tag.name;
+
+    const uid = document.createElement("small");
+    uid.textContent = tag.uid;
+
+    info.append(name,uid);
+
+    const state = document.createElement("div");
+    state.className = "tag-state";
+
+    row.append(number,info,state);
+    container.appendChild(row);
   });
-
-  table.appendChild(heading);
-
-  profiles.forEach((profile, i) => {
-    const tr = document.createElement('tr');
-    tr.id = 'tag-' + i;
-
-    [
-      String(i + 1),
-      profile.name,
-      profile.uid
-    ].forEach(value => {
-      const td = document.createElement('td');
-      td.textContent = value;
-      tr.appendChild(td);
-    });
-
-    table.appendChild(tr);
-  });
-
-  container.appendChild(table);
 }
 
 async function readIdentity() {
   const data = await ultra.cmdHf14aGetAntiCollData();
 
   return {
-    uid: hex(data.uid),
-    atqa: hex(data.atqa),
-    sak: hex(data.sak),
-    ats: hex(data.ats)
+    uid:hex(data.uid),
+    atqa:hex(data.atqa),
+    sak:hex(data.sak),
+    ats:hex(data.ats)
   };
 }
 
-async function inspectSlot() {
-  const slot = Number(
-    await ultra.cmdSlotGetActive()
-  );
-
+async function inspect() {
+  const slot = Number(await ultra.cmdSlotGetActive());
   const info = await ultra.cmdSlotGetInfo();
   const identity = await readIdentity();
 
-  $('slot').textContent = String(slot + 1);
-  $('deviceUID').textContent = identity.uid;
+  $('slotInfo').textContent =
+    "Slot " + (slot+1) +
+    " · HF type " + info[slot]?.hfTagType +
+    " · UID " + identity.uid;
 
-  log('Active slot: ' + (slot + 1));
-  log('HF tag type: ' + info[slot]?.hfTagType);
-  log('Identity: ' + JSON.stringify(identity));
+  log("Active slot: "+(slot+1));
+  log("Identity: "+JSON.stringify(identity));
 
-  return { slot, info, identity };
+  return {slot,info,identity};
 }
 
 async function captureOriginal() {
   if (originalIdentity) return;
 
-  const snapshot = await inspectSlot();
+  const snapshot = await inspect();
 
   if (snapshot.info[snapshot.slot]?.hfTagType !== 1101) {
-    throw new Error(
-      'Active slot is not configured as tag type 1101.'
-    );
+    throw new Error("Active slot is not tag type 1101");
   }
 
   originalSlot = snapshot.slot;
   originalIdentity = snapshot.identity;
+  sessionIdentity = snapshot.identity;
 
-  log('Original identity captured.');
-  updateControls();
-}
-
-function profileToIdentity(profile) {
-  // JSON uses ATQA [00,44], while the SDK's
-  // readback on this device reports 44 00.
-  // Reverse the two JSON bytes for the SDK.
-  const atqa = [...profile.atqa].reverse();
-
-  return {
-    uid: profile.uid,
-    atqa: hex(atqa),
-    sak: hex([profile.sak]),
-    ats: ''
-  };
+  log("Original identity saved for this session.");
 }
 
 async function writeIdentity(identity) {
-  const uid = hexToBuffer(identity.uid);
-  const atqa = hexToBuffer(identity.atqa);
-  const sak = hexToBuffer(identity.sak);
-
-  if (![4, 7, 10].includes(uid.length)) {
-    throw new Error('Unsupported UID length');
-  }
-
-  if (atqa.length !== 2 || sak.length !== 1) {
-    throw new Error('Invalid ATQA or SAK length');
-  }
-
-  // Use Buffer objects, not Uint8Array.
   await ultra.cmdHf14aSetAntiCollData({
-    uid,
-    atqa,
-    sak,
-    ats: hexToBuffer(identity.ats || '')
+    uid:toBuffer(identity.uid),
+    atqa:toBuffer(identity.atqa),
+    sak:toBuffer(identity.sak),
+    ats:toBuffer(identity.ats || "")
   });
 
   const actual = await readIdentity();
 
   if (
-    actual.uid !== normalizeHex(identity.uid) ||
-    actual.atqa !== normalizeHex(identity.atqa) ||
-    actual.sak !== normalizeHex(identity.sak)
+    actual.uid !== identity.uid ||
+    actual.atqa !== identity.atqa ||
+    actual.sak !== identity.sak
   ) {
     throw new Error(
-      'Identity verification mismatch. Read: ' +
+      "Identity verification mismatch: " +
       JSON.stringify(actual)
     );
   }
-
-  $('deviceUID').textContent = actual.uid;
 
   return actual;
 }
 
 async function applyProfile(profile) {
-  const active = Number(
-    await ultra.cmdSlotGetActive()
-  );
+  const slot = Number(await ultra.cmdSlotGetActive());
 
-  if (active !== originalSlot) {
-    throw new Error(
-      'Active slot changed. Playback stopped.'
-    );
+  if (slot !== originalSlot) {
+    throw new Error("Active slot changed externally");
   }
 
-  const identity = profileToIdentity(profile);
+  // Preserve ATQA, SAK and ATS from the original
+  // NTAG215-compatible slot. Change only the UID.
+  const identity = {
+    ...sessionIdentity,
+    uid:profile.uid
+  };
 
-  log('Loading ' + profile.name + '...');
-
-  const result = await writeIdentity(identity);
-
-  log(
-    'Verified ' + profile.name +
-    ' UID: ' + result.uid
-  );
-
-  return result;
+  const actual = await writeIdentity(identity);
+  log("Verified "+profile.name+" · "+actual.uid);
 }
 
-function wait(ms) {
-  return new Promise(resolve => {
-    const timer = setTimeout(() => {
-      cancelWait = null;
-      resolve('elapsed');
-    }, ms);
+function updateCountdown() {
+  if (!running || paused || !activeWait) return;
 
-    cancelWait = () => {
-      clearTimeout(timer);
-      cancelWait = null;
-      resolve('interrupted');
+  remainingMs = Math.max(
+    0,phaseEnd-performance.now()
+  );
+
+  $('countdown').textContent = formatTime(remainingMs);
+
+  const percent = phaseTotalMs
+    ? Math.min(100,Math.max(0,
+        (1-remainingMs/phaseTotalMs)*100))
+    : 100;
+
+  $('phaseProgress').style.width = percent+"%";
+  $('percentage').textContent = Math.round(percent)+"%";
+}
+
+function finishWait(reason) {
+  if (!activeWait) return;
+
+  const current = activeWait;
+  activeWait = null;
+
+  if (current.timer) clearTimeout(current.timer);
+
+  waitResolve = null;
+  current.resolve(reason);
+}
+
+function timedWait(ms,phaseName) {
+  phaseTotalMs = ms;
+  remainingMs = ms;
+  phaseEnd = performance.now()+ms;
+
+  setPhase(
+    phaseName,
+    phaseName === "delay"
+      ? "Waiting before loading next UID"
+      : "UID loaded and verified"
+  );
+
+  $('countdown').textContent = formatTime(ms);
+  $('phaseProgress').style.width = "0%";
+  $('percentage').textContent = "0%";
+
+  return new Promise(resolve => {
+    const current = {
+      resolve,
+      timer:null
     };
+
+    activeWait = current;
+
+    const schedule = () => {
+      current.timer = setTimeout(() => {
+        if (activeWait !== current) return;
+        remainingMs = 0;
+        finishWait("elapsed");
+      },Math.max(0,remainingMs));
+    };
+
+    current.schedule = schedule;
+    schedule();
   });
 }
 
-function interruptWait() {
-  if (cancelWait) cancelWait();
+function pauseWait() {
+  if (!activeWait) return;
+
+  remainingMs = Math.max(
+    0,phaseEnd-performance.now()
+  );
+
+  clearTimeout(activeWait.timer);
+  activeWait.timer = null;
 }
 
-async function playbackLoop() {
+function resumeWait() {
+  if (!activeWait) return;
+
+  phaseEnd = performance.now()+remainingMs;
+  activeWait.schedule();
+}
+
+async function playback() {
   try {
-    await serialize(captureOriginal);
+    await serial(captureOriginal);
 
     while (running) {
-      const profile = profiles[position];
+      setPhase("loading","Sending UID over Bluetooth");
+      showTag();
 
-      $('now').textContent =
-        `Loading ${profile.name}...`;
-
-      await serialize(() => applyProfile(profile));
+      await serial(() => applyProfile(profiles[position]));
 
       if (!running) break;
 
-      showProgress();
+      if (paused) {
+        // Pause requested while a Bluetooth command
+        // was still running.
+        while (running && paused) {
+          await new Promise(resolve => {
+            const check = setInterval(() => {
+              if (!running || !paused) {
+                clearInterval(check);
+                resolve();
+              }
+            },100);
+          });
+        }
+        if (!running) break;
+      }
 
       const duration = Number($('duration').value);
       const gap = Number($('gap').value);
 
-      $('now').textContent =
-        `Emulating ${profile.name} (${position + 1}/${profiles.length})`;
-
       log(
-        'Emulating ' + profile.name +
-        ' for ' + duration + ' seconds.'
+        "Emulating "+profiles[position].name+
+        " for "+duration+" seconds"
       );
 
-      const waitResult = await wait(duration * 1000);
+      const result = await timedWait(
+        duration*1000,"emulating"
+      );
 
       if (!running) break;
 
-      if (skipRequested || waitResult === 'interrupted') {
-        skipRequested = false;
+      if (result === "skip") {
+        skip = false;
       } else {
+        completedCount++;
+        $('completed').textContent = completedCount;
+
         if (
-          position === profiles.length - 1 &&
+          position === profiles.length-1 &&
           !$('loop').checked
         ) {
           running = false;
-          $('now').textContent = 'Playlist completed';
-          $('progressBar').style.width = '100%';
-          log('Playlist completed successfully.');
+          setPhase("finished","All tags processed");
+          $('countdown').textContent = "00:00";
+          $('phaseProgress').style.width = "100%";
+          $('percentage').textContent = "100%";
+          log("Playlist completed.");
           break;
         }
 
-        if (gap > 0) {
-          $('now').textContent =
-            'Waiting ' + gap + ' seconds before next tag';
+        if (gap>0) {
+          log("Delay: "+gap+" seconds");
 
-          await wait(gap * 1000);
+          const delayResult = await timedWait(
+            gap*1000,"delay"
+          );
 
           if (!running) break;
 
-          if (skipRequested) {
-            skipRequested = false;
+          if (delayResult === "skip") {
+            skip = false;
           }
         }
       }
 
       if (!running) break;
 
-      position = (position + 1) % profiles.length;
+      position = (position+1)%profiles.length;
     }
-  } catch (error) {
-    log('PLAYBACK ERROR: ' + (error.message || error));
-    $('now').textContent =
-      'Stopped: ' + (error.message || error);
+  } catch(e) {
+    log("ERROR: "+(e.message||e));
+    setPhase("error",e.message||String(e));
     running = false;
   } finally {
     running = false;
-    skipRequested = false;
-    playbackPromise = null;
+    paused = false;
+    skip = false;
+    loopPromise = null;
     updateControls();
   }
 }
 
 $('connect').onclick = async () => {
-  if (ultra || busy) return;
-
-  setBusy(true);
+  if (connected || busy) return;
+  busy = true;
+  updateControls();
 
   try {
-    $('status').textContent = 'Connecting...';
-
-    if (!BufferClass) {
-      throw new Error(
-        'Buffer library did not load.'
-      );
-    }
-
     if (!sdk.ChameleonUltra || !sdk.WebbleAdapter) {
-      throw new Error(
-        'Chameleon Ultra SDK did not load.'
-      );
+      throw new Error("SDK not loaded");
     }
+    if (!BufferClass?.from) {
+      throw new Error("Buffer library unavailable");
+    }
+
+    $('deviceInfo').textContent = "Connecting...";
 
     ultra = new sdk.ChameleonUltra();
 
-    // Preserve the working Bluetooth connection sequence.
+    // Keep the Bluetooth sequence proven on v0.2.
     await ultra.use(new sdk.WebbleAdapter());
     await ultra.connect();
 
     const firmware = await ultra.cmdGetAppVersion();
 
-    $('status').textContent =
-      'Connected · Firmware ' + firmware;
+    connected = true;
+    $('connectionBadge').textContent = "Connected";
+    $('connectionBadge').className =
+      "badge connected";
+    $('deviceInfo').textContent =
+      "Connected · Firmware "+firmware;
 
-    log('Bluetooth connected. Firmware: ' + firmware);
-    log('Buffer constructor available.');
+    log("Bluetooth connected. Firmware "+firmware);
 
-    await serialize(inspectSlot);
+    await serial(inspect);
 
-  } catch (error) {
-    log('Connection error: ' + (error.message || error));
+  } catch(e) {
+    log("Connection error: "+(e.message||e));
 
-    $('status').textContent = 'Disconnected';
-
-    try {
-      await ultra?.disconnect();
-    } catch (_) {}
+    try { await ultra?.disconnect(); } catch(_) {}
 
     ultra = null;
+    connected = false;
+
+    $('connectionBadge').textContent = "Disconnected";
+    $('connectionBadge').className = "badge";
+    $('deviceInfo').textContent = "Connection failed";
   } finally {
-    setBusy(false);
+    busy = false;
+    updateControls();
   }
 };
 
 $('disconnect').onclick = async () => {
   if (running || busy) return;
+  busy = true;
+  updateControls();
 
-  setBusy(true);
-
-  try {
-    await ultra?.disconnect();
-  } catch (error) {
-    log('Disconnect warning: ' + error.message);
-  }
+  try { await ultra?.disconnect(); }
+  catch(e) { log("Disconnect: "+e.message); }
 
   ultra = null;
+  connected = false;
   originalIdentity = null;
   originalSlot = null;
+  sessionIdentity = null;
 
-  $('status').textContent = 'Disconnected';
-  $('slot').textContent = 'Unknown';
-  $('deviceUID').textContent = 'Unknown';
+  $('connectionBadge').textContent = "Disconnected";
+  $('connectionBadge').className = "badge";
+  $('deviceInfo').textContent = "Not connected";
+  $('slotInfo').textContent = "No active device";
 
-  setBusy(false);
+  busy = false;
+  updateControls();
 };
 
 $('inspect').onclick = async () => {
-  if (!ultra || busy || running) return;
+  if (!connected || running || busy) return;
+  busy = true;
+  updateControls();
 
-  setBusy(true);
+  try { await serial(inspect); }
+  catch(e) { log("Inspect error: "+e.message); }
 
-  try {
-    await serialize(inspectSlot);
-  } catch (error) {
-    log('Inspect error: ' + error.message);
-  } finally {
-    setBusy(false);
-  }
-};
-
-$('file').onchange = async event => {
-  if (running || busy) return;
-
-  try {
-    const file = event.target.files[0];
-    if (!file) return;
-
-    const json = JSON.parse(await file.text());
-
-    if (!Array.isArray(json.cards)) {
-      throw new Error('JSON must contain cards array.');
-    }
-
-    const imported = [];
-    const seen = new Set();
-
-    for (const card of json.cards) {
-      if (Number(card.tag) !== 1101) continue;
-
-      const uid = String(card.uid || '')
-        .trim()
-        .replace(/\s+/g, ' ')
-        .toUpperCase();
-
-      if (!/^([0-9A-F]{2} ){6}[0-9A-F]{2}$/.test(uid)) {
-        continue;
-      }
-
-      if (seen.has(uid)) continue;
-
-      const atqa = card.atqa;
-      const sak = Number(card.sak);
-
-      if (
-        !Array.isArray(atqa) ||
-        atqa.length !== 2 ||
-        !atqa.every(n =>
-          Number.isInteger(n) && n >= 0 && n <= 255
-        ) ||
-        !Number.isInteger(sak) ||
-        sak < 0 ||
-        sak > 255
-      ) {
-        continue;
-      }
-
-      seen.add(uid);
-
-      imported.push({
-        name: String(card.name || 'Unnamed'),
-        uid,
-        atqa,
-        sak
-      });
-    }
-
-    if (!imported.length) {
-      throw new Error('No compatible NFC profiles found.');
-    }
-
-    profiles = imported;
-    position = 0;
-
-    $('loaded').textContent =
-      profiles.length + ' unique NFC profiles imported';
-
-    renderProfiles();
-
-    $('counter').textContent =
-      '0 / ' + profiles.length;
-
-    $('progressBar').style.width = '0%';
-
-    log(
-      'Imported ' + profiles.length +
-      ' NFC profiles successfully.'
-    );
-
-    updateControls();
-
-  } catch (error) {
-    log('Import error: ' + (error.message || error));
-  }
-};
-
-$('consent').onchange = updateControls;
-
-$('test').onclick = async () => {
-  if (
-    !ultra ||
-    busy ||
-    running ||
-    !profiles.length ||
-    !$('consent').checked
-  ) return;
-
-  setBusy(true);
-
-  try {
-    await serialize(captureOriginal);
-
-    const profile = profiles[0];
-
-    $('now').textContent =
-      'Testing ' + profile.name + '...';
-
-    await serialize(() => applyProfile(profile));
-
-    position = 0;
-    showProgress();
-
-    $('now').textContent =
-      'Test passed: ' + profile.name;
-
-    log(
-      'TEST PASSED. Device identity matches ' +
-      profile.name
-    );
-
-  } catch (error) {
-    $('now').textContent =
-      'Test failed: ' + (error.message || error);
-
-    log(
-      'TEST FAILED: ' + (error.message || error)
-    );
-  } finally {
-    setBusy(false);
-  }
+  busy = false;
+  updateControls();
 };
 
 $('start').onclick = () => {
-  if (
-    !ultra ||
-    running ||
-    busy ||
-    !profiles.length ||
-    !$('consent').checked
-  ) return;
+  if (!connected || running || busy) return;
 
   const duration = Number($('duration').value);
   const gap = Number($('gap').value);
 
   if (
     !Number.isInteger(duration) ||
-    duration < 1 ||
-    duration > 3600 ||
+    duration<1 || duration>3600 ||
     !Number.isInteger(gap) ||
-    gap < 0 ||
-    gap > 3600
+    gap<0 || gap>3600
   ) {
-    log('Invalid playback settings.');
+    log("Invalid playback settings.");
     return;
   }
 
   position = 0;
+  completedCount = 0;
   running = true;
-  skipRequested = false;
+  paused = false;
+  skip = false;
 
-  $('progressBar').style.width = '0%';
+  $('completed').textContent = "0";
+  log("Starting playlist.");
 
-  log('Starting playlist...');
   updateControls();
+  loopPromise = playback();
+};
 
-  playbackPromise = playbackLoop();
+$('pause').onclick = () => {
+  if (!running) return;
+
+  paused = !paused;
+
+  if (paused) {
+    pauseWait();
+    setPhase("paused","Playlist timer paused");
+    $('pause').textContent = "▶ Resume";
+    log("Playlist paused.");
+  } else {
+    resumeWait();
+    setPhase(
+      activeWait && phaseTotalMs ===
+        Number($('gap').value)*1000
+        ? "delay" : "emulating",
+      "Playback resumed"
+    );
+    $('pause').textContent = "⏸ Pause";
+    log("Playlist resumed.");
+  }
 };
 
 $('stop').onclick = () => {
   if (!running) return;
 
   running = false;
-  skipRequested = false;
+  paused = false;
 
-  interruptWait();
+  finishWait("stop");
+  setPhase("idle","Stopped by user");
 
-  $('now').textContent = 'Stopping...';
+  $('pause').textContent = "⏸ Pause";
+  log("Stop requested.");
 
-  log('Stop requested.');
   updateControls();
 };
 
 $('next').onclick = () => {
   if (!running) return;
 
-  skipRequested = true;
-  interruptWait();
+  skip = true;
+  paused = false;
+  $('pause').textContent = "⏸ Pause";
 
-  log('Skip to next tag requested.');
+  finishWait("skip");
+
+  log("Next tag requested.");
 };
 
 $('restore').onclick = async () => {
-  if (
-    !ultra ||
-    running ||
-    busy ||
-    !originalIdentity
-  ) return;
+  if (!connected || running || busy ||
+      !originalIdentity) return;
 
-  setBusy(true);
+  busy = true;
+  updateControls();
 
   try {
-    const active = Number(
-      await serialize(() => ultra.cmdSlotGetActive())
+    const slot = Number(
+      await serial(() => ultra.cmdSlotGetActive())
     );
 
-    if (active !== originalSlot) {
-      throw new Error(
-        'Active slot changed. Cannot safely restore.'
-      );
+    if (slot !== originalSlot) {
+      throw new Error("Active slot changed");
     }
 
-    const restored = await serialize(
+    await serial(
       () => writeIdentity(originalIdentity)
     );
 
-    log(
-      'Original identity restored: ' + restored.uid
-    );
-
-    $('now').textContent = 'Original identity restored';
+    log("Original identity restored.");
 
     originalIdentity = null;
     originalSlot = null;
+    sessionIdentity = null;
 
-  } catch (error) {
-    log(
-      'RESTORE ERROR: ' + (error.message || error)
-    );
+    await serial(inspect);
+
+  } catch(e) {
+    log("Restore failed: "+e.message);
   } finally {
-    setBusy(false);
+    busy = false;
+    updateControls();
   }
 };
 
 $('clearLog').onclick = () => {
-  $('log').textContent = 'Log cleared.';
+  $('log').textContent = "Activity log cleared.";
 };
 
+setInterval(updateCountdown,100);
+
+renderPlaylist();
+$('totalTags').textContent = profiles.length;
+$('tagCounter').textContent = "0 / "+profiles.length;
+$('nextTag').textContent = "Next: "+profiles[0].name;
 updateControls();
 
 </script>
