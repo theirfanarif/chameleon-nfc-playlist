@@ -9,7 +9,7 @@ const $=id=>document.getElementById(id);let ultra=null;
 function log(s){$('output').textContent+=`\n${s}`;}
 function status(s,connected){$('status').textContent=s;for(const id of ['info','slots','disconnect'])$(id).disabled=!connected;$('connect').disabled=connected;}
 function fmt(v){try{return JSON.stringify(v,(k,x)=>typeof x==='bigint'?x.toString():x,2)}catch{return String(v)}}
-$('connect').onclick=async()=>{try{$('output').textContent='Connecting…';ultra=new ChameleonUltra();ultra.use(new WebbleAdapter());await ultra.connect();status('Connected',true);log('Bluetooth connection established.');}catch(e){status('Disconnected',false);log('Connection failed: '+(e?.message||e));ultra=null;}};
+$('connect').onclick=async()=>{try{$('output').textContent='Connecting…';ultra=new ChameleonUltra();await ultra.use(new WebbleAdapter());await ultra.connect();status('Connected',true);log('Bluetooth connection established.');}catch(e){status('Disconnected',false);log('Connection failed: '+(e?.message||e));ultra=null;}};
 $('disconnect').onclick=async()=>{try{if(ultra)await ultra.disconnect();}catch(e){log('Disconnect warning: '+(e?.message||e));}finally{ultra=null;status('Disconnected',false);}};
 async function read(name,fn){if(!ultra)return;try{log('Reading '+name+'…');log(fmt(await fn()));}catch(e){log(name+' failed: '+(e?.message||e));}}
 $('info').onclick=async()=>{await read('firmware version',()=>ultra.cmdGetAppVersion());};
