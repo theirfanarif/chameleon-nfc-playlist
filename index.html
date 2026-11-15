@@ -1,17 +1,389 @@
+
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>NFC Playlist Plus — Chameleon Ultra</title><style>
-:root{font-family:system-ui,-apple-system,sans-serif;color-scheme:dark;background:#0b1220;color:#edf2ff}body{margin:0;padding:22px;max-width:650px;margin-inline:auto}h1{font-size:1.6rem;margin-bottom:4px}.muted{color:#9cacc7}section{background:#172238;border:1px solid #2c3c56;border-radius:16px;padding:18px;margin:18px 0}button{background:#5c8dff;color:#071224;border:0;border-radius:10px;padding:13px 16px;font-size:1rem;font-weight:650;margin:4px;cursor:pointer}button.secondary{background:#2d405f;color:white}button:disabled{opacity:.45;cursor:not-allowed}pre{white-space:pre-wrap;word-break:break-word;background:#0b1424;padding:12px;border-radius:10px;max-height:300px;overflow:auto}small{color:#a9b9d4}.status{font-weight:700}code{color:#c4d7ff}
-</style></head><body><h1>📡 NFC Playlist Plus</h1><p class="muted">Chameleon Ultra · Connection diagnostic · v0.2</p><section><p>Device status: <span class="status" id="status">Disconnected</span></p><button id="connect">Connect via Bluetooth</button><button id="disconnect" class="secondary" disabled>Disconnect</button><p><small>On iPhone, open this page in Bluefy. On desktop, use a Web Bluetooth-capable browser. Bluetooth pairing requires a user gesture and a secure (HTTPS) page.</small></p></section><section><h2>Read-only diagnostics</h2><button id="info" disabled>Read device information</button><button id="slots" class="secondary" disabled>Read slots</button><pre id="output">Connect your Chameleon Ultra to begin.</pre></section><section><h2>Next milestone</h2><p class="muted">After the connection and slot commands pass on your firmware, we'll add verified NTAG215 profile imports and controlled playlist playback. This diagnostic version intentionally does not modify or cycle NFC tags.</p></section><script src="https://cdn.jsdelivr.net/npm/chameleon-ultra.js@0/dist/index.global.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chameleon-ultra.js@0/dist/plugin/WebbleAdapter.global.js"></script>
-<script>
-const {ChameleonUltra, WebbleAdapter} = window.ChameleonUltraJS;
-const $=id=>document.getElementById(id);let ultra=null;
-function log(s){$('output').textContent+=`\n${s}`;}
-function status(s,connected){$('status').textContent=s;for(const id of ['info','slots','disconnect'])$(id).disabled=!connected;$('connect').disabled=connected;}
-function fmt(v){try{return JSON.stringify(v,(k,x)=>typeof x==='bigint'?x.toString():x,2)}catch{return String(v)}}
-$('connect').onclick=async()=>{try{$('output').textContent='Connecting…';ultra=new ChameleonUltra();await ultra.use(new WebbleAdapter());await ultra.connect();status('Connected',true);log('Bluetooth connection established.');}catch(e){status('Disconnected',false);log('Connection failed: '+(e?.message||e));ultra=null;}};
-$('disconnect').onclick=async()=>{try{if(ultra)await ultra.disconnect();}catch(e){log('Disconnect warning: '+(e?.message||e));}finally{ultra=null;status('Disconnected',false);}};
-async function read(name,fn){if(!ultra)return;try{log('Reading '+name+'…');log(fmt(await fn()));}catch(e){log(name+' failed: '+(e?.message||e));}}
-$('info').onclick=async()=>{await read('firmware version',()=>ultra.cmdGetAppVersion());};
-$('slots').onclick=async()=>{await read('slot information',()=>ultra.cmdSlotGetInfo());};
-</script></body></html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>NFC Playlist Plus — Chameleon Ultra</title>
+
+  <style>
+    :root {
+      font-family: system-ui, -apple-system, sans-serif;
+      color-scheme: dark;
+      background: #0b1220;
+      color: #edf2ff;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0 auto;
+      padding: 22px;
+      max-width: 650px;
+    }
+
+    h1 {
+      font-size: 1.6rem;
+      margin-bottom: 4px;
+    }
+
+    h2 { font-size: 1.15rem; }
+
+    .muted { color: #9cacc7; }
+
+    section {
+      background: #172238;
+      border: 1px solid #2c3c56;
+      border-radius: 16px;
+      padding: 18px;
+      margin: 18px 0;
+    }
+
+    button {
+      background: #5c8dff;
+      color: #071224;
+      border: 0;
+      border-radius: 10px;
+      padding: 13px 16px;
+      font-size: 1rem;
+      font-weight: 650;
+      margin: 4px;
+      cursor: pointer;
+    }
+
+    button.secondary {
+      background: #2d405f;
+      color: white;
+    }
+
+    button:disabled {
+      opacity: .45;
+      cursor: not-allowed;
+    }
+
+    pre {
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      background: #0b1424;
+      padding: 12px;
+      border-radius: 10px;
+      max-height: 350px;
+      overflow: auto;
+      font-size: .85rem;
+    }
+
+    small { color: #a9b9d4; }
+
+    .status { font-weight: 700; }
+
+    .connected { color: #4ade80; }
+    .disconnected { color: #fb7185; }
+    .connecting { color: #facc15; }
+
+    code { color: #c4d7ff; }
+  </style>
+</head>
+
+<body>
+
+  <h1>📡 NFC Playlist Plus</h1>
+  <p class="muted">
+    Chameleon Ultra · Connection diagnostic · v0.3
+  </p>
+
+  <section>
+    <h2>Device connection</h2>
+
+    <p>
+      Device status:
+      <span class="status disconnected" id="status">
+        Disconnected
+      </span>
+    </p>
+
+    <button id="connect">Connect via Bluetooth</button>
+    <button id="disconnect" class="secondary" disabled>
+      Disconnect
+    </button>
+
+    <p>
+      <small>
+        MacBook: use Chrome.
+        iPhone: use a compatible Web Bluetooth browser such as Bluefy.
+        Keep the device powered on and disconnect it from other apps.
+      </small>
+    </p>
+  </section>
+
+  <section>
+    <h2>Read-only diagnostics</h2>
+
+    <button id="info" disabled>
+      Read device information
+    </button>
+
+    <button id="slots" class="secondary" disabled>
+      Read slots
+    </button>
+
+    <button id="clear" class="secondary">
+      Clear log
+    </button>
+
+    <pre id="output">Ready. Connect your Chameleon Ultra to begin.</pre>
+  </section>
+
+  <section>
+    <h2>Development status</h2>
+    <p class="muted">
+      This version tests Bluetooth connectivity and reads
+      device information. It does not change NFC slots,
+      import tags, or start NFC emulation.
+    </p>
+  </section>
+
+  <!-- Chameleon Ultra JavaScript SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/chameleon-ultra.js@0/dist/index.global.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chameleon-ultra.js@0/dist/plugin/WebbleAdapter.global.js"></script>
+
+  <script>
+    "use strict";
+
+    const $ = id => document.getElementById(id);
+
+    let ultra = null;
+    let busy = false;
+    let connected = false;
+    let sessionId = 0;
+
+    function log(message) {
+      const time = new Date().toLocaleTimeString();
+      $('output').textContent += `\n[${time}] ${message}`;
+      $('output').scrollTop = $('output').scrollHeight;
+    }
+
+    function format(value) {
+      try {
+        return JSON.stringify(
+          value,
+          (key, item) =>
+            typeof item === 'bigint' ? item.toString() : item,
+          2
+        ) ?? String(value);
+      } catch {
+        return String(value);
+      }
+    }
+
+    function updateUI(state) {
+      const statusEl = $('status');
+
+      statusEl.textContent = state;
+      statusEl.className = 'status ' + (
+        state === 'Connected' ? 'connected' :
+        state === 'Connecting' ? 'connecting' :
+        'disconnected'
+      );
+
+      $('connect').disabled = busy || connected;
+      $('disconnect').disabled = busy || !connected;
+      $('info').disabled = busy || !connected;
+      $('slots').disabled = busy || !connected;
+    }
+
+    function handleDisconnect(id) {
+      if (id !== sessionId) return;
+
+      connected = false;
+      busy = false;
+      ultra = null;
+
+      updateUI('Disconnected');
+      log('Device connection closed.');
+    }
+
+    async function connectDevice() {
+      if (busy || connected) return;
+
+      busy = true;
+      updateUI('Connecting');
+
+      $('output').textContent = 'Starting Bluetooth connection...';
+
+      const id = ++sessionId;
+      let device = null;
+
+      try {
+        if (!navigator.bluetooth) {
+          throw new Error(
+            'Web Bluetooth is unavailable. Use Chrome on macOS or a compatible browser.'
+          );
+        }
+
+        if (!window.ChameleonUltraJS) {
+          throw new Error('Chameleon Ultra SDK failed to load.');
+        }
+
+        const {
+          ChameleonUltra,
+          WebbleAdapter
+        } = window.ChameleonUltraJS;
+
+        if (
+          typeof ChameleonUltra !== 'function' ||
+          typeof WebbleAdapter !== 'function'
+        ) {
+          throw new Error('SDK Bluetooth adapter is unavailable.');
+        }
+
+        log('Creating SDK instance...');
+        device = new ChameleonUltra();
+
+        log('Registering Bluetooth adapter...');
+        await device.use(new WebbleAdapter());
+
+        log('Opening Bluetooth connection...');
+        await device.connect();
+
+        if (id !== sessionId) {
+          await device.disconnect().catch(() => {});
+          return;
+        }
+
+        ultra = device;
+        connected = true;
+
+        log('Bluetooth connection established.');
+
+        if (typeof device.on === 'function') {
+          // Event names vary between SDK versions.
+          // The current build relies on command failures and
+          // explicit disconnect rather than an unverified event.
+        }
+
+      } catch (error) {
+        console.error('Chameleon Ultra connection error:', error);
+
+        log('Connection failed: ' + (
+          error?.message || String(error)
+        ));
+
+        connected = false;
+        ultra = null;
+
+        if (device) {
+          try {
+            await device.disconnect();
+          } catch (cleanupError) {
+            console.warn('Connection cleanup:', cleanupError);
+          }
+        }
+
+      } finally {
+        if (id === sessionId) {
+          busy = false;
+          updateUI(connected ? 'Connected' : 'Disconnected');
+        }
+      }
+    }
+
+    async function disconnectDevice() {
+      if (busy || !ultra) return;
+
+      busy = true;
+      updateUI('Disconnecting');
+
+      const device = ultra;
+      const id = ++sessionId;
+
+      try {
+        await device.disconnect();
+        log('Bluetooth disconnected successfully.');
+      } catch (error) {
+        console.error('Disconnect error:', error);
+        log('Disconnect warning: ' + (
+          error?.message || String(error)
+        ));
+      } finally {
+        if (id === sessionId) {
+          ultra = null;
+          connected = false;
+          busy = false;
+          updateUI('Disconnected');
+        }
+      }
+    }
+
+    async function readDiagnostic(name, command) {
+      if (!connected || !ultra || busy) return;
+
+      busy = true;
+      updateUI('Connected');
+
+      try {
+        if (!ultra.isConnected()) {
+          throw new Error('Device is no longer connected.');
+        }
+
+        log('Reading ' + name + '...');
+
+        const result = await command(ultra);
+
+        log(name + ':');
+        log(format(result));
+
+      } catch (error) {
+        console.error(name + ' error:', error);
+        log(name + ' failed: ' + (
+          error?.message || String(error)
+        ));
+
+        if (ultra && !ultra.isConnected()) {
+          handleDisconnect(sessionId);
+        }
+
+      } finally {
+        busy = false;
+        updateUI(connected ? 'Connected' : 'Disconnected');
+      }
+    }
+
+    $('connect').addEventListener('click', connectDevice);
+
+    $('disconnect').addEventListener(
+      'click',
+      disconnectDevice
+    );
+
+    $('info').addEventListener('click', () => {
+      readDiagnostic(
+        'Firmware application version',
+        device => device.cmdGetAppVersion()
+      );
+    });
+
+    $('slots').addEventListener('click', () => {
+      readDiagnostic(
+        'Slot information',
+        device => device.cmdSlotGetInfo()
+      );
+    });
+
+    $('clear').addEventListener('click', () => {
+      $('output').textContent = 'Log cleared.';
+    });
+
+    window.addEventListener('pagehide', () => {
+      if (ultra) {
+        const device = ultra;
+        ultra = null;
+        connected = false;
+        device.disconnect().catch(() => {});
+      }
+    });
+
+    updateUI('Disconnected');
+  </script>
+
+</body>
+</html>
