@@ -1,389 +1,503 @@
 
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>NFC Playlist Plus — Chameleon Ultra</title>
-
-  <style>
-    :root {
-      font-family: system-ui, -apple-system, sans-serif;
-      color-scheme: dark;
-      background: #0b1220;
-      color: #edf2ff;
-    }
-
-    * { box-sizing: border-box; }
-
-    body {
-      margin: 0 auto;
-      padding: 22px;
-      max-width: 650px;
-    }
-
-    h1 {
-      font-size: 1.6rem;
-      margin-bottom: 4px;
-    }
-
-    h2 { font-size: 1.15rem; }
-
-    .muted { color: #9cacc7; }
-
-    section {
-      background: #172238;
-      border: 1px solid #2c3c56;
-      border-radius: 16px;
-      padding: 18px;
-      margin: 18px 0;
-    }
-
-    button {
-      background: #5c8dff;
-      color: #071224;
-      border: 0;
-      border-radius: 10px;
-      padding: 13px 16px;
-      font-size: 1rem;
-      font-weight: 650;
-      margin: 4px;
-      cursor: pointer;
-    }
-
-    button.secondary {
-      background: #2d405f;
-      color: white;
-    }
-
-    button:disabled {
-      opacity: .45;
-      cursor: not-allowed;
-    }
-
-    pre {
-      white-space: pre-wrap;
-      overflow-wrap: anywhere;
-      background: #0b1424;
-      padding: 12px;
-      border-radius: 10px;
-      max-height: 350px;
-      overflow: auto;
-      font-size: .85rem;
-    }
-
-    small { color: #a9b9d4; }
-
-    .status { font-weight: 700; }
-
-    .connected { color: #4ade80; }
-    .disconnected { color: #fb7185; }
-    .connecting { color: #facc15; }
-
-    code { color: #c4d7ff; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NFC Playlist Plus v0.4</title>
+<style>
+:root {
+  font-family: system-ui, -apple-system, sans-serif;
+  color-scheme: dark;
+  background: #0b1220;
+  color: #edf2ff;
+}
+body { max-width: 750px; margin: auto; padding: 18px; }
+h1 { margin-bottom: 4px; }
+p, small { color: #aab9d2; }
+section {
+  background: #172238;
+  border: 1px solid #31415d;
+  border-radius: 16px;
+  padding: 17px;
+  margin: 16px 0;
+}
+button {
+  background: #76a3ff;
+  color: #091428;
+  border: none;
+  border-radius: 9px;
+  padding: 11px 15px;
+  margin: 4px;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+}
+button:disabled { opacity: .4; cursor: not-allowed; }
+input[type=number] {
+  width: 75px;
+  background: #0b1424;
+  color: white;
+  border: 1px solid #52637d;
+  padding: 9px;
+  border-radius: 8px;
+}
+input[type=file] { max-width: 100%; }
+label { display: inline-block; margin: 9px 12px 9px 0; }
+pre {
+  white-space: pre-wrap;
+  word-break: break-word;
+  background: #0b1424;
+  padding: 12px;
+  max-height: 300px;
+  overflow: auto;
+}
+#tags { max-height: 290px; overflow: auto; }
+table { width: 100%; border-collapse: collapse; }
+td, th {
+  border-bottom: 1px solid #30405b;
+  padding: 8px;
+  text-align: left;
+  font-size: .88rem;
+}
+.active { background: #263e60; }
+.warn { color: #ffcf8a; }
+#now { font-size: 1.15rem; font-weight: 700; }
+</style>
 </head>
 
 <body>
+<h1>📡 NFC Playlist Plus</h1>
+<p>Chameleon Ultra · Single-slot UID playlist · v0.4</p>
 
-  <h1>📡 NFC Playlist Plus</h1>
-  <p class="muted">
-    Chameleon Ultra · Connection diagnostic · v0.3
+<section>
+  <h2>Bluetooth Connection</h2>
+  <button id="connect">Connect</button>
+  <button id="disconnect" disabled>Disconnect</button>
+  <button id="inspect" disabled>Inspect Slot</button>
+  <p>Status: <strong id="status">Disconnected</strong></p>
+  <p>Active slot: <strong id="slot">Unknown</strong></p>
+  <small>Keep this page open and your device awake during playback.</small>
+</section>
+
+<section>
+  <h2>1. Import NFC Playlist</h2>
+  <p>Select your Chameleon Ultra GUI JSON file containing the 28 tags.</p>
+  <input id="file" type="file" accept=".json,application/json">
+  <p id="loaded">No playlist imported</p>
+  <div id="tags"></div>
+</section>
+
+<section>
+  <h2>2. Playback Settings</h2>
+  <label>
+    Emulation time (seconds)
+    <input id="duration" type="number" min="1" max="3600" value="5">
+  </label>
+  <label>
+    Delay between tags (seconds)
+    <input id="gap" type="number" min="0" max="3600" value="1">
+  </label>
+  <label>
+    <input type="checkbox" id="loop"> Loop playlist
+  </label>
+
+  <p class="warn">
+    Experimental: Playback changes the active slot's UID, ATQA and SAK.
+    It does not load the full NTAG215 memory. Back up your slot first.
   </p>
+  <label>
+    <input type="checkbox" id="consent">
+    I understand that the active slot will be modified.
+  </label>
 
-  <section>
-    <h2>Device connection</h2>
+  <div>
+    <button id="start" disabled>▶ Start Playlist</button>
+    <button id="stop" disabled>■ Stop</button>
+    <button id="next" disabled>⏭ Next</button>
+    <button id="restore" disabled>↶ Restore Identity</button>
+  </div>
+  <p id="now">Not playing</p>
+  <small>Stopping leaves the current identity active. Restore is available while connected.</small>
+</section>
 
-    <p>
-      Device status:
-      <span class="status disconnected" id="status">
-        Disconnected
-      </span>
-    </p>
+<section>
+  <h2>Activity Log</h2>
+  <pre id="log">Ready. Import JSON and connect to begin.</pre>
+</section>
 
-    <button id="connect">Connect via Bluetooth</button>
-    <button id="disconnect" class="secondary" disabled>
-      Disconnect
-    </button>
+<script src="https://cdn.jsdelivr.net/npm/chameleon-ultra.js@0/dist/index.global.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chameleon-ultra.js@0/dist/plugin/WebbleAdapter.global.js"></script>
 
-    <p>
-      <small>
-        MacBook: use Chrome.
-        iPhone: use a compatible Web Bluetooth browser such as Bluefy.
-        Keep the device powered on and disconnect it from other apps.
-      </small>
-    </p>
-  </section>
+<script>
+const $ = id => document.getElementById(id);
+const { ChameleonUltra, WebbleAdapter } = window.ChameleonUltraJS;
 
-  <section>
-    <h2>Read-only diagnostics</h2>
+let ultra = null;
+let profiles = [];
+let original = null;
+let activeSlot = null;
+let running = false;
+let generation = 0;
+let index = 0;
+let wake = null;
+let operation = Promise.resolve();
 
-    <button id="info" disabled>
-      Read device information
-    </button>
+function log(message) {
+  const el = $('log');
+  el.textContent += '\n' + new Date().toLocaleTimeString() + ' ' + message;
+  el.scrollTop = el.scrollHeight;
+}
 
-    <button id="slots" class="secondary" disabled>
-      Read slots
-    </button>
+function hex(value) {
+  return Array.from(value || [])
+    .map(x => x.toString(16).padStart(2, '0'))
+    .join(' ')
+    .toUpperCase();
+}
 
-    <button id="clear" class="secondary">
-      Clear log
-    </button>
+function toBytes(value) {
+  const parts = value.trim().split(/\s+/);
+  if (!parts.every(x => /^[0-9a-f]{2}$/i.test(x))) {
+    throw new Error('Invalid hexadecimal bytes');
+  }
+  return Uint8Array.from(parts.map(x => parseInt(x, 16)));
+}
 
-    <pre id="output">Ready. Connect your Chameleon Ultra to begin.</pre>
-  </section>
+function serial(fn) {
+  const task = operation.then(fn);
+  operation = task.catch(() => {});
+  return task;
+}
 
-  <section>
-    <h2>Development status</h2>
-    <p class="muted">
-      This version tests Bluetooth connectivity and reads
-      device information. It does not change NFC slots,
-      import tags, or start NFC emulation.
-    </p>
-  </section>
+function sleep(ms) {
+  return new Promise(resolve => {
+    const timer = setTimeout(() => {
+      wake = null;
+      resolve();
+    }, ms);
+    wake = () => {
+      clearTimeout(timer);
+      wake = null;
+      resolve();
+    };
+  });
+}
 
-  <!-- Chameleon Ultra JavaScript SDK -->
-  <script src="https://cdn.jsdelivr.net/npm/chameleon-ultra.js@0/dist/index.global.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chameleon-ultra.js@0/dist/plugin/WebbleAdapter.global.js"></script>
+function updateControls() {
+  const connected = !!ultra;
+  $('connect').disabled = connected;
+  $('disconnect').disabled = !connected || running;
+  $('inspect').disabled = !connected || running;
+  $('start').disabled =
+    !connected || running || !profiles.length || !$('consent').checked;
+  $('stop').disabled = !running;
+  $('next').disabled = !running;
+  $('restore').disabled = !connected || running || !original;
+}
 
-  <script>
-    "use strict";
+function stopPlayback(message) {
+  running = false;
+  generation++;
+  if (wake) wake();
+  $('now').textContent = message;
+  updateControls();
+}
 
-    const $ = id => document.getElementById(id);
+async function readIdentity() {
+  const value = await ultra.cmdHf14aGetAntiCollData();
+  return {
+    uid: hex(value.uid),
+    atqa: hex(value.atqa),
+    sak: hex(value.sak),
+    ats: hex(value.ats)
+  };
+}
 
-    let ultra = null;
-    let busy = false;
-    let connected = false;
-    let sessionId = 0;
+async function inspectSlot() {
+  activeSlot = Number(await ultra.cmdSlotGetActive());
+  $('slot').textContent = String(activeSlot + 1);
+  const info = await ultra.cmdSlotGetInfo();
+  log('Active slot: ' + (activeSlot + 1));
+  log('HF tag type: ' + info[activeSlot]?.hfTagType);
+  log('Identity: ' + JSON.stringify(await readIdentity()));
+}
 
-    function log(message) {
-      const time = new Date().toLocaleTimeString();
-      $('output').textContent += `\n[${time}] ${message}`;
-      $('output').scrollTop = $('output').scrollHeight;
+$('connect').onclick = async () => {
+  try {
+    $('status').textContent = 'Connecting...';
+    ultra = new ChameleonUltra();
+
+    // This is the adapter sequence that worked in v0.2.
+    await ultra.use(new WebbleAdapter());
+    await ultra.connect();
+
+    const version = await ultra.cmdGetAppVersion();
+    $('status').textContent = 'Connected · Firmware ' + version;
+    log('Bluetooth connected. Firmware: ' + version);
+
+    try {
+      await inspectSlot();
+    } catch (e) {
+      log('Slot inspection failed: ' + e.message);
+    }
+  } catch (e) {
+    log('Connection error: ' + (e.message || e));
+    ultra = null;
+    $('status').textContent = 'Disconnected';
+  }
+  updateControls();
+};
+
+$('disconnect').onclick = async () => {
+  if (running) return;
+  try {
+    await ultra?.disconnect();
+  } catch (e) {
+    log('Disconnect warning: ' + e.message);
+  }
+  ultra = null;
+  original = null;
+  activeSlot = null;
+  $('status').textContent = 'Disconnected';
+  $('slot').textContent = 'Unknown';
+  updateControls();
+};
+
+$('inspect').onclick = async () => {
+  try {
+    await serial(inspectSlot);
+  } catch (e) {
+    log('Inspection error: ' + e.message);
+  }
+};
+
+$('file').onchange = async event => {
+  try {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const data = JSON.parse(await file.text());
+    if (!Array.isArray(data.cards)) {
+      throw new Error('JSON must contain a cards array');
     }
 
-    function format(value) {
-      try {
-        return JSON.stringify(
-          value,
-          (key, item) =>
-            typeof item === 'bigint' ? item.toString() : item,
-          2
-        ) ?? String(value);
-      } catch {
-        return String(value);
+    const seen = new Set();
+    profiles = [];
+
+    for (const card of data.cards) {
+      if (card.tag !== 1101 || typeof card.uid !== 'string') continue;
+
+      const uid = card.uid.trim().toUpperCase();
+      if (!/^([0-9A-F]{2} ){6}[0-9A-F]{2}$/.test(uid)) continue;
+      if (seen.has(uid)) continue;
+
+      const atqa = Array.isArray(card.atqa) ? card.atqa : [0, 68];
+      const sak = Number(card.sak ?? 0);
+
+      if (
+        atqa.length !== 2 ||
+        !atqa.every(x => Number.isInteger(x) && x >= 0 && x <= 255) ||
+        !Number.isInteger(sak) || sak < 0 || sak > 255
+      ) continue;
+
+      seen.add(uid);
+      profiles.push({
+        name: String(card.name || 'Unnamed'),
+        uid,
+        atqa,
+        sak
+      });
+    }
+
+    $('loaded').textContent = profiles.length + ' unique profiles imported';
+
+    const table = document.createElement('table');
+    const header = document.createElement('tr');
+    for (const title of ['#', 'Name', 'UID']) {
+      const th = document.createElement('th');
+      th.textContent = title;
+      header.appendChild(th);
+    }
+    table.appendChild(header);
+
+    profiles.forEach((profile, i) => {
+      const tr = document.createElement('tr');
+      tr.id = 'tag' + i;
+      for (const value of [i + 1, profile.name, profile.uid]) {
+        const td = document.createElement('td');
+        td.textContent = value;
+        tr.appendChild(td);
       }
-    }
+      table.appendChild(tr);
+    });
 
-    function updateUI(state) {
-      const statusEl = $('status');
+    $('tags').replaceChildren(table);
+    log('Imported ' + profiles.length + ' profiles.');
+    updateControls();
+  } catch (e) {
+    log('Import failed: ' + e.message);
+  }
+};
 
-      statusEl.textContent = state;
-      statusEl.className = 'status ' + (
-        state === 'Connected' ? 'connected' :
-        state === 'Connecting' ? 'connecting' :
-        'disconnected'
-      );
+$('consent').onchange = updateControls;
 
-      $('connect').disabled = busy || connected;
-      $('disconnect').disabled = busy || !connected;
-      $('info').disabled = busy || !connected;
-      $('slots').disabled = busy || !connected;
-    }
+async function writeIdentity(profile) {
+  const uid = toBytes(profile.uid);
+  const atqa = Uint8Array.from(profile.atqa);
+  const sak = Uint8Array.from([profile.sak]);
 
-    function handleDisconnect(id) {
-      if (id !== sessionId) return;
+  await ultra.cmdHf14aSetAntiCollData({
+    uid,
+    atqa,
+    sak
+  });
 
-      connected = false;
-      busy = false;
-      ultra = null;
+  const actual = await readIdentity();
 
-      updateUI('Disconnected');
-      log('Device connection closed.');
-    }
-
-    async function connectDevice() {
-      if (busy || connected) return;
-
-      busy = true;
-      updateUI('Connecting');
-
-      $('output').textContent = 'Starting Bluetooth connection...';
-
-      const id = ++sessionId;
-      let device = null;
-
-      try {
-        if (!navigator.bluetooth) {
-          throw new Error(
-            'Web Bluetooth is unavailable. Use Chrome on macOS or a compatible browser.'
-          );
-        }
-
-        if (!window.ChameleonUltraJS) {
-          throw new Error('Chameleon Ultra SDK failed to load.');
-        }
-
-        const {
-          ChameleonUltra,
-          WebbleAdapter
-        } = window.ChameleonUltraJS;
-
-        if (
-          typeof ChameleonUltra !== 'function' ||
-          typeof WebbleAdapter !== 'function'
-        ) {
-          throw new Error('SDK Bluetooth adapter is unavailable.');
-        }
-
-        log('Creating SDK instance...');
-        device = new ChameleonUltra();
-
-        log('Registering Bluetooth adapter...');
-        await device.use(new WebbleAdapter());
-
-        log('Opening Bluetooth connection...');
-        await device.connect();
-
-        if (id !== sessionId) {
-          await device.disconnect().catch(() => {});
-          return;
-        }
-
-        ultra = device;
-        connected = true;
-
-        log('Bluetooth connection established.');
-
-        if (typeof device.on === 'function') {
-          // Event names vary between SDK versions.
-          // The current build relies on command failures and
-          // explicit disconnect rather than an unverified event.
-        }
-
-      } catch (error) {
-        console.error('Chameleon Ultra connection error:', error);
-
-        log('Connection failed: ' + (
-          error?.message || String(error)
-        ));
-
-        connected = false;
-        ultra = null;
-
-        if (device) {
-          try {
-            await device.disconnect();
-          } catch (cleanupError) {
-            console.warn('Connection cleanup:', cleanupError);
-          }
-        }
-
-      } finally {
-        if (id === sessionId) {
-          busy = false;
-          updateUI(connected ? 'Connected' : 'Disconnected');
-        }
-      }
-    }
-
-    async function disconnectDevice() {
-      if (busy || !ultra) return;
-
-      busy = true;
-      updateUI('Disconnecting');
-
-      const device = ultra;
-      const id = ++sessionId;
-
-      try {
-        await device.disconnect();
-        log('Bluetooth disconnected successfully.');
-      } catch (error) {
-        console.error('Disconnect error:', error);
-        log('Disconnect warning: ' + (
-          error?.message || String(error)
-        ));
-      } finally {
-        if (id === sessionId) {
-          ultra = null;
-          connected = false;
-          busy = false;
-          updateUI('Disconnected');
-        }
-      }
-    }
-
-    async function readDiagnostic(name, command) {
-      if (!connected || !ultra || busy) return;
-
-      busy = true;
-      updateUI('Connected');
-
-      try {
-        if (!ultra.isConnected()) {
-          throw new Error('Device is no longer connected.');
-        }
-
-        log('Reading ' + name + '...');
-
-        const result = await command(ultra);
-
-        log(name + ':');
-        log(format(result));
-
-      } catch (error) {
-        console.error(name + ' error:', error);
-        log(name + ' failed: ' + (
-          error?.message || String(error)
-        ));
-
-        if (ultra && !ultra.isConnected()) {
-          handleDisconnect(sessionId);
-        }
-
-      } finally {
-        busy = false;
-        updateUI(connected ? 'Connected' : 'Disconnected');
-      }
-    }
-
-    $('connect').addEventListener('click', connectDevice);
-
-    $('disconnect').addEventListener(
-      'click',
-      disconnectDevice
+  if (
+    actual.uid !== profile.uid ||
+    actual.atqa !== hex(atqa) ||
+    actual.sak !== hex(sak)
+  ) {
+    throw new Error(
+      'Identity verification mismatch: ' + JSON.stringify(actual)
     );
+  }
+}
 
-    $('info').addEventListener('click', () => {
-      readDiagnostic(
-        'Firmware application version',
-        device => device.cmdGetAppVersion()
+async function play(currentGeneration) {
+  try {
+    const fixedSlot = Number(await serial(() => ultra.cmdSlotGetActive()));
+
+    if (!original) {
+      original = await serial(readIdentity);
+      log('Original identity saved: ' + JSON.stringify(original));
+    }
+
+    while (running && currentGeneration === generation) {
+      const currentSlot = Number(
+        await serial(() => ultra.cmdSlotGetActive())
       );
-    });
 
-    $('slots').addEventListener('click', () => {
-      readDiagnostic(
-        'Slot information',
-        device => device.cmdSlotGetInfo()
-      );
-    });
-
-    $('clear').addEventListener('click', () => {
-      $('output').textContent = 'Log cleared.';
-    });
-
-    window.addEventListener('pagehide', () => {
-      if (ultra) {
-        const device = ultra;
-        ultra = null;
-        connected = false;
-        device.disconnect().catch(() => {});
+      if (currentSlot !== fixedSlot) {
+        throw new Error('Active slot changed externally');
       }
+
+      const profile = profiles[index];
+
+      $('now').textContent =
+        (index + 1) + '/' + profiles.length +
+        ': ' + profile.name + ' — loading';
+
+      await serial(() => writeIdentity(profile));
+
+      if (!running || currentGeneration !== generation) break;
+
+      document.querySelectorAll('#tags tr')
+        .forEach(row => row.classList.remove('active'));
+
+      $('tag' + index)?.classList.add('active');
+
+      const duration = Number($('duration').value);
+      const gap = Number($('gap').value);
+
+      $('now').textContent =
+        (index + 1) + '/' + profiles.length +
+        ': ' + profile.name + ' — emulating';
+
+      log('Verified ' + profile.name + ': ' + profile.uid);
+
+      await sleep(duration * 1000);
+      if (!running || currentGeneration !== generation) break;
+
+      if (index === profiles.length - 1 && !$('loop').checked) {
+        stopPlayback('Playlist finished');
+        log('Completed all ' + profiles.length + ' tags.');
+        break;
+      }
+
+      $('now').textContent = 'Waiting between tags...';
+      await sleep(gap * 1000);
+
+      if (!running || currentGeneration !== generation) break;
+      index = (index + 1) % profiles.length;
+    }
+  } catch (e) {
+    log('PLAYBACK ERROR: ' + (e.message || e));
+    stopPlayback('Stopped: ' + (e.message || e));
+  } finally {
+    updateControls();
+  }
+}
+
+$('start').onclick = () => {
+  if (!ultra || !profiles.length || running || !$('consent').checked) return;
+
+  const duration = Number($('duration').value);
+  const gap = Number($('gap').value);
+
+  if (
+    !Number.isInteger(duration) || duration < 1 || duration > 3600 ||
+    !Number.isInteger(gap) || gap < 0 || gap > 3600
+  ) {
+    log('Invalid playback timing.');
+    return;
+  }
+
+  running = true;
+  index = 0;
+  generation++;
+  updateControls();
+  play(generation);
+};
+
+$('stop').onclick = () => {
+  stopPlayback('Stopped by user');
+  log('Playback stopped. Current UID remains active.');
+};
+
+$('next').onclick = () => {
+  if (!running) return;
+  index = (index + 1) % profiles.length;
+  generation++;
+  if (wake) wake();
+  log('Next tag requested.');
+  play(generation);
+};
+
+$('restore').onclick = async () => {
+  if (!ultra || running || !original) return;
+
+  try {
+    const saved = original;
+    await serial(async () => {
+      await ultra.cmdHf14aSetAntiCollData({
+        uid: toBytes(saved.uid),
+        atqa: toBytes(saved.atqa),
+        sak: toBytes(saved.sak),
+        ...(saved.ats ? { ats: toBytes(saved.ats) } : {})
+      });
     });
 
-    updateUI('Disconnected');
-  </script>
+    const actual = await serial(readIdentity);
+    if (
+      actual.uid !== saved.uid ||
+      actual.atqa !== saved.atqa ||
+      actual.sak !== saved.sak
+    ) {
+      throw new Error('Restored identity did not match backup');
+    }
 
+    log('Original identity restored successfully.');
+    original = null;
+    updateControls();
+  } catch (e) {
+    log('Restore failed: ' + e.message);
+  }
+};
+
+updateControls();
+</script>
 </body>
 </html>
