@@ -5,164 +5,174 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#0b1020">
-<title>NFC Playlist Plus v1.1</title>
+<title>NFC Playlist Plus — Manual v1.2</title>
 <style>
 :root{
   color-scheme:dark;
   font-family:Inter,system-ui,-apple-system,sans-serif;
-  background:#0b1020;color:#f4f7ff
+  background:#0b1020;color:#f5f7ff
 }
 *{box-sizing:border-box}
 body{
   margin:0;padding:16px 12px 60px;
-  background:radial-gradient(ellipse at top,#243c63,transparent 65%),#0b1020
+  background:radial-gradient(ellipse at top,#233d62,transparent 65%),#0b1020
 }
-main{max-width:790px;margin:auto}
-header{text-align:center;padding:18px 0}
+main{max-width:780px;margin:auto}
+header{text-align:center;padding:20px 0}
 .logo{
-  display:grid;place-items:center;margin:auto;
-  width:65px;height:65px;border-radius:20px;
-  background:linear-gradient(135deg,#428bff,#7953ed);
-  font-size:32px
+  width:64px;height:64px;margin:auto;
+  display:grid;place-items:center;
+  border-radius:20px;font-size:32px;
+  background:linear-gradient(135deg,#418aff,#7953ed)
 }
-h1{font-size:27px;margin:12px 0 5px}
+h1{font-size:27px;margin:12px 0 4px}
 h2{font-size:18px;margin:0 0 13px}
-h3{font-size:15px;margin:15px 0 8px}
-small,.muted{color:#9fb0cd}
-small{font-size:12px}
+.muted{color:#9eafca;font-size:13px}
 .card{
   background:#151f33;border:1px solid #30415e;
-  border-radius:19px;padding:19px;margin:14px 0
+  border-radius:20px;padding:19px;margin:15px 0
 }
 .row{
-  display:flex;justify-content:space-between;
-  align-items:center;flex-wrap:wrap;gap:10px
+  display:flex;align-items:center;
+  justify-content:space-between;
+  flex-wrap:wrap;gap:10px
 }
 .buttons{
-  display:flex;flex-wrap:wrap;gap:9px;margin-top:14px
+  display:flex;gap:9px;flex-wrap:wrap;
+  margin-top:15px
 }
 button{
-  border:0;border-radius:11px;padding:12px 15px;
-  background:#304360;color:white;
-  font:inherit;font-size:14px;font-weight:750;
-  cursor:pointer
+  border:0;border-radius:12px;
+  padding:13px 16px;background:#304360;
+  color:white;font:inherit;font-size:14px;
+  font-weight:750;cursor:pointer
 }
 button:disabled{opacity:.35;cursor:not-allowed}
-button.primary{background:linear-gradient(120deg,#3d83ff,#7554ee)}
-button.green{background:#167b58}
-button.orange{background:#9c6921}
+button.primary{background:linear-gradient(120deg,#3d83ff,#7654ee)}
+button.green{background:#187b58}
 button.red{background:#a43d50}
-button.big{flex:1;font-size:16px;padding:15px}
+button.orange{background:#98651e}
+button.large{flex:1;font-size:16px;padding:16px}
 .pill{
-  border-radius:40px;background:#2a3b55;
+  background:#2a3a53;border-radius:40px;
   padding:7px 12px;font-size:12px;font-weight:800
 }
-.pill.good{background:#164c38;color:#8cf5bf}
-.pill.warn{background:#57421f;color:#ffe1a1}
-.pill.bad{background:#552633;color:#ffb2bc}
+.pill.good{background:#164a38;color:#85f4b9}
+.pill.warn{background:#58411e;color:#ffdf96}
+.pill.bad{background:#562633;color:#ffb0bc}
 .player{
   text-align:center;
-  background:radial-gradient(circle at 50% 10%,#254b72,transparent 65%),#151f33
+  background:radial-gradient(circle at 50% 12%,#25496f,transparent 65%),#151f33
 }
 .signal{
-  width:75px;height:75px;margin:17px auto;
-  border:2px solid #587daf;border-radius:50%;
-  display:grid;place-items:center;font-size:34px;
-  background:#223e5b
+  width:80px;height:80px;margin:17px auto;
+  display:grid;place-items:center;
+  background:#203d5a;border:2px solid #547cae;
+  border-radius:50%;font-size:36px
 }
-.signal.live{border-color:#66e7ae;box-shadow:0 0 20px #42bd8655}
+.signal.live{
+  border-color:#6be9b0;
+  box-shadow:0 0 25px #56dca655
+}
 .eyebrow{
-  font-size:12px;font-weight:800;
-  letter-spacing:2px;color:#b3caff
+  color:#b2c9ff;letter-spacing:2px;
+  font-size:12px;font-weight:800
 }
 .tagName{
-  font-size:76px;font-weight:850;
-  letter-spacing:-3px;margin:10px 0
+  font-size:80px;font-weight:850;
+  letter-spacing:-3px;margin:12px 0
 }
 .clock{
   font-size:66px;font-weight:850;
   font-variant-numeric:tabular-nums;
-  margin:13px 0 0
+  margin:17px 0 2px
 }
 .bar{
-  height:11px;border-radius:30px;
-  overflow:hidden;background:#293c58;margin:18px 0 12px
+  height:10px;background:#2a3d58;
+  border-radius:40px;overflow:hidden;
+  margin:20px 0 12px
 }
 .fill{
   height:100%;width:0;
-  background:linear-gradient(90deg,#4889ff,#68e6b5)
+  background:linear-gradient(90deg,#488aff,#69e7b3)
 }
 .settings{
   display:grid;
   grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:11px
+  gap:12px
 }
 .field{
-  background:#0e192b;border:1px solid #344b6a;
+  background:#0e192b;
+  border:1px solid #354c6a;
   border-radius:12px;padding:12px
 }
 .field label{
   display:block;font-size:12px;
-  color:#a4b7d3;margin-bottom:8px
+  color:#a6b8d3;margin-bottom:8px
 }
 input[type=number],select{
-  width:100%;background:#1d2d46;
-  color:white;border:1px solid #466080;
-  border-radius:9px;padding:11px;font:inherit
+  width:100%;padding:11px;
+  border:1px solid #486080;border-radius:9px;
+  background:#1d2d46;color:white;font:inherit
 }
-input[type=file]{max-width:100%;font-size:13px}
 .check{
   display:flex;align-items:center;gap:10px;
-  font-size:14px;margin:13px 0
+  margin:14px 0;font-size:14px
 }
 .check input{width:18px;height:18px}
-.stats{
-  display:grid;grid-template-columns:repeat(3,1fr);gap:9px
+.hint{
+  color:#97aac7;font-size:12px;
+  line-height:1.65
 }
-.stat{
-  background:#151f33;border:1px solid #30415e;
-  border-radius:13px;text-align:center;padding:14px 4px
-}
-.stat strong{display:block;font-size:25px}
-.stat span{font-size:12px;color:#9fb0cd}
 .grid{
   display:grid;grid-template-columns:repeat(4,1fr);
   gap:8px;margin-top:14px
 }
 .tagButton{
-  padding:13px 4px;border:1px solid #3a5072;
-  background:#22334e
+  padding:14px 4px;background:#22334e;
+  border:1px solid #3b5070
 }
-.tagButton.selected{background:#205642;border-color:#72e4ae}
-.tagButton.attempted{border-color:#5d8df2}
-.tagButton.recovery{background:#664225;border-color:#e8a75c}
-.tagButton.confirmed{background:#19553f;border-color:#55d49b}
-.hint{font-size:12px;line-height:1.6;color:#9aacca}
-details summary{cursor:pointer;font-weight:750;font-size:17px}
-details[open] summary{margin-bottom:16px}
+.tagButton.selected{
+  background:#205540;border-color:#78e6ae
+}
+.tagButton.loaded{
+  box-shadow:inset 0 0 0 2px #6a9fff
+}
+.stats{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:9px
+}
+.stat{
+  background:#151f33;border:1px solid #30415e;
+  border-radius:13px;padding:14px 5px;text-align:center
+}
+.stat strong{display:block;font-size:25px}
+.stat span{color:#9aacca;font-size:12px}
 pre{
-  white-space:pre-wrap;overflow:auto;
-  max-height:250px;padding:13px;
-  background:#0a1323;border-radius:12px;
-  color:#b6c9e4;font-size:12px
+  white-space:pre-wrap;max-height:200px;
+  overflow:auto;background:#0a1323;
+  padding:14px;border-radius:12px;
+  font-size:12px;color:#b3c6e2
 }
-footer{text-align:center;color:#778ba9;font-size:12px;margin-top:25px}
+footer{
+  text-align:center;color:#788ba8;
+  font-size:12px;margin-top:25px
+}
 @media(max-width:430px){
   .card{padding:15px}
-  .tagName{font-size:64px}
-  .clock{font-size:55px}
-  button{padding:11px}
+  .tagName{font-size:65px}
+  .clock{font-size:56px}
+  button{padding:12px}
 }
 </style>
 </head>
-
 <body>
 <main>
 
 <header>
   <div class="logo">📡</div>
   <h1>NFC Playlist Plus</h1>
-  <div class="muted">Chameleon Ultra · Smart Controller v1.1</div>
+  <div class="muted">Chameleon Ultra · Manual v1.2</div>
 </header>
 
 <section class="card">
@@ -186,175 +196,134 @@ footer{text-align:center;color:#778ba9;font-size:12px;margin-top:25px}
 </section>
 
 <section class="card player">
+
   <div class="row">
     <span class="pill" id="badge">READY</span>
-    <small id="position">Tag 1 of 28</small>
+    <span class="muted" id="position">Tag 1 of 28</span>
   </div>
 
   <div class="signal" id="signal">◉</div>
 
-  <div class="eyebrow" id="modeLabel">SMART NFC CONTROLLER</div>
+  <div class="eyebrow">MANUAL NFC CONTROL</div>
   <div class="tagName" id="tagName">1f1</div>
 
-  <div class="muted" id="description">Ready to start</div>
+  <div class="muted" id="description">
+    Press Start to load this tag
+  </div>
 
-  <div class="clock" id="timer">00:05</div>
-  <div class="muted" id="timerLabel">Emulation duration</div>
+  <div class="clock" id="timer">00:00</div>
+  <div class="muted" id="timerLabel">
+    Elapsed emulation time
+  </div>
 
-  <div class="bar"><div class="fill" id="progress"></div></div>
+  <div class="bar">
+    <div class="fill" id="progress"></div>
+  </div>
 
   <div class="row">
-    <small id="status">Ready</small>
-    <small id="nextName">Next: 1f2</small>
+    <span class="muted" id="status">Ready</span>
+    <span class="muted" id="nextName">Next: 1f2</span>
   </div>
 
   <div class="buttons">
-    <button class="green big" id="play" disabled>▶ Start Manual</button>
-    <button class="primary big" id="next" disabled>⏭ Next Tag</button>
-  </div>
-
-  <div class="buttons">
-    <button id="previous" disabled>⏮ Previous</button>
-    <button class="orange" id="repeat" disabled>↻ Repeat</button>
-    <button class="red" id="stop" disabled>■ Stop</button>
-  </div>
-</section>
-
-<section class="card">
-  <h2>Smart Auto Playlist</h2>
-
-  <p class="hint">
-    Runs all 28 tags automatically. Each tag is presented
-    for the configured emulation duration, followed by
-    the configured delay. Repeat attempts are optional.
-  </p>
-
-  <div class="settings">
-    <div class="field">
-      <label for="duration">Emulation seconds</label>
-      <input id="duration" type="number" min="1" max="3600" value="5">
-    </div>
-
-    <div class="field">
-      <label for="gap">Delay seconds</label>
-      <input id="gap" type="number" min="0" max="3600" value="15">
-    </div>
-
-    <div class="field">
-      <label for="attempts">Presentations per tag</label>
-      <select id="attempts">
-        <option value="1">1 (default)</option>
-        <option value="2">2</option>
-        <option value="3">3</option>
-      </select>
-    </div>
-
-    <div class="field">
-      <label for="startAt">Start playlist from</label>
-      <select id="startAt"></select>
-    </div>
-  </div>
-
-  <label class="check">
-    <input type="checkbox" id="rfOff">
-    Disable HF during delay (experimental)
-  </label>
-
-  <div class="buttons">
-    <button class="primary big" id="autoStart" disabled>
-      ▶ Start Smart Auto
+    <button class="green large" id="start" disabled>
+      ▶ Start
     </button>
-    <button class="orange" id="autoPause" disabled>
-      ⏸ Pause
-    </button>
-    <button class="red" id="autoStop" disabled>
+    <button class="red large" id="stop" disabled>
       ■ Stop
     </button>
   </div>
 
-  <p class="hint" id="autoStatus">Automatic playlist idle</p>
+  <div class="buttons">
+    <button class="primary large" id="previous" disabled>
+      ⏮ Previous
+    </button>
+    <button class="primary large" id="next" disabled>
+      Next ⏭
+    </button>
+  </div>
+
+  <div class="buttons">
+    <button class="orange" id="repeat" disabled>
+      ↻ Repeat Current
+    </button>
+    <button id="skip" disabled>
+      ⏩ Skip Delay
+    </button>
+  </div>
+</section>
+
+<section class="card">
+  <h2>Random Delay Settings</h2>
+
+  <div class="settings">
+    <div class="field">
+      <label for="minDelay">Minimum delay (sec)</label>
+      <input type="number" id="minDelay"
+             value="15" min="0" max="3600">
+    </div>
+
+    <div class="field">
+      <label for="maxDelay">Maximum delay (sec)</label>
+      <input type="number" id="maxDelay"
+             value="25" min="0" max="3600">
+    </div>
+  </div>
+
+  <label class="check">
+    <input type="checkbox" id="useDelay" checked>
+    Apply random delay on Next / Previous
+  </label>
+
+  <p class="hint">
+    Each Next or Previous click chooses a fresh random
+    delay between 15 and 25 seconds, inclusive.
+    The next tag loads after the countdown.
+    Emulation has no automatic timeout.
+  </p>
+
+  <p class="hint">
+    During a delay, the previously loaded NFC identity
+    remains active. The delay separates Bluetooth
+    updates; it does not itself simulate tag removal.
+  </p>
 </section>
 
 <div class="stats">
   <div class="stat">
-    <strong id="presented">0</strong>
-    <span>Tags presented</span>
+    <strong>28</strong>
+    <span>Total tags</span>
   </div>
   <div class="stat">
-    <strong id="remaining">28</strong>
-    <span>Remaining</span>
+    <strong id="loads">0</strong>
+    <span>Tag loads</span>
   </div>
   <div class="stat">
-    <strong id="attemptCount">0</strong>
-    <span>Total attempts</span>
+    <strong id="currentNumber">1</strong>
+    <span>Selected tag</span>
   </div>
 </div>
 
 <section class="card">
-  <h2>Manual Control & Recovery</h2>
+  <h2>Quick Tag Selection</h2>
 
   <p class="hint">
-    Use the player above to load tags individually.
-    Select any tag below, then load it directly.
-    You can also mark tags for a separate recovery run.
+    Tap a tag to select it. Press Load Selected to
+    emulate it immediately without a delay.
   </p>
 
   <div class="field">
-    <label for="jump">Selected tag</label>
+    <label for="jump">Choose tag</label>
     <select id="jump"></select>
   </div>
 
   <div class="buttons">
-    <button id="load" disabled>Load Selected</button>
-    <button id="markRecovery">+ Add to Recovery</button>
-    <button id="markConfirmed">✓ Mark Scanned</button>
+    <button class="primary" id="load" disabled>
+      Load Selected
+    </button>
   </div>
 
   <div class="grid" id="grid"></div>
-
-  <h3>Recovery Queue</h3>
-  <p class="hint" id="recoveryInfo">
-    No tags marked for recovery.
-  </p>
-
-  <div class="buttons">
-    <button class="primary" id="runRecovery" disabled>
-      ▶ Run Recovery
-    </button>
-    <button id="clearRecovery">Clear Recovery</button>
-  </div>
-
-  <p class="hint">
-    Mark Scanned is a manual confirmation only.
-    The web app cannot detect a scan on another phone.
-  </p>
-</section>
-
-<section class="card">
-  <details>
-    <summary>Full Dump Compatibility Test</summary>
-
-    <p class="hint">
-      Import the original ZIP containing your 28
-      Flipper Zero .nfc files. The browser checks
-      their names, UIDs and NTAG215 memory pages.
-    </p>
-
-    <input type="file" id="zipInput" accept=".zip">
-
-    <div class="buttons">
-      <button id="inspect">Inspect Imported Dumps</button>
-    </div>
-
-    <pre id="dumpReport">No ZIP imported yet.</pre>
-
-    <p class="hint">
-      This checks the source dumps only. Full memory
-      upload to Chameleon Ultra is not enabled until
-      a compatible and verified SDK method is available.
-      UID-based emulation remains the active method.
-    </p>
-  </details>
 </section>
 
 <section class="card">
@@ -362,17 +331,16 @@ footer{text-align:center;color:#778ba9;font-size:12px;margin-top:25px}
     <h2>Activity Log</h2>
     <button id="clearLog">Clear</button>
   </div>
-  <pre id="log">NFC Playlist Plus v1.1 ready.</pre>
+  <pre id="log">Manual NFC Controller v1.2 ready.</pre>
 </section>
 
 <footer>
-  28 NTAG215 identities · Web Bluetooth · Smart Auto
+  28 tags · Unlimited emulation · Random delay
 </footer>
 
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/buffer@6.0.3/index.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chameleon-ultra.js@0/dist/index.global.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chameleon-ultra.js@0/dist/plugin/WebbleAdapter.global.js"></script>
 
@@ -412,34 +380,31 @@ const RAW=[
 
 const tags=RAW.map(([name,uid])=>({name,uid}));
 const $=id=>document.getElementById(id);
+
 const sdk=window.ChameleonUltraJS||{};
 const Buf=sdk.Buffer||window.buffer?.Buffer||window.Buffer;
 
 let ultra=null;
 let connected=false;
 let busy=false;
+
 let mode='idle';
 let selected=0;
 let active=-1;
+let loads=0;
+
 let original=null;
 let slot=null;
-let hfDisabled=false;
 
-let phase='ready';
-let paused=false;
-let remainingMs=5000;
-let totalMs=5000;
-let deadline=0;
-let timerTask=null;
-let timerResolve=null;
-let runId=0;
+let operation=0;
+let delayTimer=null;
+let delayFinish=null;
+let delayDeadline=0;
+let delayDuration=0;
+let delayTarget=-1;
 
+let emulationStarted=0;
 let queue=Promise.resolve();
-let presented=new Set();
-let confirmed=new Set();
-let recovery=new Set();
-let totalAttempts=0;
-let importedDumps=new Map();
 
 function log(message){
   const el=$('log');
@@ -455,117 +420,111 @@ function serial(fn){
   return result;
 }
 
-function hex(v){
-  return Array.from(v||[])
-    .map(x=>Number(x).toString(16).padStart(2,'0'))
+function hex(buffer){
+  return Array.from(buffer||[])
+    .map(v=>Number(v).toString(16).padStart(2,'0'))
     .join(' ').toUpperCase();
 }
 
-function normalizeHex(s){
-  return String(s||'')
-    .replace(/[^0-9a-f]/gi,'')
-    .toUpperCase();
+function normalizeHex(value){
+  return String(value||'')
+    .replace(/\s/g,'').toUpperCase();
 }
 
-function bytes(value){
-  if(!Buf?.from)throw Error('Buffer unavailable');
+function toBuffer(value){
+  if(!Buf?.from){
+    throw Error('Buffer library unavailable');
+  }
+
   const h=normalizeHex(value);
-  if(h.length%2)throw Error('Invalid hex data');
+
+  if(h.length%2||!/^[0-9A-F]*$/.test(h)){
+    throw Error('Invalid hex data');
+  }
+
   return Buf.from(
-    (h.match(/../g)||[]).map(x=>parseInt(x,16))
+    (h.match(/../g)||[]).map(v=>parseInt(v,16))
   );
 }
 
-function setting(id,min=0,max=3600){
-  const n=Number($(id).value);
-  if(!Number.isInteger(n)||n<min||n>max)
-    throw Error(id+' must be between '+min+' and '+max);
-  return n;
+function clock(ms){
+  const sec=Math.max(0,Math.floor(ms/1000));
+  const min=Math.floor(sec/60);
+
+  return String(min).padStart(2,'0')+
+    ':'+String(sec%60).padStart(2,'0');
 }
 
-function formatTime(ms){
-  const seconds=Math.max(0,Math.ceil(ms/1000));
-  return String(Math.floor(seconds/60)).padStart(2,'0')+
-    ':'+String(seconds%60).padStart(2,'0');
-}
+function remainingClock(ms){
+  const sec=Math.max(0,Math.ceil(ms/1000));
+  const min=Math.floor(sec/60);
 
-function updateTimer(){
-  if(timerTask&&!paused){
-    remainingMs=Math.max(0,deadline-performance.now());
-  }
-  $('timer').textContent=formatTime(remainingMs);
-  $('progress').style.width=
-    (totalMs?Math.max(0,Math.min(100,
-      100*(1-remainingMs/totalMs))):100)+'%';
+  return String(min).padStart(2,'0')+
+    ':'+String(sec%60).padStart(2,'0');
 }
 
 function setPhase(name,message){
-  phase=name;
-  $('status').textContent=message||'';
-  $('badge').textContent=name.toUpperCase();
-  $('badge').className='pill';
+  const badge=$('badge');
 
-  if(name==='emulating')$('badge').classList.add('good');
-  if(name==='delay'||name==='paused')
-    $('badge').classList.add('warn');
-  if(name==='error')$('badge').classList.add('bad');
+  badge.textContent=name.toUpperCase();
+  badge.className='pill';
+
+  if(name==='emulating'){
+    badge.classList.add('good');
+  }else if(name==='delay'){
+    badge.classList.add('warn');
+  }else if(name==='error'){
+    badge.classList.add('bad');
+  }
 
   $('signal').classList.toggle(
     'live',name==='emulating'
   );
 
-  $('timerLabel').textContent=
-    name==='emulating'?'Emulation remaining':
-    name==='delay'?'Delay remaining':
-    name==='paused'?'Countdown paused':
-    'Countdown';
-}
-
-function refreshStats(){
-  $('presented').textContent=presented.size;
-  $('remaining').textContent=
-    tags.length-presented.size;
-  $('attemptCount').textContent=totalAttempts;
-
-  $('recoveryInfo').textContent=recovery.size
-    ?[...recovery].sort((a,b)=>a-b)
-      .map(i=>tags[i].name).join(', ')
-    :'No tags marked for recovery.';
-
-  document.querySelectorAll('.tagButton')
-    .forEach((b,i)=>{
-      b.classList.toggle('selected',i===selected);
-      b.classList.toggle('attempted',presented.has(i));
-      b.classList.toggle('recovery',recovery.has(i));
-      b.classList.toggle('confirmed',confirmed.has(i));
-    });
+  $('status').textContent=message;
 }
 
 function selectTag(index){
   selected=(index+tags.length)%tags.length;
+
   $('tagName').textContent=tags[selected].name;
   $('position').textContent=
     'Tag '+(selected+1)+' of '+tags.length;
+
   $('nextName').textContent=
     'Next: '+tags[(selected+1)%tags.length].name;
+
+  $('currentNumber').textContent=selected+1;
   $('jump').value=String(selected);
-  refreshStats();
+
+  document.querySelectorAll('.tagButton')
+    .forEach((button,i)=>{
+      button.classList.toggle(
+        'selected',i===selected
+      );
+
+      button.classList.toggle(
+        'loaded',i===active
+      );
+    });
 }
 
-function buildUI(){
-  tags.forEach((tag,i)=>{
-    for(const id of ['jump','startAt']){
-      const option=document.createElement('option');
-      option.value=i;
-      option.textContent=tag.name;
-      $(id).append(option);
-    }
+function buildTags(){
+  tags.forEach((tag,index)=>{
+    const option=document.createElement('option');
 
-    const b=document.createElement('button');
-    b.className='tagButton';
-    b.textContent=tag.name;
-    b.onclick=()=>selectTag(i);
-    $('grid').append(b);
+    option.value=index;
+    option.textContent=tag.name;
+    $('jump').append(option);
+
+    const button=document.createElement('button');
+
+    button.className='tagButton';
+    button.textContent=tag.name;
+
+    button.onclick=()=>selectTag(index);
+
+    $('grid').append(button);
   });
 
   selectTag(0);
@@ -574,61 +533,49 @@ function buildUI(){
 function updateButtons(){
   const idle=connected&&!busy&&mode==='idle';
   const manual=connected&&mode==='manual';
-  const auto=mode==='auto';
+  const delaying=mode==='delay';
 
   $('connect').disabled=connected||busy;
   $('disconnect').disabled=!idle;
   $('restore').disabled=!idle||!original;
 
-  $('play').disabled=(!idle&&!manual)||busy;
+  $('start').disabled=!idle;
+  $('stop').disabled=mode==='idle';
+
   $('next').disabled=!manual||busy;
   $('previous').disabled=!manual||busy;
   $('repeat').disabled=!manual||busy;
-  $('stop').disabled=!manual;
 
-  $('load').disabled=(!idle&&!manual)||busy;
+  $('skip').disabled=!delaying;
+  $('load').disabled=!connected||busy;
 
-  $('autoStart').disabled=!idle;
-  $('autoPause').disabled=!auto||busy;
-  $('autoStop').disabled=!auto;
-
-  $('runRecovery').disabled=!idle||recovery.size===0;
-
-  $('play').textContent=manual
-    ?(paused?'▶ Resume':'⏸ Pause')
-    :'▶ Start Manual';
-
-  $('play').className=paused
-    ?'orange big':'green big';
-
-  $('autoPause').textContent=paused
-    ?'▶ Resume':'⏸ Pause';
-
-  for(const id of [
-    'duration','gap','attempts','startAt','rfOff'
-  ]){
-    $(id).disabled=mode!=='idle';
-  }
+  $('start').textContent='▶ Start';
 }
 
 async function readIdentity(){
-  const d=await ultra.cmdHf14aGetAntiCollData();
+  const data=await ultra.cmdHf14aGetAntiCollData();
+
   return {
-    uid:hex(d.uid),
-    atqa:hex(d.atqa),
-    sak:hex(d.sak),
-    ats:hex(d.ats)
+    uid:hex(data.uid),
+    atqa:hex(data.atqa),
+    sak:hex(data.sak),
+    ats:hex(data.ats)
   };
 }
 
 async function captureOriginal(){
   if(original)return;
 
-  slot=Number(await ultra.cmdSlotGetActive());
+  slot=Number(
+    await ultra.cmdSlotGetActive()
+  );
+
   const info=await ultra.cmdSlotGetInfo();
 
   if(Number(info[slot]?.hfTagType)!==1101){
-    throw Error('Active slot must use HF tag type 1101');
+    throw Error(
+      'Active slot must use HF tag type 1101'
+    );
   }
 
   original=await readIdentity();
@@ -636,81 +583,93 @@ async function captureOriginal(){
   $('slotInfo').textContent=
     'Active slot '+(slot+1)+' · HF type 1101';
 
-  log('Original slot identity saved');
+  log('Original identity saved');
 }
 
 async function checkSlot(){
   const current=Number(
     await ultra.cmdSlotGetActive()
   );
-  if(current!==slot)
+
+  if(current!==slot){
     throw Error('Active slot changed');
-}
-
-async function setHF(enabled){
-  if(typeof ultra.cmdSlotSetEnable!=='function'||
-     sdk.FreqType?.HF===undefined){
-    throw Error('HF enable/disable unsupported');
   }
-
-  await checkSlot();
-
-  await ultra.cmdSlotSetEnable(
-    slot,sdk.FreqType.HF,enabled
-  );
-
-  hfDisabled=!enabled;
-  log('HF '+(enabled?'ON':'OFF')+' command sent');
 }
 
-async function loadIdentity(i){
+async function writeTag(index){
   await checkSlot();
 
   await ultra.cmdHf14aSetAntiCollData({
-    uid:bytes(tags[i].uid),
-    atqa:bytes(original.atqa),
-    sak:bytes(original.sak),
-    ats:bytes(original.ats||'')
+    uid:toBuffer(tags[index].uid),
+    atqa:toBuffer(original.atqa),
+    sak:toBuffer(original.sak),
+    ats:toBuffer(original.ats||'')
   });
 
   const actual=await readIdentity();
 
   if(normalizeHex(actual.uid)!==
-     normalizeHex(tags[i].uid)){
-    throw Error('UID readback failed for '+tags[i].name);
+     normalizeHex(tags[index].uid)){
+    throw Error(
+      'UID verification failed for '+
+      tags[index].name
+    );
   }
 
-  active=i;
-  selectTag(i);
+  active=index;
+  loads++;
 
-  log('Loaded and verified '+tags[i].name);
+  $('loads').textContent=loads;
+
+  selectTag(index);
+
+  log('Loaded and verified '+tags[index].name);
 }
 
-async function present(i,token){
+function startEmulationDisplay(index){
+  selectTag(index);
+
+  emulationStarted=performance.now();
+
+  mode='manual';
+
+  $('description').textContent=
+    'Tag loaded · Unlimited emulation';
+
+  $('timerLabel').textContent=
+    'Elapsed emulation time';
+
+  $('progress').style.width='100%';
+
+  setPhase(
+    'emulating',
+    'Waiting for phone scan'
+  );
+
+  updateButtons();
+}
+
+async function loadNow(index,token){
   busy=true;
   updateButtons();
 
   try{
     await serial(captureOriginal);
-    if(token!==runId)return false;
 
-    await serial(()=>loadIdentity(i));
-    if(token!==runId)return false;
+    if(token!==operation)return;
 
-    if(hfDisabled){
-      await serial(()=>setHF(true));
-    }
-    if(token!==runId)return false;
+    await serial(()=>writeTag(index));
 
-    totalAttempts++;
-    presented.add(i);
-    refreshStats();
+    if(token!==operation)return;
 
-    $('description').textContent=
-      'Presenting '+tags[i].name;
+    startEmulationDisplay(index);
 
-    log('Presentation attempt '+tags[i].name);
-    return true;
+  }catch(error){
+    log('LOAD ERROR: '+error.message);
+
+    mode='idle';
+
+    setPhase('error',error.message);
 
   }finally{
     busy=false;
@@ -718,309 +677,168 @@ async function present(i,token){
   }
 }
 
-// Countdown supports pause/resume and cancellation.
-// It uses real elapsed time rather than counting
-// timer ticks, avoiding accumulated drift.
+function randomDelay(){
+  const min=Number($('minDelay').value);
+  const max=Number($('maxDelay').value);
 
-function cancelCountdown(){
-  if(timerTask!==null){
-    clearTimeout(timerTask);
-    timerTask=null;
-  }
-  if(timerResolve){
-    const resolve=timerResolve;
-    timerResolve=null;
-    resolve(false);
-  }
-}
-
-function countdown(ms,type,token){
-  cancelCountdown();
-
-  totalMs=ms;
-  remainingMs=ms;
-  paused=false;
-
-  setPhase(
-    type,
-    type==='delay'
-      ?'Waiting for next presentation'
-      :'Presenting tag'
-  );
-
-  updateTimer();
-
-  if(ms<=0)return Promise.resolve(true);
-
-  return new Promise(resolve=>{
-    timerResolve=resolve;
-    deadline=performance.now()+ms;
-
-    const finish=()=>{
-      timerTask=null;
-      timerResolve=null;
-      remainingMs=0;
-      updateTimer();
-      resolve(token===runId);
-    };
-
-    timerTask=setTimeout(finish,ms);
-  });
-}
-
-function pauseResume(){
-  if(!timerResolve)return;
-
-  if(!paused){
-    remainingMs=Math.max(
-      0,deadline-performance.now()
+  if(!Number.isInteger(min)||
+     !Number.isInteger(max)||
+     min<0||max>3600||min>max){
+    throw Error(
+      'Invalid delay range: minimum must not exceed maximum'
     );
-
-    clearTimeout(timerTask);
-    timerTask=null;
-    paused=true;
-
-    $('badge').textContent='PAUSED';
-    $('badge').className='pill warn';
-    $('status').textContent='Countdown paused';
-    $('timerLabel').textContent='Countdown paused';
-  }else{
-    paused=false;
-    deadline=performance.now()+remainingMs;
-
-    setPhase(
-      phase,
-      phase==='delay'
-        ?'Delay resumed'
-        :'Emulation countdown resumed'
-    );
-
-    const resolve=timerResolve;
-    timerTask=setTimeout(()=>{
-      timerTask=null;
-      timerResolve=null;
-      remainingMs=0;
-      updateTimer();
-      resolve(true);
-    },remainingMs);
   }
 
-  updateTimer();
-  updateButtons();
+  // Uniform integer seconds, inclusive.
+  const range=max-min+1;
+  const values=new Uint32Array(1);
+  const limit=Math.floor(4294967296/range)*range;
+  let value;
+
+  do{
+    crypto.getRandomValues(values);
+    value=values[0];
+  }while(value>=limit);
+
+  return min+(value%range);
 }
 
-async function waitPhase(ms,type,token){
-  const result=await countdown(ms,type,token);
-  return result&&token===runId;
-}
-
-function finishRun(message){
-  cancelCountdown();
-  mode='idle';
-  paused=false;
-
-  setPhase('ready',message);
-  $('description').textContent=message;
-  $('autoStatus').textContent=message;
-
-  updateButtons();
-}
-
-async function manualPresent(i,token){
-  try{
-    if(!await present(i,token))return;
-    if(token!==runId||mode!=='manual')return;
-
-    const duration=setting('duration',1)*1000;
-
-    const ok=await waitPhase(
-      duration,'emulating',token
-    );
-
-    if(!ok||mode!=='manual')return;
-
-    setPhase(
-      'ready',
-      'Presentation window finished'
-    );
-
-    $('description').textContent=
-      'Press Next, Repeat or Stop';
-
-  }catch(e){
-    log('MANUAL ERROR: '+e.message);
-    finishRun('Manual error: '+e.message);
-    setPhase('error',e.message);
+function cancelDelay(){
+  if(delayTimer!==null){
+    clearTimeout(delayTimer);
+    delayTimer=null;
   }
+
+  delayFinish=null;
+  delayTarget=-1;
 }
 
-async function manualAdvance(i,delay){
-  if(mode!=='manual'||busy)return;
+function startDelay(target,seconds,token){
+  cancelDelay();
 
-  const token=++runId;
-  cancelCountdown();
-  paused=false;
-
-  try{
-    if(delay>0){
-      if($('rfOff').checked){
-        busy=true;updateButtons();
-        await serial(()=>setHF(false));
-        busy=false;updateButtons();
-      }
-
-      if(token!==runId)return;
-
-      const ok=await waitPhase(
-        delay*1000,'delay',token
-      );
-
-      if(!ok||mode!=='manual')return;
-    }
-
-    if(token!==runId)return;
-    await manualPresent(i,token);
-
-  }catch(e){
-    log('ADVANCE ERROR: '+e.message);
-    finishRun('Error');
-    setPhase('error',e.message);
-  }finally{
-    busy=false;
-    updateButtons();
-  }
-}
-
-async function runSequence(indices,token,recoveryRun=false){
-  try{
-    const duration=setting('duration',1)*1000;
-    const gap=setting('gap')*1000;
-    const repeats=setting('attempts',1,3);
-
-    for(let p=0;p<indices.length;p++){
-      const i=indices[p];
-
-      for(let attempt=1;attempt<=repeats;attempt++){
-        if(token!==runId||mode!=='auto')return;
-
-        $('autoStatus').textContent=
-          tags[i].name+' · attempt '+attempt+
-          '/'+repeats;
-
-        if(!await present(i,token))return;
-
-        if(token!==runId||mode!=='auto')return;
-
-        const shown=await waitPhase(
-          duration,'emulating',token
-        );
-
-        if(!shown||mode!=='auto')return;
-
-        const last=
-          p===indices.length-1 &&
-          attempt===repeats;
-
-        if(last)break;
-
-        if($('rfOff').checked){
-          busy=true;updateButtons();
-          await serial(()=>setHF(false));
-          busy=false;updateButtons();
-        }
-
-        if(token!==runId||mode!=='auto')return;
-
-        if(gap>0){
-          const waited=await waitPhase(
-            gap,'delay',token
-          );
-          if(!waited||mode!=='auto')return;
-        }
-      }
-    }
-
-    if(token!==runId||mode!=='auto')return;
-
-    log(
-      (recoveryRun?'Recovery':'Smart Auto')+
-      ' sequence completed'
-    );
-
-    finishRun(
-      'Sequence completed — phone scans not verified'
-    );
-
-  }catch(e){
-    log('AUTO ERROR: '+e.message);
-    finishRun('Automatic playback error');
-    setPhase('error',e.message);
-  }finally{
-    busy=false;
-    updateButtons();
-  }
-}
-
-async function startAuto(indices,recoveryRun=false){
-  if(!connected||busy||mode!=='idle')return;
-
-  try{
-    setting('duration',1);
-    setting('gap');
-    setting('attempts',1,3);
-  }catch(e){
-    log(e.message);
+  if(seconds===0){
+    loadNow(target,token);
     return;
   }
 
-  mode='auto';
-  paused=false;
+  mode='delay';
+  delayTarget=target;
+  delayDuration=seconds*1000;
+  delayDeadline=performance.now()+delayDuration;
 
-  const token=++runId;
+  $('description').textContent=
+    'Preparing '+tags[target].name;
 
-  $('modeLabel').textContent=recoveryRun
-    ?'RECOVERY PLAYLIST'
-    :'SMART AUTO PLAYLIST';
+  $('timerLabel').textContent=
+    'Random delay remaining';
+
+  setPhase(
+    'delay',
+    'Next tag loads after countdown'
+  );
 
   log(
-    (recoveryRun?'Recovery':'Smart Auto')+
-    ' started with '+indices.length+' tags'
+    'Random delay '+seconds+'s before '+
+    tags[target].name
+  );
+
+  delayFinish=()=>{
+    if(token!==operation||mode!=='delay')return;
+
+    cancelDelay();
+    loadNow(target,token);
+  };
+
+  delayTimer=setTimeout(
+    delayFinish,delayDuration
   );
 
   updateButtons();
-  await runSequence(indices,token,recoveryRun);
 }
 
-function stopAll(){
-  ++runId;
-  cancelCountdown();
+function moveTo(index){
+  if(mode!=='manual'||busy)return;
+
+  let seconds=0;
+
+  try{
+    if($('useDelay').checked){
+      seconds=randomDelay();
+    }
+  }catch(error){
+    log('DELAY ERROR: '+error.message);
+    return;
+  }
+
+  const token=++operation;
+
+  cancelDelay();
+
+  startDelay(index,seconds,token);
+}
+
+function stopPlayback(){
+  ++operation;
+  cancelDelay();
 
   mode='idle';
-  paused=false;
 
-  setPhase('ready','Stopped');
   $('description').textContent=
-    'Stopped by user';
+    'Stopped · Press Start to load a tag';
 
-  $('autoStatus').textContent='Stopped';
+  $('timerLabel').textContent=
+    'Elapsed emulation time';
 
-  log('Playback stopped');
+  $('timer').textContent='00:00';
+  $('progress').style.width='0%';
+
+  setPhase(
+    'ready',
+    'Controller stopped'
+  );
+
+  log(
+    'Stopped (last NFC identity remains loaded)'
+  );
 
   updateButtons();
 }
 
-// Connection controls
+function updateTimer(){
+  if(mode==='manual'){
+    $('timer').textContent=clock(
+      performance.now()-emulationStarted
+    );
+
+    $('progress').style.width='100%';
+  }
+
+  if(mode==='delay'){
+    const remaining=Math.max(
+      0,delayDeadline-performance.now()
+    );
+
+    $('timer').textContent=
+      remainingClock(remaining);
+
+    $('progress').style.width=
+      (100*(1-remaining/delayDuration))+'%';
+  }
+}
+
+// Connect
 
 $('connect').onclick=async()=>{
   if(connected||busy)return;
 
-  busy=true;updateButtons();
+  busy=true;
+  updateButtons();
 
   try{
     if(!sdk.ChameleonUltra||
        !sdk.WebbleAdapter||
        !Buf?.from){
-      throw Error('Chameleon SDK unavailable');
+      throw Error('SDK libraries unavailable');
     }
 
     ultra=new sdk.ChameleonUltra();
@@ -1034,25 +852,30 @@ $('connect').onclick=async()=>{
 
     $('connection').textContent='Connected';
     $('connection').className='pill good';
-    $('device').textContent='Firmware '+firmware;
+
+    $('device').textContent=
+      'Firmware '+firmware;
 
     await serial(captureOriginal);
 
     log('Connected · Firmware '+firmware);
 
-  }catch(e){
-    log('CONNECT ERROR: '+e.message);
+  }catch(error){
+    log('CONNECT ERROR: '+error.message);
 
-    try{await ultra?.disconnect()}catch(_){}
+    try{
+      await ultra?.disconnect();
+    }catch(_){}
 
     ultra=null;
     connected=false;
     original=null;
     slot=null;
 
-    $('device').textContent='Connection failed';
     $('connection').textContent='Disconnected';
     $('connection').className='pill';
+
+    $('device').textContent='Connection failed';
 
   }finally{
     busy=false;
@@ -1060,66 +883,130 @@ $('connect').onclick=async()=>{
   }
 };
 
+// Disconnect
+
 $('disconnect').onclick=async()=>{
   if(!connected||busy||mode!=='idle')return;
 
-  busy=true;updateButtons();
+  busy=true;
+  updateButtons();
 
   try{
-    if(hfDisabled){
-      await serial(()=>setHF(true));
-    }
     await ultra.disconnect();
-  }catch(e){
-    log('Disconnect warning: '+e.message);
+  }catch(error){
+    log('DISCONNECT: '+error.message);
   }
 
   ultra=null;
   connected=false;
   original=null;
   slot=null;
-  hfDisabled=false;
   active=-1;
 
   $('connection').textContent='Disconnected';
   $('connection').className='pill';
+
   $('device').textContent='Not connected';
 
   busy=false;
   updateButtons();
 };
 
-$('restore').onclick=async()=>{
-  if(!connected||busy||mode!=='idle'||!original)return;
+// Main controls
 
-  busy=true;updateButtons();
+$('start').onclick=()=>{
+  if(!connected||busy||mode!=='idle')return;
+
+  const token=++operation;
+
+  loadNow(selected,token);
+};
+
+$('next').onclick=()=>{
+  moveTo((selected+1)%tags.length);
+};
+
+$('previous').onclick=()=>{
+  moveTo(
+    (selected-1+tags.length)%tags.length
+  );
+};
+
+$('repeat').onclick=()=>{
+  if(mode!=='manual'||busy)return;
+
+  const token=++operation;
+
+  cancelDelay();
+  loadNow(selected,token);
+};
+
+$('skip').onclick=()=>{
+  if(mode!=='delay'||delayTarget<0)return;
+
+  const target=delayTarget;
+  const token=++operation;
+
+  cancelDelay();
+
+  log('Delay skipped');
+
+  loadNow(target,token);
+};
+
+$('stop').onclick=stopPlayback;
+
+// Direct tag selection
+
+$('jump').onchange=()=>{
+  selectTag(Number($('jump').value));
+};
+
+$('load').onclick=()=>{
+  if(!connected||busy)return;
+
+  const token=++operation;
+
+  cancelDelay();
+
+  loadNow(selected,token);
+};
+
+// Restore original identity
+
+$('restore').onclick=async()=>{
+  if(!connected||busy||
+     mode!=='idle'||!original)return;
+
+  busy=true;
+  updateButtons();
 
   try{
     await serial(async()=>{
       await checkSlot();
 
       await ultra.cmdHf14aSetAntiCollData({
-        uid:bytes(original.uid),
-        atqa:bytes(original.atqa),
-        sak:bytes(original.sak),
-        ats:bytes(original.ats||'')
+        uid:toBuffer(original.uid),
+        atqa:toBuffer(original.atqa),
+        sak:toBuffer(original.sak),
+        ats:toBuffer(original.ats||'')
       });
 
-      if(hfDisabled)await setHF(true);
+      const actual=await readIdentity();
 
-      const d=await readIdentity();
-
-      if(normalizeHex(d.uid)!==
+      if(normalizeHex(actual.uid)!==
          normalizeHex(original.uid)){
         throw Error('Restore verification failed');
       }
     });
 
     active=-1;
+    selectTag(selected);
+
     log('Original identity restored');
 
-  }catch(e){
-    log('RESTORE ERROR: '+e.message);
+  }catch(error){
+    log('RESTORE ERROR: '+error.message);
 
   }finally{
     busy=false;
@@ -1127,271 +1014,14 @@ $('restore').onclick=async()=>{
   }
 };
 
-// Manual controls
-
-$('play').onclick=()=>{
-  if(mode==='manual'){
-    pauseResume();
-    return;
-  }
-
-  if(mode!=='idle'||!connected||busy)return;
-
-  try{
-    setting('duration',1);
-    setting('gap');
-  }catch(e){
-    log(e.message);
-    return;
-  }
-
-  mode='manual';
-  $('modeLabel').textContent='MANUAL TAG CONTROL';
-
-  const token=++runId;
-
-  updateButtons();
-  manualPresent(selected,token);
-};
-
-$('next').onclick=()=>{
-  if(mode==='manual'&&!busy){
-    manualAdvance(
-      (selected+1)%tags.length,
-      setting('gap')
-    );
-  }
-};
-
-$('previous').onclick=()=>{
-  if(mode==='manual'&&!busy){
-    manualAdvance(
-      (selected-1+tags.length)%tags.length,
-      setting('gap')
-    );
-  }
-};
-
-$('repeat').onclick=()=>{
-  if(mode==='manual'&&!busy){
-    manualAdvance(selected,0);
-  }
-};
-
-$('stop').onclick=stopAll;
-
-$('jump').onchange=()=>{
-  selectTag(Number($('jump').value));
-};
-
-$('load').onclick=()=>{
-  if(mode==='manual'&&!busy){
-    manualAdvance(selected,0);
-  }else if(mode==='idle'){
-    $('play').click();
-  }
-};
-
-// Automatic controls
-
-$('autoStart').onclick=()=>{
-  const start=Number($('startAt').value);
-  const indices=tags
-    .map((_,i)=>i)
-    .slice(start);
-
-  startAuto(indices);
-};
-
-$('autoPause').onclick=()=>{
-  if(mode==='auto'&&!busy)pauseResume();
-};
-
-$('autoStop').onclick=stopAll;
-
-// Recovery controls
-
-$('markRecovery').onclick=()=>{
-  recovery.add(selected);
-  refreshStats();
-  updateButtons();
-  log('Marked for recovery: '+tags[selected].name);
-};
-
-$('markConfirmed').onclick=()=>{
-  confirmed.add(selected);
-  recovery.delete(selected);
-  refreshStats();
-  updateButtons();
-  log('User marked scanned: '+tags[selected].name);
-};
-
-$('runRecovery').onclick=()=>{
-  if(!recovery.size)return;
-  const indices=[...recovery].sort((a,b)=>a-b);
-  startAuto(indices,true);
-};
-
-$('clearRecovery').onclick=()=>{
-  recovery.clear();
-  refreshStats();
-  updateButtons();
-};
-
 $('clearLog').onclick=()=>{
   $('log').textContent='Log cleared.';
 };
 
-// Full Flipper dump inspection.
-// Does not write memory to the Chameleon.
-
-function parseDump(name,text){
-  const get=(label)=>{
-    const escaped=label.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
-    const match=text.match(
-      new RegExp('^'+escaped+':\\s*(.*)$','m')
-    );
-    return match?match[1].trim():null;
-  };
-
-  const pages=new Map();
-  const regex=/^Page (\d+):\s*(.*)$/gm;
-
-  let match;
-  while((match=regex.exec(text))!==null){
-    pages.set(Number(match[1]),normalizeHex(match[2]));
-  }
-
-  return {
-    name,
-    uid:get('UID'),
-    type:get('NTAG/Ultralight type'),
-    total:Number(get('Pages total')),
-    read:Number(get('Pages read')),
-    pages
-  };
-}
-
-$('inspect').onclick=async()=>{
-  const file=$('zipInput').files?.[0];
-
-  if(!file){
-    $('dumpReport').textContent=
-      'Please select your NFC Tags ZIP file.';
-    return;
-  }
-
-  if(!window.JSZip){
-    $('dumpReport').textContent=
-      'ZIP library unavailable. Check internet connection.';
-    return;
-  }
-
-  $('inspect').disabled=true;
-  $('dumpReport').textContent='Inspecting ZIP...';
-
-  try{
-    const zip=await JSZip.loadAsync(file);
-    const found=new Map();
-
-    for(const [path,entry] of Object.entries(zip.files)){
-      if(entry.dir||!/\.nfc$/i.test(path))continue;
-
-      const filename=path.split('/').pop();
-      const name=filename.replace(/\.nfc$/i,'');
-
-      if(!tags.some(t=>t.name===name))continue;
-
-      if(found.has(name)){
-        throw Error('Duplicate dump: '+name);
-      }
-
-      const content=await entry.async('string');
-      found.set(name,parseDump(name,content));
-    }
-
-    const report=[];
-    let valid=0;
-
-    for(const tag of tags){
-      const dump=found.get(tag.name);
-
-      if(!dump){
-        report.push('✗ '+tag.name+': missing');
-        continue;
-      }
-
-      const uidOK=
-        normalizeHex(dump.uid)===
-        normalizeHex(tag.uid);
-
-      const pagesOK=
-        dump.total===135 &&
-        dump.read===135 &&
-        dump.pages.size===135 &&
-        [...Array(135).keys()].every(i=>
-          /^[0-9A-F]{8}$/.test(
-            dump.pages.get(i)||''
-          )
-        );
-
-      const typeOK=dump.type==='NTAG215';
-
-      if(uidOK&&pagesOK&&typeOK){
-        valid++;
-        report.push('✓ '+tag.name+
-          ': NTAG215 · 135 pages');
-      }else{
-        report.push('✗ '+tag.name+
-          ': UID, type or page validation failed');
-      }
-    }
-
-    if(found.size!==tags.length){
-      report.push(
-        '\nRecognised files: '+found.size+
-        ' / '+tags.length
-      );
-    }
-
-    importedDumps=found;
-
-    $('dumpReport').textContent=
-      'VALID DUMPS: '+valid+' / 28\n\n'+
-      report.join('\n')+
-      '\n\nEmulation mode: UID-based only.'+
-      '\nFull memory upload: NOT VERIFIED.'+
-      '\nPhone scan detection: NOT AVAILABLE.';
-
-    log('Dump inspection: '+valid+'/28 valid');
-
-  }catch(e){
-    $('dumpReport').textContent=
-      'Import error: '+e.message;
-    log('ZIP ERROR: '+e.message);
-
-  }finally{
-    $('inspect').disabled=false;
-  }
-};
-
-$('duration').onchange=()=>{
-  if(mode!=='idle')return;
-  try{
-    remainingMs=setting('duration',1)*1000;
-    totalMs=remainingMs;
-    updateTimer();
-  }catch(e){
-    log(e.message);
-  }
-};
-
-buildUI();
-refreshStats();
+buildTags();
 updateButtons();
-updateTimer();
-
 setInterval(updateTimer,100);
+
 </script>
 </body>
 </html>
