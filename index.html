@@ -4,7 +4,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>NFC Playlist Plus v0.4</title>
+<title>NFC Playlist Plus v0.5</title>
+
 <style>
 :root {
   font-family: system-ui, -apple-system, sans-serif;
@@ -12,20 +13,31 @@
   background: #0b1220;
   color: #edf2ff;
 }
-body { max-width: 750px; margin: auto; padding: 18px; }
+
+* { box-sizing: border-box; }
+
+body {
+  max-width: 780px;
+  margin: auto;
+  padding: 18px;
+}
+
 h1 { margin-bottom: 4px; }
+
 p, small { color: #aab9d2; }
+
 section {
   background: #172238;
   border: 1px solid #31415d;
   border-radius: 16px;
-  padding: 17px;
+  padding: 18px;
   margin: 16px 0;
 }
+
 button {
   background: #76a3ff;
   color: #091428;
-  border: none;
+  border: 0;
   border-radius: 9px;
   padding: 11px 15px;
   margin: 4px;
@@ -33,276 +45,789 @@ button {
   font: inherit;
   font-weight: 700;
 }
-button:disabled { opacity: .4; cursor: not-allowed; }
+
+button.secondary {
+  background: #304767;
+  color: white;
+}
+
+button.danger {
+  background: #e56d76;
+  color: #210b10;
+}
+
+button:disabled {
+  opacity: .4;
+  cursor: not-allowed;
+}
+
 input[type=number] {
-  width: 75px;
+  width: 85px;
   background: #0b1424;
   color: white;
   border: 1px solid #52637d;
   padding: 9px;
   border-radius: 8px;
 }
+
 input[type=file] { max-width: 100%; }
-label { display: inline-block; margin: 9px 12px 9px 0; }
+
+label {
+  display: inline-block;
+  margin: 9px 12px 9px 0;
+}
+
 pre {
   white-space: pre-wrap;
   word-break: break-word;
   background: #0b1424;
   padding: 12px;
-  max-height: 300px;
+  max-height: 330px;
+  overflow: auto;
+  font-size: 12px;
+}
+
+#tags {
+  max-height: 320px;
   overflow: auto;
 }
-#tags { max-height: 290px; overflow: auto; }
-table { width: 100%; border-collapse: collapse; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
 td, th {
   border-bottom: 1px solid #30405b;
-  padding: 8px;
+  padding: 9px 6px;
   text-align: left;
-  font-size: .88rem;
+  font-size: .85rem;
 }
-.active { background: #263e60; }
+
+.active { background: #294c71; }
+
 .warn { color: #ffcf8a; }
-#now { font-size: 1.15rem; font-weight: 700; }
+
+.good { color: #85e4b0; }
+
+#now {
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.progress {
+  background: #0b1424;
+  border-radius: 10px;
+  height: 12px;
+  overflow: hidden;
+  margin-top: 12px;
+}
+
+#progressBar {
+  background: #76a3ff;
+  height: 100%;
+  width: 0%;
+  transition: width .2s;
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.statusline {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
 </style>
 </head>
 
 <body>
+
 <h1>📡 NFC Playlist Plus</h1>
-<p>Chameleon Ultra · Single-slot UID playlist · v0.4</p>
+<p>Chameleon Ultra · UID Playlist Controller · v0.5</p>
 
 <section>
   <h2>Bluetooth Connection</h2>
-  <button id="connect">Connect</button>
-  <button id="disconnect" disabled>Disconnect</button>
-  <button id="inspect" disabled>Inspect Slot</button>
+
+  <div class="controls">
+    <button id="connect">Connect</button>
+    <button id="disconnect" class="secondary" disabled>
+      Disconnect
+    </button>
+    <button id="inspect" class="secondary" disabled>
+      Inspect Slot
+    </button>
+  </div>
+
   <p>Status: <strong id="status">Disconnected</strong></p>
   <p>Active slot: <strong id="slot">Unknown</strong></p>
-  <small>Keep this page open and your device awake during playback.</small>
+  <p>Current UID: <strong id="deviceUID">Unknown</strong></p>
+
+  <small>
+    Use Chrome on your MacBook or a compatible Web Bluetooth
+    browser. Keep the browser awake during playback.
+  </small>
 </section>
 
 <section>
   <h2>1. Import NFC Playlist</h2>
-  <p>Select your Chameleon Ultra GUI JSON file containing the 28 tags.</p>
-  <input id="file" type="file" accept=".json,application/json">
-  <p id="loaded">No playlist imported</p>
+
+  <p>
+    Import your Chameleon Ultra GUI JSON containing
+    your 28 NTAG215 profiles.
+  </p>
+
+  <input
+    id="file"
+    type="file"
+    accept=".json,application/json"
+  >
+
+  <p id="loaded">No playlist imported.</p>
+
   <div id="tags"></div>
 </section>
 
 <section>
   <h2>2. Playback Settings</h2>
+
   <label>
     Emulation time (seconds)
-    <input id="duration" type="number" min="1" max="3600" value="5">
+    <input
+      id="duration"
+      type="number"
+      min="1"
+      max="3600"
+      value="10"
+    >
   </label>
+
   <label>
     Delay between tags (seconds)
-    <input id="gap" type="number" min="0" max="3600" value="1">
+    <input
+      id="gap"
+      type="number"
+      min="0"
+      max="3600"
+      value="2"
+    >
   </label>
-  <label>
-    <input type="checkbox" id="loop"> Loop playlist
-  </label>
+
+  <p>
+    <label>
+      <input type="checkbox" id="loop">
+      Loop playlist automatically
+    </label>
+  </p>
 
   <p class="warn">
-    Experimental: Playback changes the active slot's UID, ATQA and SAK.
-    It does not load the full NTAG215 memory. Back up your slot first.
+    Experimental: This controller changes the active
+    slot's NFC anticollision identity only.
+    It does not load complete NTAG215 memory.
+    Back up your test slot before proceeding.
   </p>
+
   <label>
     <input type="checkbox" id="consent">
-    I understand that the active slot will be modified.
+    I have backed up the active slot and understand
+    it will be modified.
   </label>
+</section>
 
-  <div>
-    <button id="start" disabled>▶ Start Playlist</button>
-    <button id="stop" disabled>■ Stop</button>
-    <button id="next" disabled>⏭ Next</button>
-    <button id="restore" disabled>↶ Restore Identity</button>
+<section>
+  <h2>3. Test & Playback</h2>
+
+  <div class="controls">
+    <button id="test" class="secondary" disabled>
+      🧪 Test First UID
+    </button>
+
+    <button id="start" disabled>
+      ▶ Start Playlist
+    </button>
+
+    <button id="stop" class="danger" disabled>
+      ■ Stop
+    </button>
+
+    <button id="next" class="secondary" disabled>
+      ⏭ Next
+    </button>
+
+    <button id="restore" class="secondary" disabled>
+      ↶ Restore Identity
+    </button>
   </div>
+
   <p id="now">Not playing</p>
-  <small>Stopping leaves the current identity active. Restore is available while connected.</small>
+
+  <div class="progress">
+    <div id="progressBar"></div>
+  </div>
+
+  <p id="counter">0 / 0</p>
+
+  <small>
+    Stop leaves the currently loaded UID active.
+    Restore Identity attempts to restore the original
+    UID, ATQA and SAK captured during this connection.
+  </small>
 </section>
 
 <section>
   <h2>Activity Log</h2>
-  <pre id="log">Ready. Import JSON and connect to begin.</pre>
+
+  <button id="clearLog" class="secondary">
+    Clear Log
+  </button>
+
+  <pre id="log">Ready. Connect your device and import JSON.</pre>
 </section>
 
+<!-- Buffer polyfill required by Chameleon Ultra SDK -->
+<script src="https://cdn.jsdelivr.net/npm/buffer@6.0.3/index.js"></script>
+
+<!-- Chameleon Ultra SDK -->
 <script src="https://cdn.jsdelivr.net/npm/chameleon-ultra.js@0/dist/index.global.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chameleon-ultra.js@0/dist/plugin/WebbleAdapter.global.js"></script>
 
 <script>
+"use strict";
+
 const $ = id => document.getElementById(id);
-const { ChameleonUltra, WebbleAdapter } = window.ChameleonUltraJS;
 
 let ultra = null;
 let profiles = [];
-let original = null;
-let activeSlot = null;
+let originalIdentity = null;
+let originalSlot = null;
+
 let running = false;
-let generation = 0;
-let index = 0;
-let wake = null;
-let operation = Promise.resolve();
+let busy = false;
+let position = 0;
+let skipRequested = false;
+let cancelWait = null;
+let playbackPromise = null;
+let commandQueue = Promise.resolve();
+
+const sdk = window.ChameleonUltraJS || {};
+
+const BufferClass =
+  sdk.Buffer ||
+  window.buffer?.Buffer ||
+  window.Buffer ||
+  null;
 
 function log(message) {
-  const el = $('log');
-  el.textContent += '\n' + new Date().toLocaleTimeString() + ' ' + message;
-  el.scrollTop = el.scrollHeight;
+  const output = $('log');
+
+  output.textContent +=
+    '\n' +
+    new Date().toLocaleTimeString() +
+    ' ' +
+    message;
+
+  output.scrollTop = output.scrollHeight;
+}
+
+function makeBuffer(value) {
+  if (!BufferClass || typeof BufferClass.from !== 'function') {
+    throw new Error(
+      'Buffer library unavailable. Check CDN scripts.'
+    );
+  }
+
+  return BufferClass.from(value);
 }
 
 function hex(value) {
   return Array.from(value || [])
-    .map(x => x.toString(16).padStart(2, '0'))
+    .map(byte =>
+      Number(byte).toString(16).padStart(2, '0')
+    )
     .join(' ')
     .toUpperCase();
 }
 
-function toBytes(value) {
-  const parts = value.trim().split(/\s+/);
-  if (!parts.every(x => /^[0-9a-f]{2}$/i.test(x))) {
-    throw new Error('Invalid hexadecimal bytes');
+function hexToBuffer(value) {
+  const clean = value.replace(/\s+/g, '').trim();
+
+  if (
+    clean.length % 2 !== 0 ||
+    !/^[0-9a-f]*$/i.test(clean)
+  ) {
+    throw new Error('Invalid hexadecimal value: ' + value);
   }
-  return Uint8Array.from(parts.map(x => parseInt(x, 16)));
+
+  return makeBuffer(clean.match(/.{2}/g)?.map(
+    pair => parseInt(pair, 16)
+  ) || []);
 }
 
-function serial(fn) {
-  const task = operation.then(fn);
-  operation = task.catch(() => {});
+function normalizeHex(value) {
+  return hex(hexToBuffer(value));
+}
+
+function serialize(command) {
+  const task = commandQueue.then(command);
+  commandQueue = task.catch(() => {});
   return task;
 }
 
-function sleep(ms) {
-  return new Promise(resolve => {
-    const timer = setTimeout(() => {
-      wake = null;
-      resolve();
-    }, ms);
-    wake = () => {
-      clearTimeout(timer);
-      wake = null;
-      resolve();
-    };
-  });
+function setBusy(value) {
+  busy = value;
+  updateControls();
 }
 
 function updateControls() {
   const connected = !!ultra;
-  $('connect').disabled = connected;
-  $('disconnect').disabled = !connected || running;
-  $('inspect').disabled = !connected || running;
+  const ready = connected && !running && !busy;
+  const allowed = $('consent').checked;
+
+  $('connect').disabled = connected || busy;
+  $('disconnect').disabled = !ready;
+  $('inspect').disabled = !ready;
+
+  $('test').disabled =
+    !ready || !allowed || profiles.length === 0;
+
   $('start').disabled =
-    !connected || running || !profiles.length || !$('consent').checked;
+    !ready || !allowed || profiles.length === 0;
+
   $('stop').disabled = !running;
   $('next').disabled = !running;
-  $('restore').disabled = !connected || running || !original;
+
+  $('restore').disabled =
+    !ready || !originalIdentity;
+
+  $('file').disabled = running || busy;
+  $('duration').disabled = running;
+  $('gap').disabled = running;
 }
 
-function stopPlayback(message) {
-  running = false;
-  generation++;
-  if (wake) wake();
-  $('now').textContent = message;
-  updateControls();
+function showProgress() {
+  const total = profiles.length;
+
+  $('counter').textContent =
+    total ? `${Math.min(position + 1, total)} / ${total}` : '0 / 0';
+
+  const percent = total
+    ? Math.min((position + 1) / total * 100, 100)
+    : 0;
+
+  $('progressBar').style.width = percent + '%';
+
+  document.querySelectorAll('#tags tr').forEach(
+    row => row.classList.remove('active')
+  );
+
+  const active = $('tag-' + position);
+
+  if (active) {
+    active.classList.add('active');
+    active.scrollIntoView({
+      block: 'nearest',
+      behavior: 'smooth'
+    });
+  }
+}
+
+function renderProfiles() {
+  const container = $('tags');
+  container.replaceChildren();
+
+  const table = document.createElement('table');
+
+  const heading = document.createElement('tr');
+
+  ['#', 'Name', 'UID'].forEach(value => {
+    const th = document.createElement('th');
+    th.textContent = value;
+    heading.appendChild(th);
+  });
+
+  table.appendChild(heading);
+
+  profiles.forEach((profile, i) => {
+    const tr = document.createElement('tr');
+    tr.id = 'tag-' + i;
+
+    [
+      String(i + 1),
+      profile.name,
+      profile.uid
+    ].forEach(value => {
+      const td = document.createElement('td');
+      td.textContent = value;
+      tr.appendChild(td);
+    });
+
+    table.appendChild(tr);
+  });
+
+  container.appendChild(table);
 }
 
 async function readIdentity() {
-  const value = await ultra.cmdHf14aGetAntiCollData();
+  const data = await ultra.cmdHf14aGetAntiCollData();
+
   return {
-    uid: hex(value.uid),
-    atqa: hex(value.atqa),
-    sak: hex(value.sak),
-    ats: hex(value.ats)
+    uid: hex(data.uid),
+    atqa: hex(data.atqa),
+    sak: hex(data.sak),
+    ats: hex(data.ats)
   };
 }
 
 async function inspectSlot() {
-  activeSlot = Number(await ultra.cmdSlotGetActive());
-  $('slot').textContent = String(activeSlot + 1);
+  const slot = Number(
+    await ultra.cmdSlotGetActive()
+  );
+
   const info = await ultra.cmdSlotGetInfo();
-  log('Active slot: ' + (activeSlot + 1));
-  log('HF tag type: ' + info[activeSlot]?.hfTagType);
-  log('Identity: ' + JSON.stringify(await readIdentity()));
+  const identity = await readIdentity();
+
+  $('slot').textContent = String(slot + 1);
+  $('deviceUID').textContent = identity.uid;
+
+  log('Active slot: ' + (slot + 1));
+  log('HF tag type: ' + info[slot]?.hfTagType);
+  log('Identity: ' + JSON.stringify(identity));
+
+  return { slot, info, identity };
+}
+
+async function captureOriginal() {
+  if (originalIdentity) return;
+
+  const snapshot = await inspectSlot();
+
+  if (snapshot.info[snapshot.slot]?.hfTagType !== 1101) {
+    throw new Error(
+      'Active slot is not configured as tag type 1101.'
+    );
+  }
+
+  originalSlot = snapshot.slot;
+  originalIdentity = snapshot.identity;
+
+  log('Original identity captured.');
+  updateControls();
+}
+
+function profileToIdentity(profile) {
+  // JSON uses ATQA [00,44], while the SDK's
+  // readback on this device reports 44 00.
+  // Reverse the two JSON bytes for the SDK.
+  const atqa = [...profile.atqa].reverse();
+
+  return {
+    uid: profile.uid,
+    atqa: hex(atqa),
+    sak: hex([profile.sak]),
+    ats: ''
+  };
+}
+
+async function writeIdentity(identity) {
+  const uid = hexToBuffer(identity.uid);
+  const atqa = hexToBuffer(identity.atqa);
+  const sak = hexToBuffer(identity.sak);
+
+  if (![4, 7, 10].includes(uid.length)) {
+    throw new Error('Unsupported UID length');
+  }
+
+  if (atqa.length !== 2 || sak.length !== 1) {
+    throw new Error('Invalid ATQA or SAK length');
+  }
+
+  // Use Buffer objects, not Uint8Array.
+  await ultra.cmdHf14aSetAntiCollData({
+    uid,
+    atqa,
+    sak,
+    ats: hexToBuffer(identity.ats || '')
+  });
+
+  const actual = await readIdentity();
+
+  if (
+    actual.uid !== normalizeHex(identity.uid) ||
+    actual.atqa !== normalizeHex(identity.atqa) ||
+    actual.sak !== normalizeHex(identity.sak)
+  ) {
+    throw new Error(
+      'Identity verification mismatch. Read: ' +
+      JSON.stringify(actual)
+    );
+  }
+
+  $('deviceUID').textContent = actual.uid;
+
+  return actual;
+}
+
+async function applyProfile(profile) {
+  const active = Number(
+    await ultra.cmdSlotGetActive()
+  );
+
+  if (active !== originalSlot) {
+    throw new Error(
+      'Active slot changed. Playback stopped.'
+    );
+  }
+
+  const identity = profileToIdentity(profile);
+
+  log('Loading ' + profile.name + '...');
+
+  const result = await writeIdentity(identity);
+
+  log(
+    'Verified ' + profile.name +
+    ' UID: ' + result.uid
+  );
+
+  return result;
+}
+
+function wait(ms) {
+  return new Promise(resolve => {
+    const timer = setTimeout(() => {
+      cancelWait = null;
+      resolve('elapsed');
+    }, ms);
+
+    cancelWait = () => {
+      clearTimeout(timer);
+      cancelWait = null;
+      resolve('interrupted');
+    };
+  });
+}
+
+function interruptWait() {
+  if (cancelWait) cancelWait();
+}
+
+async function playbackLoop() {
+  try {
+    await serialize(captureOriginal);
+
+    while (running) {
+      const profile = profiles[position];
+
+      $('now').textContent =
+        `Loading ${profile.name}...`;
+
+      await serialize(() => applyProfile(profile));
+
+      if (!running) break;
+
+      showProgress();
+
+      const duration = Number($('duration').value);
+      const gap = Number($('gap').value);
+
+      $('now').textContent =
+        `Emulating ${profile.name} (${position + 1}/${profiles.length})`;
+
+      log(
+        'Emulating ' + profile.name +
+        ' for ' + duration + ' seconds.'
+      );
+
+      const waitResult = await wait(duration * 1000);
+
+      if (!running) break;
+
+      if (skipRequested || waitResult === 'interrupted') {
+        skipRequested = false;
+      } else {
+        if (
+          position === profiles.length - 1 &&
+          !$('loop').checked
+        ) {
+          running = false;
+          $('now').textContent = 'Playlist completed';
+          $('progressBar').style.width = '100%';
+          log('Playlist completed successfully.');
+          break;
+        }
+
+        if (gap > 0) {
+          $('now').textContent =
+            'Waiting ' + gap + ' seconds before next tag';
+
+          await wait(gap * 1000);
+
+          if (!running) break;
+
+          if (skipRequested) {
+            skipRequested = false;
+          }
+        }
+      }
+
+      if (!running) break;
+
+      position = (position + 1) % profiles.length;
+    }
+  } catch (error) {
+    log('PLAYBACK ERROR: ' + (error.message || error));
+    $('now').textContent =
+      'Stopped: ' + (error.message || error);
+    running = false;
+  } finally {
+    running = false;
+    skipRequested = false;
+    playbackPromise = null;
+    updateControls();
+  }
 }
 
 $('connect').onclick = async () => {
+  if (ultra || busy) return;
+
+  setBusy(true);
+
   try {
     $('status').textContent = 'Connecting...';
-    ultra = new ChameleonUltra();
 
-    // This is the adapter sequence that worked in v0.2.
-    await ultra.use(new WebbleAdapter());
+    if (!BufferClass) {
+      throw new Error(
+        'Buffer library did not load.'
+      );
+    }
+
+    if (!sdk.ChameleonUltra || !sdk.WebbleAdapter) {
+      throw new Error(
+        'Chameleon Ultra SDK did not load.'
+      );
+    }
+
+    ultra = new sdk.ChameleonUltra();
+
+    // Preserve the working Bluetooth connection sequence.
+    await ultra.use(new sdk.WebbleAdapter());
     await ultra.connect();
 
-    const version = await ultra.cmdGetAppVersion();
-    $('status').textContent = 'Connected · Firmware ' + version;
-    log('Bluetooth connected. Firmware: ' + version);
+    const firmware = await ultra.cmdGetAppVersion();
+
+    $('status').textContent =
+      'Connected · Firmware ' + firmware;
+
+    log('Bluetooth connected. Firmware: ' + firmware);
+    log('Buffer constructor available.');
+
+    await serialize(inspectSlot);
+
+  } catch (error) {
+    log('Connection error: ' + (error.message || error));
+
+    $('status').textContent = 'Disconnected';
 
     try {
-      await inspectSlot();
-    } catch (e) {
-      log('Slot inspection failed: ' + e.message);
-    }
-  } catch (e) {
-    log('Connection error: ' + (e.message || e));
+      await ultra?.disconnect();
+    } catch (_) {}
+
     ultra = null;
-    $('status').textContent = 'Disconnected';
+  } finally {
+    setBusy(false);
   }
-  updateControls();
 };
 
 $('disconnect').onclick = async () => {
-  if (running) return;
+  if (running || busy) return;
+
+  setBusy(true);
+
   try {
     await ultra?.disconnect();
-  } catch (e) {
-    log('Disconnect warning: ' + e.message);
+  } catch (error) {
+    log('Disconnect warning: ' + error.message);
   }
+
   ultra = null;
-  original = null;
-  activeSlot = null;
+  originalIdentity = null;
+  originalSlot = null;
+
   $('status').textContent = 'Disconnected';
   $('slot').textContent = 'Unknown';
-  updateControls();
+  $('deviceUID').textContent = 'Unknown';
+
+  setBusy(false);
 };
 
 $('inspect').onclick = async () => {
+  if (!ultra || busy || running) return;
+
+  setBusy(true);
+
   try {
-    await serial(inspectSlot);
-  } catch (e) {
-    log('Inspection error: ' + e.message);
+    await serialize(inspectSlot);
+  } catch (error) {
+    log('Inspect error: ' + error.message);
+  } finally {
+    setBusy(false);
   }
 };
 
 $('file').onchange = async event => {
+  if (running || busy) return;
+
   try {
     const file = event.target.files[0];
     if (!file) return;
 
-    const data = JSON.parse(await file.text());
-    if (!Array.isArray(data.cards)) {
-      throw new Error('JSON must contain a cards array');
+    const json = JSON.parse(await file.text());
+
+    if (!Array.isArray(json.cards)) {
+      throw new Error('JSON must contain cards array.');
     }
 
+    const imported = [];
     const seen = new Set();
-    profiles = [];
 
-    for (const card of data.cards) {
-      if (card.tag !== 1101 || typeof card.uid !== 'string') continue;
+    for (const card of json.cards) {
+      if (Number(card.tag) !== 1101) continue;
 
-      const uid = card.uid.trim().toUpperCase();
-      if (!/^([0-9A-F]{2} ){6}[0-9A-F]{2}$/.test(uid)) continue;
+      const uid = String(card.uid || '')
+        .trim()
+        .replace(/\s+/g, ' ')
+        .toUpperCase();
+
+      if (!/^([0-9A-F]{2} ){6}[0-9A-F]{2}$/.test(uid)) {
+        continue;
+      }
+
       if (seen.has(uid)) continue;
 
-      const atqa = Array.isArray(card.atqa) ? card.atqa : [0, 68];
-      const sak = Number(card.sak ?? 0);
+      const atqa = card.atqa;
+      const sak = Number(card.sak);
 
       if (
+        !Array.isArray(atqa) ||
         atqa.length !== 2 ||
-        !atqa.every(x => Number.isInteger(x) && x >= 0 && x <= 255) ||
-        !Number.isInteger(sak) || sak < 0 || sak > 255
-      ) continue;
+        !atqa.every(n =>
+          Number.isInteger(n) && n >= 0 && n <= 255
+        ) ||
+        !Number.isInteger(sak) ||
+        sak < 0 ||
+        sak > 255
+      ) {
+        continue;
+      }
 
       seen.add(uid);
-      profiles.push({
+
+      imported.push({
         name: String(card.name || 'Unnamed'),
         uid,
         atqa,
@@ -310,194 +835,189 @@ $('file').onchange = async event => {
       });
     }
 
-    $('loaded').textContent = profiles.length + ' unique profiles imported';
-
-    const table = document.createElement('table');
-    const header = document.createElement('tr');
-    for (const title of ['#', 'Name', 'UID']) {
-      const th = document.createElement('th');
-      th.textContent = title;
-      header.appendChild(th);
+    if (!imported.length) {
+      throw new Error('No compatible NFC profiles found.');
     }
-    table.appendChild(header);
 
-    profiles.forEach((profile, i) => {
-      const tr = document.createElement('tr');
-      tr.id = 'tag' + i;
-      for (const value of [i + 1, profile.name, profile.uid]) {
-        const td = document.createElement('td');
-        td.textContent = value;
-        tr.appendChild(td);
-      }
-      table.appendChild(tr);
-    });
+    profiles = imported;
+    position = 0;
 
-    $('tags').replaceChildren(table);
-    log('Imported ' + profiles.length + ' profiles.');
+    $('loaded').textContent =
+      profiles.length + ' unique NFC profiles imported';
+
+    renderProfiles();
+
+    $('counter').textContent =
+      '0 / ' + profiles.length;
+
+    $('progressBar').style.width = '0%';
+
+    log(
+      'Imported ' + profiles.length +
+      ' NFC profiles successfully.'
+    );
+
     updateControls();
-  } catch (e) {
-    log('Import failed: ' + e.message);
+
+  } catch (error) {
+    log('Import error: ' + (error.message || error));
   }
 };
 
 $('consent').onchange = updateControls;
 
-async function writeIdentity(profile) {
-  const uid = toBytes(profile.uid);
-  const atqa = Uint8Array.from(profile.atqa);
-  const sak = Uint8Array.from([profile.sak]);
-
-  await ultra.cmdHf14aSetAntiCollData({
-    uid,
-    atqa,
-    sak
-  });
-
-  const actual = await readIdentity();
-
+$('test').onclick = async () => {
   if (
-    actual.uid !== profile.uid ||
-    actual.atqa !== hex(atqa) ||
-    actual.sak !== hex(sak)
-  ) {
-    throw new Error(
-      'Identity verification mismatch: ' + JSON.stringify(actual)
-    );
-  }
-}
+    !ultra ||
+    busy ||
+    running ||
+    !profiles.length ||
+    !$('consent').checked
+  ) return;
 
-async function play(currentGeneration) {
+  setBusy(true);
+
   try {
-    const fixedSlot = Number(await serial(() => ultra.cmdSlotGetActive()));
+    await serialize(captureOriginal);
 
-    if (!original) {
-      original = await serial(readIdentity);
-      log('Original identity saved: ' + JSON.stringify(original));
-    }
+    const profile = profiles[0];
 
-    while (running && currentGeneration === generation) {
-      const currentSlot = Number(
-        await serial(() => ultra.cmdSlotGetActive())
-      );
+    $('now').textContent =
+      'Testing ' + profile.name + '...';
 
-      if (currentSlot !== fixedSlot) {
-        throw new Error('Active slot changed externally');
-      }
+    await serialize(() => applyProfile(profile));
 
-      const profile = profiles[index];
+    position = 0;
+    showProgress();
 
-      $('now').textContent =
-        (index + 1) + '/' + profiles.length +
-        ': ' + profile.name + ' — loading';
+    $('now').textContent =
+      'Test passed: ' + profile.name;
 
-      await serial(() => writeIdentity(profile));
+    log(
+      'TEST PASSED. Device identity matches ' +
+      profile.name
+    );
 
-      if (!running || currentGeneration !== generation) break;
+  } catch (error) {
+    $('now').textContent =
+      'Test failed: ' + (error.message || error);
 
-      document.querySelectorAll('#tags tr')
-        .forEach(row => row.classList.remove('active'));
-
-      $('tag' + index)?.classList.add('active');
-
-      const duration = Number($('duration').value);
-      const gap = Number($('gap').value);
-
-      $('now').textContent =
-        (index + 1) + '/' + profiles.length +
-        ': ' + profile.name + ' — emulating';
-
-      log('Verified ' + profile.name + ': ' + profile.uid);
-
-      await sleep(duration * 1000);
-      if (!running || currentGeneration !== generation) break;
-
-      if (index === profiles.length - 1 && !$('loop').checked) {
-        stopPlayback('Playlist finished');
-        log('Completed all ' + profiles.length + ' tags.');
-        break;
-      }
-
-      $('now').textContent = 'Waiting between tags...';
-      await sleep(gap * 1000);
-
-      if (!running || currentGeneration !== generation) break;
-      index = (index + 1) % profiles.length;
-    }
-  } catch (e) {
-    log('PLAYBACK ERROR: ' + (e.message || e));
-    stopPlayback('Stopped: ' + (e.message || e));
+    log(
+      'TEST FAILED: ' + (error.message || error)
+    );
   } finally {
-    updateControls();
+    setBusy(false);
   }
-}
+};
 
 $('start').onclick = () => {
-  if (!ultra || !profiles.length || running || !$('consent').checked) return;
+  if (
+    !ultra ||
+    running ||
+    busy ||
+    !profiles.length ||
+    !$('consent').checked
+  ) return;
 
   const duration = Number($('duration').value);
   const gap = Number($('gap').value);
 
   if (
-    !Number.isInteger(duration) || duration < 1 || duration > 3600 ||
-    !Number.isInteger(gap) || gap < 0 || gap > 3600
+    !Number.isInteger(duration) ||
+    duration < 1 ||
+    duration > 3600 ||
+    !Number.isInteger(gap) ||
+    gap < 0 ||
+    gap > 3600
   ) {
-    log('Invalid playback timing.');
+    log('Invalid playback settings.');
     return;
   }
 
+  position = 0;
   running = true;
-  index = 0;
-  generation++;
+  skipRequested = false;
+
+  $('progressBar').style.width = '0%';
+
+  log('Starting playlist...');
   updateControls();
-  play(generation);
+
+  playbackPromise = playbackLoop();
 };
 
 $('stop').onclick = () => {
-  stopPlayback('Stopped by user');
-  log('Playback stopped. Current UID remains active.');
+  if (!running) return;
+
+  running = false;
+  skipRequested = false;
+
+  interruptWait();
+
+  $('now').textContent = 'Stopping...';
+
+  log('Stop requested.');
+  updateControls();
 };
 
 $('next').onclick = () => {
   if (!running) return;
-  index = (index + 1) % profiles.length;
-  generation++;
-  if (wake) wake();
-  log('Next tag requested.');
-  play(generation);
+
+  skipRequested = true;
+  interruptWait();
+
+  log('Skip to next tag requested.');
 };
 
 $('restore').onclick = async () => {
-  if (!ultra || running || !original) return;
+  if (
+    !ultra ||
+    running ||
+    busy ||
+    !originalIdentity
+  ) return;
+
+  setBusy(true);
 
   try {
-    const saved = original;
-    await serial(async () => {
-      await ultra.cmdHf14aSetAntiCollData({
-        uid: toBytes(saved.uid),
-        atqa: toBytes(saved.atqa),
-        sak: toBytes(saved.sak),
-        ...(saved.ats ? { ats: toBytes(saved.ats) } : {})
-      });
-    });
+    const active = Number(
+      await serialize(() => ultra.cmdSlotGetActive())
+    );
 
-    const actual = await serial(readIdentity);
-    if (
-      actual.uid !== saved.uid ||
-      actual.atqa !== saved.atqa ||
-      actual.sak !== saved.sak
-    ) {
-      throw new Error('Restored identity did not match backup');
+    if (active !== originalSlot) {
+      throw new Error(
+        'Active slot changed. Cannot safely restore.'
+      );
     }
 
-    log('Original identity restored successfully.');
-    original = null;
-    updateControls();
-  } catch (e) {
-    log('Restore failed: ' + e.message);
+    const restored = await serialize(
+      () => writeIdentity(originalIdentity)
+    );
+
+    log(
+      'Original identity restored: ' + restored.uid
+    );
+
+    $('now').textContent = 'Original identity restored';
+
+    originalIdentity = null;
+    originalSlot = null;
+
+  } catch (error) {
+    log(
+      'RESTORE ERROR: ' + (error.message || error)
+    );
+  } finally {
+    setBusy(false);
   }
 };
 
+$('clearLog').onclick = () => {
+  $('log').textContent = 'Log cleared.';
+};
+
 updateControls();
+
 </script>
 </body>
 </html>
