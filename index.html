@@ -1,367 +1,321 @@
 
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#080d19">
-<title>NFC Playlist Plus v0.7</title>
-
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#080e1b">
+<title>NFC Playlist Plus v0.8</title>
 <style>
 :root {
-  font-family: Inter, system-ui, -apple-system, sans-serif;
-  color-scheme: dark;
-  background: #080d19;
-  color: #f0f5ff;
+  color-scheme:dark;
+  font-family:Inter,system-ui,-apple-system,sans-serif;
+  background:#080e1b;
+  color:#f2f6ff
 }
-* { box-sizing: border-box; }
+* { box-sizing:border-box }
 body {
-  margin: 0;
-  padding: 20px 15px 60px;
-  background:
-    radial-gradient(ellipse at 50% -15%, #1d3761 0%, transparent 55%),
-    #080d19;
-  min-height: 100vh;
+  margin:0;
+  padding:20px 14px 60px;
+  background:radial-gradient(
+    ellipse at 50% 0%,#1a3456,transparent 55%
+  )
 }
-.app { max-width: 780px; margin: auto; }
-header { text-align: center; margin: 18px 0 25px; }
-.logo {
-  width: 60px;
-  height: 60px;
-  margin: auto;
-  border-radius: 18px;
-  display: grid;
-  place-items: center;
-  font-size: 30px;
-  background: linear-gradient(135deg, #3569ff, #873cff);
-  box-shadow: 0 10px 35px #4265ff44;
+main { max-width:790px;margin:auto }
+header { text-align:center;padding:18px 0 12px }
+header .logo {
+  font-size:34px;
+  background:linear-gradient(140deg,#3e83ff,#8c55ef);
+  display:grid;
+  place-items:center;
+  width:66px;
+  height:66px;
+  border-radius:20px;
+  margin:auto
 }
-h1 { font-size: 27px; margin: 13px 0 5px; }
-h2 { font-size: 17px; margin: 0 0 17px; }
-.muted { color: #8f9eb8; }
-.subtitle { font-size: 13px; }
+h1 { margin:12px 0 4px;font-size:28px }
+h2 { font-size:17px;margin:0 0 16px }
+.sub,.hint { color:#9baccc }
+.sub { font-size:13px }
+.hint { font-size:12px;line-height:1.6 }
 .card {
-  background: #141e31;
-  border: 1px solid #293a55;
-  border-radius: 19px;
-  padding: 20px;
-  margin: 15px 0;
+  background:#141f32;
+  border:1px solid #2a3d59;
+  border-radius:19px;
+  padding:20px;
+  margin:15px 0
 }
 .row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  flex-wrap: wrap;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  flex-wrap:wrap
 }
-.badge {
-  padding: 7px 12px;
-  border-radius: 30px;
-  font-size: 12px;
-  font-weight: 700;
-  background: #28344b;
-  color: #b5c4e0;
-}
-.badge.connected {
-  background: #123e31;
-  color: #65e6aa;
-}
-.badge.emulating {
-  background: #124632;
-  color: #6bf0ac;
-}
-.badge.delay {
-  background: #4c3718;
-  color: #ffd27e;
-}
-.badge.error {
-  background: #51232e;
-  color: #ff9ba6;
+.buttons {
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:14px
 }
 button {
-  border: 0;
-  border-radius: 12px;
-  padding: 13px 18px;
-  font: inherit;
-  font-size: 14px;
-  font-weight: 750;
-  cursor: pointer;
-  color: white;
-  background: #33435e;
-  transition: transform .12s, opacity .12s;
+  font:inherit;
+  font-weight:750;
+  font-size:14px;
+  background:#304461;
+  border:0;
+  color:#fff;
+  border-radius:11px;
+  padding:12px 16px;
+  cursor:pointer
 }
-button:active { transform: scale(.97); }
-button:disabled { opacity: .35; cursor: not-allowed; }
-.primary {
-  background: linear-gradient(135deg, #477dff, #7254fa);
-  box-shadow: 0 5px 22px #416bff33;
+button.primary {
+  background:linear-gradient(120deg,#3879fb,#7456f5)
 }
-.danger { background: #a9394a; }
-.green { background: #147d59; }
-.buttons { display: flex; flex-wrap: wrap; gap: 8px; }
+button.danger { background:#a63c4e }
+button:disabled { opacity:.36;cursor:not-allowed }
+.pill {
+  font-size:12px;
+  border-radius:50px;
+  background:#2a3850;
+  padding:7px 12px;
+  font-weight:750
+}
+.pill.good { color:#79edb2;background:#174231 }
+.pill.warn { color:#ffd48c;background:#49351c }
+.pill.bad { color:#ffacb5;background:#4a2432 }
 .player {
-  text-align: center;
-  padding: 27px 19px;
-  background:
-    radial-gradient(circle at 50% 25%, #23446c 0%, transparent 65%),
-    #141e31;
+  text-align:center;
+  background:radial-gradient(
+    circle at 50% 15%,#21466a,transparent 62%
+  ),#141f32
 }
-.nfc-icon {
-  width: 83px;
-  height: 83px;
-  display: grid;
-  place-items: center;
-  margin: 12px auto 20px;
-  border-radius: 50%;
-  background: #23416a;
-  border: 2px solid #426da8;
-  font-size: 39px;
-  transition: .3s;
+.signal {
+  font-size:44px;
+  width:90px;
+  height:90px;
+  border:2px solid #497db4;
+  border-radius:50%;
+  margin:16px auto;
+  display:grid;
+  place-items:center;
+  background:#203c5c
 }
-.nfc-icon.pulse {
-  animation: pulse 1.6s infinite;
-  border-color: #55e5a0;
+.signal.live {
+  animation:pulse 1.6s infinite;
+  border-color:#65eab3
 }
 @keyframes pulse {
-  0%,100% { box-shadow: 0 0 0 0 #42e9a52e; }
-  50% { box-shadow: 0 0 0 17px #42e9a500; }
+  50% { box-shadow:0 0 0 18px #50d9a500 }
 }
 .phase {
-  font-size: 12px;
-  letter-spacing: 1.5px;
-  font-weight: 800;
-  color: #83aaff;
+  font-size:12px;
+  letter-spacing:1.6px;
+  color:#9dbaff;
+  font-weight:800
 }
-.tag-name {
-  font-size: 49px;
-  font-weight: 850;
-  letter-spacing: -2px;
-  margin: 8px 0;
+.name {
+  font-size:52px;
+  font-weight:850;
+  letter-spacing:-2px;
+  margin:5px
 }
 .uid {
-  font-family: ui-monospace, monospace;
-  color: #a6b9d6;
-  font-size: 13px;
-  overflow-wrap: anywhere;
+  font:13px ui-monospace,monospace;
+  color:#b1c2db;
+  overflow-wrap:anywhere
 }
-.timer {
-  font-size: 59px;
-  font-weight: 800;
-  letter-spacing: -2px;
-  font-variant-numeric: tabular-nums;
-  margin: 20px 0 5px;
+.clock {
+  font-size:60px;
+  font-weight:850;
+  font-variant-numeric:tabular-nums;
+  margin:18px 0 0
 }
-.timer-label { font-size: 12px; color: #91a2bf; }
-.progress {
-  height: 10px;
-  background: #273550;
-  border-radius: 30px;
-  overflow: hidden;
-  margin: 18px 0 9px;
+.bar {
+  height:10px;
+  border-radius:50px;
+  overflow:hidden;
+  background:#2a3b57;
+  margin:17px 0 9px
 }
-.progress > div {
-  width: 0%;
-  height: 100%;
-  background: linear-gradient(90deg, #477dff, #6ee8be);
-  transition: width .1s linear;
-}
-.next {
-  margin-top: 17px;
-  font-size: 13px;
-  color: #b4c4de;
+.fill {
+  height:100%;
+  width:0;
+  background:linear-gradient(90deg,#4b83ff,#66e5b2)
 }
 .stats {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px
 }
 .stat {
-  background: #141e31;
-  border: 1px solid #293a55;
-  border-radius: 15px;
-  padding: 15px 8px;
-  text-align: center;
+  background:#141f32;
+  border:1px solid #2a3d59;
+  border-radius:14px;
+  padding:14px 6px;
+  text-align:center
 }
-.stat strong { display: block; font-size: 24px; }
-.stat span { color: #8e9fbb; font-size: 12px; }
+.stat strong { display:block;font-size:23px }
+.stat span { font-size:12px;color:#9baccc }
 .settings {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 13px;
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:12px
 }
-.setting {
-  background: #0e1727;
-  border: 1px solid #2b3a54;
-  padding: 13px;
-  border-radius: 12px;
+.field {
+  background:#0c1728;
+  border:1px solid #344761;
+  border-radius:12px;
+  padding:12px
 }
-.setting label {
-  display: block;
-  font-size: 12px;
-  color: #a9bad6;
-  margin-bottom: 9px;
+.field label {
+  font-size:12px;
+  color:#a7b7d0;
+  display:block;
+  margin-bottom:8px
 }
-.setting input {
-  width: 100%;
-  background: #1d2a41;
-  color: white;
-  border: 1px solid #405472;
-  border-radius: 8px;
-  padding: 11px;
-  font-size: 16px;
+input[type=number],select {
+  width:100%;
+  border-radius:9px;
+  border:1px solid #45617f;
+  background:#1c2b43;
+  color:white;
+  padding:12px;
+  font-size:16px
 }
-.switch-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-top: 17px;
+label.check {
+  display:flex;
+  gap:9px;
+  align-items:center;
+  margin:14px 0;
+  font-size:14px
 }
-.switch-row input { width: 18px; height: 18px; }
-.playlist {
-  max-height: 370px;
-  overflow-y: auto;
+input[type=checkbox] { width:18px;height:18px }
+.list { max-height:360px;overflow:auto }
+.tag {
+  display:flex;
+  align-items:center;
+  gap:11px;
+  background:#0e192b;
+  border:1px solid transparent;
+  border-radius:11px;
+  padding:11px;
+  margin:5px 0
 }
-.tag-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px;
-  border-radius: 11px;
-  margin-bottom: 6px;
-  background: #0e1727;
-  border: 1px solid transparent;
+.tag.active {
+  border-color:#528cff;
+  background:#1d3555
 }
-.tag-row.active {
-  background: #1b3555;
-  border-color: #487de8;
+.number {
+  border-radius:9px;
+  background:#293c58;
+  min-width:34px;
+  height:34px;
+  display:grid;
+  place-items:center;
+  font-size:12px;
+  font-weight:800
 }
-.tag-number {
-  background: #273651;
-  color: #a5b8d7;
-  width: 34px;
-  height: 34px;
-  border-radius: 10px;
-  display: grid;
-  place-items: center;
-  font-size: 12px;
-  font-weight: 800;
-  flex-shrink: 0;
+.tag .meta { flex:1;min-width:0 }
+.tag small {
+  display:block;
+  color:#93a7c4;
+  font:11px monospace;
+  overflow-wrap:anywhere
 }
-.tag-info { flex: 1; min-width: 0; }
-.tag-info strong { display: block; }
-.tag-info small {
-  color: #8294b2;
-  font-family: monospace;
-  font-size: 11px;
-  overflow-wrap: anywhere;
+.tag .flag { font-size:11px;color:#8cf1c1 }
+pre {
+  white-space:pre-wrap;
+  overflow-wrap:anywhere;
+  max-height:260px;
+  overflow:auto;
+  background:#080f1d;
+  border-radius:12px;
+  padding:14px;
+  font-size:12px;
+  color:#a9bdd8
 }
-.tag-state { font-size: 11px; color: #6de7ad; }
-.log {
-  background: #090f1b;
-  color: #a5b9d6;
-  border-radius: 12px;
-  padding: 13px;
-  max-height: 230px;
-  overflow: auto;
-  font-size: 12px;
-  font-family: monospace;
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
+.divider {
+  border-top:1px solid #2a3d59;
+  margin:20px 0
 }
-.note { font-size: 12px; line-height: 1.6; color: #9eafc9; }
+.hidden { display:none }
 footer {
-  text-align: center;
-  color: #61728d;
-  font-size: 12px;
-  margin-top: 24px;
+  text-align:center;
+  font-size:12px;
+  color:#6f83a1;
+  margin-top:24px
 }
-@media(max-width:440px) {
-  .tag-name { font-size: 43px; }
-  .timer { font-size: 52px; }
-  .card { padding: 16px; }
-  button { padding: 12px 14px; }
+@media(max-width:430px) {
+  .card { padding:15px }
+  .name { font-size:44px }
+  .clock { font-size:52px }
+  button { padding:11px 13px }
 }
 </style>
 </head>
 
 <body>
-<div class="app">
-
+<main>
 <header>
   <div class="logo">📡</div>
   <h1>NFC Playlist Plus</h1>
-  <div class="muted subtitle">
-    Chameleon Ultra · Automatic NFC Playlist · v0.7
+  <div class="sub">
+    Chameleon Ultra · 28 built-in tags · v0.8
   </div>
 </header>
 
 <section class="card">
   <div class="row">
     <div>
-      <strong>Chameleon Ultra</strong>
-      <div class="muted subtitle" id="deviceInfo">
-        Not connected
-      </div>
+      <strong>Bluetooth connection</strong>
+      <div class="sub" id="device">Not connected</div>
     </div>
-    <span class="badge" id="connectionBadge">
-      Disconnected
-    </span>
+    <span class="pill" id="connection">Disconnected</span>
   </div>
 
-  <div class="buttons" style="margin-top:17px">
+  <div class="buttons">
     <button class="primary" id="connect">Connect</button>
     <button id="disconnect" disabled>Disconnect</button>
     <button id="inspect" disabled>Inspect Slot</button>
   </div>
 
-  <p class="note" id="slotInfo">
-    Connect to inspect the active NFC slot.
+  <p class="hint" id="slotInfo">
+    Connect your Chameleon Ultra in Chrome using Web Bluetooth.
   </p>
 </section>
 
 <section class="card player">
   <div class="row">
-    <span class="badge" id="phaseBadge">Idle</span>
-    <span class="muted subtitle" id="tagCounter">
-      0 / 28
-    </span>
+    <span class="pill" id="phaseBadge">Idle</span>
+    <span class="sub" id="count">0 / 28</span>
   </div>
 
-  <div class="nfc-icon" id="nfcIcon">◉</div>
-
-  <div class="phase" id="phaseText">
-    READY TO PLAY
-  </div>
-
-  <div class="tag-name" id="tagName">—</div>
+  <div class="signal" id="signal">◉</div>
+  <div class="phase" id="phaseText">READY TO PLAY</div>
+  <div class="name" id="tagName">—</div>
   <div class="uid" id="tagUID">
-    No active playlist tag
+    No tag loaded by this session
   </div>
 
-  <div class="timer" id="countdown">00:00</div>
-  <div class="timer-label" id="timerLabel">
-    Waiting to start
-  </div>
+  <div class="clock" id="timer">00:00</div>
+  <div class="sub" id="timerLabel">Waiting to start</div>
 
-  <div class="progress">
-    <div id="phaseProgress"></div>
+  <div class="bar">
+    <div class="fill" id="progress"></div>
   </div>
 
   <div class="row">
-    <small class="muted" id="phaseDetail">
-      Connect to begin
-    </small>
-    <small class="muted" id="percentage">0%</small>
+    <span class="sub" id="detail">Connect to begin</span>
+    <span class="sub" id="percent">0%</span>
   </div>
 
-  <div class="next" id="nextTag">
-    Next: 1f1
-  </div>
+  <p class="sub" id="nextName">Next: 1f1</p>
 </section>
 
 <div class="stats">
   <div class="stat">
-    <strong id="totalTags">28</strong>
+    <strong>28</strong>
     <span>Total tags</span>
   </div>
   <div class="stat">
@@ -369,13 +323,13 @@ footer {
     <span>Completed</span>
   </div>
   <div class="stat">
-    <strong id="currentPosition">0</strong>
-    <span>Current</span>
+    <strong id="current">0</strong>
+    <span>Current position</span>
   </div>
 </div>
 
 <section class="card">
-  <h2>Playback Controls</h2>
+  <h2>Playlist controls</h2>
 
   <div class="buttons">
     <button class="primary" id="start" disabled>
@@ -391,777 +345,968 @@ footer {
     </button>
   </div>
 
-  <p class="note">
-    Pause freezes the playlist timer, not the hardware
-    NFC field. Stop leaves the current identity loaded.
+  <p class="hint">
+    Pause freezes the playlist timer, not the NFC hardware.
+    Stop leaves the last identity loaded.
+    Restore puts the original UID back.
   </p>
 </section>
 
 <section class="card">
-  <h2>Playback Settings</h2>
+  <h2>Playback settings</h2>
 
   <div class="settings">
-    <div class="setting">
-      <label for="duration">Emulation time (seconds)</label>
+    <div class="field">
+      <label for="duration">Emulation (seconds)</label>
       <input id="duration" type="number"
-             min="1" max="3600" value="10">
+             min="1" max="3600" value="3">
     </div>
-    <div class="setting">
-      <label for="gap">Delay between tags (seconds)</label>
+
+    <div class="field">
+      <label for="gap">Delay (seconds)</label>
       <input id="gap" type="number"
-             min="0" max="3600" value="2">
+             min="0" max="3600" value="15">
     </div>
   </div>
 
-  <label class="switch-row">
+  <label class="check">
     <input type="checkbox" id="loop">
-    Loop playlist after the final tag
+    Loop after final tag
   </label>
 
-  <p class="note">
-    The 28 profiles are built in. No JSON import required.
-    This version changes the UID identity only and does
-    not reproduce full NTAG215 memory.
+  <label class="check">
+    <input type="checkbox" id="rfReset" checked>
+    Disable HF slot during delay (experimental)
+  </label>
+
+  <p class="hint">
+    With reset enabled, the app disables HF emulation
+    during the gap, loads the next UID, then enables HF
+    again. This may help the phone recognise a new tag.
+    It has not been tested on your firmware 2.3.
+  </p>
+</section>
+
+<section class="card">
+  <h2>Manual tag emulator</h2>
+
+  <p class="sub">
+    Choose a missed tag and present it again
+    without restarting the playlist.
+  </p>
+
+  <div class="settings">
+    <div class="field">
+      <label for="manualTag">Select tag</label>
+      <select id="manualTag"></select>
+    </div>
+
+    <div class="field">
+      <label for="manualSeconds">
+        Manual emulation (seconds)
+      </label>
+      <input id="manualSeconds" type="number"
+             min="1" max="3600" value="15">
+    </div>
+  </div>
+
+  <div class="buttons">
+    <button class="primary" id="manualStart" disabled>
+      📡 Emulate Selected Tag
+    </button>
+    <button class="danger" id="manualStop" disabled>
+      ■ Stop Manual
+    </button>
+  </div>
+
+  <p class="hint" id="manualInfo">
+    Manual emulation runs independently of the playlist.
+    Stop Manual disables HF only if experimental reset
+    is enabled; otherwise the UID remains loaded.
   </p>
 </section>
 
 <section class="card">
   <div class="row">
-    <h2>Playlist</h2>
-    <span class="badge">28 tags loaded</span>
+    <h2>Built-in playlist</h2>
+    <span class="pill">28 tags</span>
   </div>
-  <div class="playlist" id="playlist"></div>
+  <div class="list" id="list"></div>
 </section>
 
 <section class="card">
   <div class="row">
-    <h2>Activity Log</h2>
-    <button id="clearLog">Clear</button>
+    <h2>Activity log</h2>
+    <button id="clear">Clear</button>
   </div>
-  <div class="log" id="log">
-    NFC Playlist Plus v0.7 ready.
-  </div>
+  <pre id="log">NFC Playlist Plus v0.8 ready.</pre>
 </section>
 
 <footer>
-  NFC Playlist Plus · Chameleon Ultra · v0.7
+  UID-only emulation · Chameleon Ultra · v0.8
 </footer>
+</main>
 
-</div>
-
-<!-- Buffer library -->
 <script src="https://cdn.jsdelivr.net/npm/buffer@6.0.3/index.js"></script>
-
-<!-- Chameleon Ultra SDK -->
 <script src="https://cdn.jsdelivr.net/npm/chameleon-ultra.js@0/dist/index.global.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chameleon-ultra.js@0/dist/plugin/WebbleAdapter.global.js"></script>
 
 <script>
-"use strict";
+'use strict';
 
-// All 28 profiles are embedded.
-// Each entry contains its name and seven-byte UID.
-const RAW_TAGS = [
-  ["1f1","04 73 71 2F 37 02 89"],
-  ["1f2","04 B3 57 F2 36 02 89"],
-  ["1f3","04 01 AB 45 46 02 89"],
-  ["2f1","04 83 BC 07 35 02 89"],
-  ["2f2","04 A1 F6 E7 45 02 89"],
-  ["2f3","04 E1 99 4B 46 02 89"],
-  ["3f1","04 11 08 22 46 02 89"],
-  ["3f2","04 73 FE EF 36 02 89"],
-  ["3f3","04 A3 92 A3 36 02 89"],
-  ["4f1","04 01 59 69 46 02 89"],
-  ["4f2","04 11 F7 D6 45 02 89"],
-  ["4f3","04 01 BA 07 46 02 89"],
-  ["5f1","04 83 47 0A 37 02 89"],
-  ["5f2","04 13 0D 16 37 02 89"],
-  ["5f3","04 73 2F 07 35 02 89"],
-  ["6f1","04 B3 C5 A2 36 02 89"],
-  ["6f2","04 B1 B8 2E 46 02 89"],
-  ["6f3","04 A1 3C 55 46 02 89"],
-  ["7f1","04 53 10 9E 36 02 89"],
-  ["7f2","04 B3 82 31 37 02 89"],
-  ["7f3","04 93 5A 42 34 02 89"],
-  ["8f1","04 33 BA 0C 35 02 89"],
-  ["8f2","04 43 1C F3 36 02 89"],
-  ["8f3","04 F1 A3 4F 46 02 89"],
-  ["Lg1","04 73 9B 0F 35 02 89"],
-  ["Lg2","04 11 51 DD 45 02 89"],
-  ["Lg3","04 93 85 CC 36 02 89"],
-  ["Lg4","04 73 FB AD 36 02 89"]
+// Built-in playlist: all 28 tags.
+const RAW = [
+  ['1f1','04 73 71 2F 37 02 89'],
+  ['1f2','04 B3 57 F2 36 02 89'],
+  ['1f3','04 01 AB 45 46 02 89'],
+  ['2f1','04 83 BC 07 35 02 89'],
+  ['2f2','04 A1 F6 E7 45 02 89'],
+  ['2f3','04 E1 99 4B 46 02 89'],
+  ['3f1','04 11 08 22 46 02 89'],
+  ['3f2','04 73 FE EF 36 02 89'],
+  ['3f3','04 A3 92 A3 36 02 89'],
+  ['4f1','04 01 59 69 46 02 89'],
+  ['4f2','04 11 F7 D6 45 02 89'],
+  ['4f3','04 01 BA 07 46 02 89'],
+  ['5f1','04 83 47 0A 37 02 89'],
+  ['5f2','04 13 0D 16 37 02 89'],
+  ['5f3','04 73 2F 07 35 02 89'],
+  ['6f1','04 B3 C5 A2 36 02 89'],
+  ['6f2','04 B1 B8 2E 46 02 89'],
+  ['6f3','04 A1 3C 55 46 02 89'],
+  ['7f1','04 53 10 9E 36 02 89'],
+  ['7f2','04 B3 82 31 37 02 89'],
+  ['7f3','04 93 5A 42 34 02 89'],
+  ['8f1','04 33 BA 0C 35 02 89'],
+  ['8f2','04 43 1C F3 36 02 89'],
+  ['8f3','04 F1 A3 4F 46 02 89'],
+  ['Lg1','04 73 9B 0F 35 02 89'],
+  ['Lg2','04 11 51 DD 45 02 89'],
+  ['Lg3','04 93 85 CC 36 02 89'],
+  ['Lg4','04 73 FB AD 36 02 89']
 ];
 
-const profiles = RAW_TAGS.map(([name,uid]) => ({
-  name, uid
-}));
-
+const tags = RAW.map(([name,uid]) => ({name,uid}));
 const $ = id => document.getElementById(id);
 const sdk = window.ChameleonUltraJS || {};
-const BufferClass =
+const BufferType =
   sdk.Buffer || window.buffer?.Buffer || window.Buffer;
 
 let ultra = null;
 let connected = false;
 let busy = false;
-let running = false;
+let mode = 'idle';
 let paused = false;
-let skip = false;
 let position = 0;
-let completedCount = 0;
+let done = 0;
 
-let originalIdentity = null;
+let original = null;
 let originalSlot = null;
-let sessionIdentity = null;
+let originalHFEnabled = null;
+let activePhase = 'idle';
 
-let phase = "idle";
-let phaseEnd = 0;
-let remainingMs = 0;
-let phaseTotalMs = 0;
-let waitResolve = null;
 let activeWait = null;
-let loopPromise = null;
-let queue = Promise.resolve();
+let phaseDeadline = 0;
+let phaseRemaining = 0;
+let phaseDuration = 0;
 
-function log(message) {
-  const el = $('log');
-  el.textContent +=
-    "\n" + new Date().toLocaleTimeString() +
-    "  " + message;
-  el.scrollTop = el.scrollHeight;
+let skipRequested = false;
+let sequence = Promise.resolve();
+let worker = null;
+
+function log(s) {
+  const e = $('log');
+  e.textContent += '\n' +
+    new Date().toLocaleTimeString() + '  ' + s;
+  e.scrollTop = e.scrollHeight;
 }
 
-function hex(bytes) {
-  return Array.from(bytes || [])
-    .map(n => Number(n).toString(16).padStart(2,"0"))
-    .join(" ").toUpperCase();
+function hex(b) {
+  return Array.from(b || [])
+    .map(x => Number(x).toString(16).padStart(2,'0'))
+    .join(' ').toUpperCase();
 }
 
-function toBuffer(value) {
-  if (!BufferClass?.from) {
-    throw new Error("Buffer constructor unavailable");
+function bytes(s) {
+  if (!BufferType?.from) {
+    throw Error('Buffer library unavailable');
   }
-
-  const clean = value.replace(/\s+/g,"");
-  if (clean.length % 2 || !/^[0-9a-f]*$/i.test(clean)) {
-    throw new Error("Invalid hexadecimal bytes");
+  const h = s.replace(/\s/g,'');
+  if (h.length % 2 || !/^[0-9a-f]*$/i.test(h)) {
+    throw Error('Invalid hex');
   }
-
-  const values = clean.match(/.{2}/g) || [];
-  return BufferClass.from(
-    values.map(x => parseInt(x,16))
+  return BufferType.from(
+    (h.match(/../g) || []).map(x => parseInt(x,16))
   );
 }
 
 function serial(fn) {
-  const task = queue.then(fn);
-  queue = task.catch(() => {});
-  return task;
+  const p = sequence.then(fn);
+  sequence = p.catch(() => {});
+  return p;
 }
 
-function formatTime(ms) {
-  const sec = Math.max(0,Math.ceil(ms/1000));
-  const m = Math.floor(sec/60);
-  const s = sec%60;
-  return String(m).padStart(2,"0") + ":" +
-         String(s).padStart(2,"0");
+function time(ms) {
+  const n = Math.max(0,Math.ceil(ms/1000));
+  return String(Math.floor(n/60)).padStart(2,'0') +
+    ':' + String(n%60).padStart(2,'0');
 }
 
-function updateControls() {
+function updateButtons() {
+  const idle = connected && !busy && mode === 'idle';
+
   $('connect').disabled = connected || busy;
-  $('disconnect').disabled = !connected || running || busy;
-  $('inspect').disabled = !connected || running || busy;
-  $('start').disabled = !connected || running || busy;
-  $('pause').disabled = !running;
-  $('stop').disabled = !running;
-  $('next').disabled = !running;
-  $('restore').disabled =
-    !connected || running || busy || !originalIdentity;
-  $('duration').disabled = running;
-  $('gap').disabled = running;
+  $('disconnect').disabled = !idle;
+  $('inspect').disabled = !idle;
+  $('start').disabled = !idle;
+  $('manualStart').disabled = !idle;
+  $('restore').disabled = !idle || !original;
+
+  $('pause').disabled = mode !== 'playlist';
+  $('stop').disabled = mode !== 'playlist';
+  $('next').disabled = mode !== 'playlist';
+  $('manualStop').disabled = mode !== 'manual';
+
+  $('duration').disabled = mode !== 'idle';
+  $('gap').disabled = mode !== 'idle';
+  $('manualTag').disabled = mode !== 'idle';
+  $('manualSeconds').disabled = mode !== 'idle';
+  $('rfReset').disabled = mode !== 'idle';
+  $('loop').disabled = mode !== 'idle';
 }
 
-function setPhase(name, detail) {
-  phase = name;
+function setPhase(p,description='') {
+  activePhase = p;
   const badge = $('phaseBadge');
-  badge.className = "badge";
+  badge.className = 'pill';
 
-  const icon = $('nfcIcon');
-  icon.classList.remove("pulse");
-
-  if (name === "emulating") {
-    badge.textContent = "● Emulating";
-    badge.classList.add("emulating");
-    icon.classList.add("pulse");
-    $('phaseText').textContent = "EMULATING NFC TAG";
-    $('timerLabel').textContent = "Emulation time remaining";
-  } else if (name === "delay") {
-    badge.textContent = "● Delay";
-    badge.classList.add("delay");
-    $('phaseText').textContent = "WAITING FOR NEXT TAG";
-    $('timerLabel').textContent = "Delay time remaining";
-  } else if (name === "loading") {
-    badge.textContent = "Loading";
-    $('phaseText').textContent = "UPDATING DEVICE";
-    $('timerLabel').textContent = "Waiting for Bluetooth";
-  } else if (name === "paused") {
-    badge.textContent = "Paused";
-    $('phaseText').textContent = "PLAYLIST PAUSED";
-    $('timerLabel').textContent = "Time remaining";
-  } else if (name === "finished") {
-    badge.textContent = "Completed";
-    $('phaseText').textContent = "PLAYLIST COMPLETED";
-    $('timerLabel').textContent = "Finished";
-  } else if (name === "error") {
-    badge.textContent = "Error";
-    badge.classList.add("error");
-    $('phaseText').textContent = "PLAYBACK ERROR";
-    $('timerLabel').textContent = "Stopped";
-  } else {
-    badge.textContent = "Idle";
-    $('phaseText').textContent = "READY TO PLAY";
-    $('timerLabel').textContent = "Waiting to start";
-  }
-
-  $('phaseDetail').textContent = detail || "";
-}
-
-function showTag() {
-  const tag = profiles[position];
-  $('tagName').textContent = tag.name;
-  $('tagUID').textContent = tag.uid;
-  $('tagCounter').textContent =
-    (position+1) + " / " + profiles.length;
-  $('currentPosition').textContent = position+1;
-  $('completed').textContent = completedCount;
-
-  const nextIndex = position+1;
-
-  $('nextTag').textContent =
-    nextIndex < profiles.length
-      ? "Up next: " + profiles[nextIndex].name
-      : ($('loop').checked
-          ? "Up next: " + profiles[0].name
-          : "Final tag in playlist");
-
-  document.querySelectorAll(".tag-row").forEach(
-    row => row.classList.remove("active")
+  $('signal').classList.toggle(
+    'live',p === 'emulating'
   );
 
-  const active = $('tag-'+position);
-  if (active) {
-    active.classList.add("active");
-    active.scrollIntoView({block:"nearest"});
+  const map = {
+    idle:['Idle','READY TO PLAY','Waiting to start'],
+    loading:['Loading','UPDATING DEVICE','Bluetooth command'],
+    emulating:['● Emulating','EMULATING NFC TAG','Time remaining'],
+    delay:['● Delay','WAITING FOR NEXT TAG','Delay remaining'],
+    paused:['Paused','PLAYLIST PAUSED','Time remaining'],
+    finished:['Completed','PLAYLIST FINISHED','Complete'],
+    error:['Error','PLAYBACK ERROR','Stopped']
+  };
+
+  const a = map[p] || map.idle;
+
+  badge.textContent = a[0];
+  $('phaseText').textContent = a[1];
+  $('timerLabel').textContent = a[2];
+
+  if (p === 'emulating') badge.classList.add('good');
+  if (p === 'delay') badge.classList.add('warn');
+  if (p === 'error') badge.classList.add('bad');
+
+  $('detail').textContent = description;
+}
+
+function showTag(index) {
+  const t = tags[index];
+
+  $('tagName').textContent = t.name;
+  $('tagUID').textContent = t.uid;
+  $('count').textContent =
+    (index+1) + ' / ' + tags.length;
+  $('current').textContent = index+1;
+  $('completed').textContent = done;
+
+  $('nextName').textContent =
+    index === tags.length-1
+      ? ($('loop').checked
+          ? 'Next: '+tags[0].name
+          : 'Final playlist tag')
+      : 'Next: '+tags[index+1].name;
+
+  document.querySelectorAll('.tag').forEach(
+    e => e.classList.remove('active')
+  );
+
+  const row = $('tag'+index);
+  if (row) {
+    row.classList.add('active');
+    row.scrollIntoView({block:'nearest'});
   }
 }
 
-function renderPlaylist() {
-  const container = $('playlist');
-  container.replaceChildren();
+function render() {
+  const list = $('list');
+  const select = $('manualTag');
 
-  profiles.forEach((tag,i) => {
-    const row = document.createElement("div");
-    row.className = "tag-row";
-    row.id = "tag-"+i;
+  tags.forEach((t,i) => {
+    const r = document.createElement('div');
+    r.className = 'tag';
+    r.id = 'tag'+i;
 
-    const number = document.createElement("div");
-    number.className = "tag-number";
-    number.textContent = i+1;
+    const num = document.createElement('div');
+    num.className = 'number';
+    num.textContent = i+1;
 
-    const info = document.createElement("div");
-    info.className = "tag-info";
+    const meta = document.createElement('div');
+    meta.className = 'meta';
 
-    const name = document.createElement("strong");
-    name.textContent = tag.name;
+    const strong = document.createElement('strong');
+    strong.textContent = t.name;
 
-    const uid = document.createElement("small");
-    uid.textContent = tag.uid;
+    const small = document.createElement('small');
+    small.textContent = t.uid;
 
-    info.append(name,uid);
+    meta.append(strong,small);
+    r.append(num,meta);
+    list.append(r);
 
-    const state = document.createElement("div");
-    state.className = "tag-state";
-
-    row.append(number,info,state);
-    container.appendChild(row);
+    const opt = document.createElement('option');
+    opt.value = String(i);
+    opt.textContent =
+      (i+1)+'. '+t.name+' — '+t.uid;
+    select.append(opt);
   });
 }
 
-async function readIdentity() {
-  const data = await ultra.cmdHf14aGetAntiCollData();
+async function identity() {
+  const d = await ultra.cmdHf14aGetAntiCollData();
 
   return {
-    uid:hex(data.uid),
-    atqa:hex(data.atqa),
-    sak:hex(data.sak),
-    ats:hex(data.ats)
+    uid:hex(d.uid),
+    atqa:hex(d.atqa),
+    sak:hex(d.sak),
+    ats:hex(d.ats)
   };
 }
 
 async function inspect() {
   const slot = Number(await ultra.cmdSlotGetActive());
   const info = await ultra.cmdSlotGetInfo();
-  const identity = await readIdentity();
+  const id = await identity();
 
   $('slotInfo').textContent =
-    "Slot " + (slot+1) +
-    " · HF type " + info[slot]?.hfTagType +
-    " · UID " + identity.uid;
+    'Slot '+(slot+1) +
+    ' · HF type '+info[slot]?.hfTagType +
+    ' · UID '+id.uid;
 
-  log("Active slot: "+(slot+1));
-  log("Identity: "+JSON.stringify(identity));
+  log(
+    'Slot '+(slot+1)+
+    ' identity '+JSON.stringify(id)
+  );
 
-  return {slot,info,identity};
+  return {slot,info,id};
 }
 
-async function captureOriginal() {
-  if (originalIdentity) return;
+async function snapshot() {
+  if (original) return;
 
-  const snapshot = await inspect();
+  const x = await inspect();
 
-  if (snapshot.info[snapshot.slot]?.hfTagType !== 1101) {
-    throw new Error("Active slot is not tag type 1101");
+  if (x.info[x.slot]?.hfTagType !== 1101) {
+    throw Error('Active slot HF type is not 1101');
   }
 
-  originalSlot = snapshot.slot;
-  originalIdentity = snapshot.identity;
-  sessionIdentity = snapshot.identity;
+  original = x.id;
+  originalSlot = x.slot;
 
-  log("Original identity saved for this session.");
+  if (typeof ultra.cmdSlotGetIsEnable === 'function') {
+    const states = await ultra.cmdSlotGetIsEnable();
+    originalHFEnabled = Boolean(states[x.slot]?.hf);
+    log('Original HF enable state: '+originalHFEnabled);
+  } else {
+    originalHFEnabled = null;
+    log(
+      'Cannot read original HF enable state; '+
+      'reset mode unavailable'
+    );
+  }
+
+  log('Original identity saved in this browser session');
 }
 
-async function writeIdentity(identity) {
+async function assertSlot() {
+  const slot = Number(await ultra.cmdSlotGetActive());
+  if (slot !== originalSlot) {
+    throw Error('Active slot changed; refusing to write');
+  }
+}
+
+async function writeTag(index) {
+  await assertSlot();
+
+  const id = {
+    ...original,
+    uid:tags[index].uid
+  };
+
   await ultra.cmdHf14aSetAntiCollData({
-    uid:toBuffer(identity.uid),
-    atqa:toBuffer(identity.atqa),
-    sak:toBuffer(identity.sak),
-    ats:toBuffer(identity.ats || "")
+    uid:bytes(id.uid),
+    atqa:bytes(id.atqa),
+    sak:bytes(id.sak),
+    ats:bytes(id.ats || '')
   });
 
-  const actual = await readIdentity();
+  const actual = await identity();
 
   if (
-    actual.uid !== identity.uid ||
-    actual.atqa !== identity.atqa ||
-    actual.sak !== identity.sak
+    actual.uid !== id.uid ||
+    actual.atqa !== id.atqa ||
+    actual.sak !== id.sak
   ) {
-    throw new Error(
-      "Identity verification mismatch: " +
+    throw Error(
+      'UID verification mismatch: '+
       JSON.stringify(actual)
     );
   }
 
-  return actual;
+  log(
+    'Verified '+tags[index].name+
+    ' · '+actual.uid
+  );
 }
 
-async function applyProfile(profile) {
-  const slot = Number(await ultra.cmdSlotGetActive());
-
-  if (slot !== originalSlot) {
-    throw new Error("Active slot changed externally");
+async function setHF(enabled) {
+  if (typeof ultra.cmdSlotSetEnable !== 'function') {
+    throw Error('SDK does not expose cmdSlotSetEnable');
   }
 
-  // Preserve ATQA, SAK and ATS from the original
-  // NTAG215-compatible slot. Change only the UID.
-  const identity = {
-    ...sessionIdentity,
-    uid:profile.uid
-  };
+  if (!sdk.FreqType ||
+      sdk.FreqType.HF === undefined) {
+    throw Error('SDK FreqType.HF unavailable');
+  }
 
-  const actual = await writeIdentity(identity);
-  log("Verified "+profile.name+" · "+actual.uid);
-}
+  await assertSlot();
 
-function updateCountdown() {
-  if (!running || paused || !activeWait) return;
-
-  remainingMs = Math.max(
-    0,phaseEnd-performance.now()
+  await ultra.cmdSlotSetEnable(
+    originalSlot,
+    sdk.FreqType.HF,
+    enabled
   );
 
-  $('countdown').textContent = formatTime(remainingMs);
-
-  const percent = phaseTotalMs
-    ? Math.min(100,Math.max(0,
-        (1-remainingMs/phaseTotalMs)*100))
-    : 100;
-
-  $('phaseProgress').style.width = percent+"%";
-  $('percentage').textContent = Math.round(percent)+"%";
+  log('HF slot '+(enabled?'ENABLED':'DISABLED'));
 }
 
-function finishWait(reason) {
+async function ensureHFOn() {
+  if ($('rfReset').checked) await setHF(true);
+}
+
+async function disableHF() {
+  if ($('rfReset').checked) await setHF(false);
+}
+
+function resetDisplay(ms) {
+  $('timer').textContent = time(ms);
+  $('progress').style.width = '0%';
+  $('percent').textContent = '0%';
+}
+
+function endWait(reason) {
   if (!activeWait) return;
 
-  const current = activeWait;
+  const w = activeWait;
   activeWait = null;
-
-  if (current.timer) clearTimeout(current.timer);
-
-  waitResolve = null;
-  current.resolve(reason);
+  clearTimeout(w.timer);
+  w.resolve(reason);
 }
 
-function timedWait(ms,phaseName) {
-  phaseTotalMs = ms;
-  remainingMs = ms;
-  phaseEnd = performance.now()+ms;
+function wait(ms,phase,description) {
+  phaseDuration = ms;
+  phaseRemaining = ms;
+  phaseDeadline = performance.now()+ms;
 
-  setPhase(
-    phaseName,
-    phaseName === "delay"
-      ? "Waiting before loading next UID"
-      : "UID loaded and verified"
-  );
-
-  $('countdown').textContent = formatTime(ms);
-  $('phaseProgress').style.width = "0%";
-  $('percentage').textContent = "0%";
+  setPhase(phase,description);
+  resetDisplay(ms);
 
   return new Promise(resolve => {
-    const current = {
+    const w = {
       resolve,
-      timer:null
+      timer:null,
+      kind:phase
     };
 
-    activeWait = current;
-
-    const schedule = () => {
-      current.timer = setTimeout(() => {
-        if (activeWait !== current) return;
-        remainingMs = 0;
-        finishWait("elapsed");
-      },Math.max(0,remainingMs));
+    w.schedule = () => {
+      w.timer = setTimeout(() => {
+        if (activeWait === w) {
+          phaseRemaining = 0;
+          endWait('elapsed');
+        }
+      },Math.max(0,phaseRemaining));
     };
 
-    current.schedule = schedule;
-    schedule();
+    activeWait = w;
+    w.schedule();
   });
 }
 
-function pauseWait() {
+function tick() {
   if (!activeWait) return;
 
-  remainingMs = Math.max(
-    0,phaseEnd-performance.now()
-  );
+  if (!paused) {
+    phaseRemaining = Math.max(
+      0,phaseDeadline-performance.now()
+    );
+  }
 
-  clearTimeout(activeWait.timer);
-  activeWait.timer = null;
+  $('timer').textContent = time(phaseRemaining);
+
+  const pct = phaseDuration
+    ? Math.max(0,Math.min(
+        100,
+        100*(1-phaseRemaining/phaseDuration)
+      ))
+    : 100;
+
+  $('progress').style.width = pct+'%';
+  $('percent').textContent = Math.round(pct)+'%';
 }
 
-function resumeWait() {
-  if (!activeWait) return;
-
-  phaseEnd = performance.now()+remainingMs;
-  activeWait.schedule();
-}
-
-async function playback() {
+async function runPlaylist() {
   try {
-    await serial(captureOriginal);
+    await serial(snapshot);
 
-    while (running) {
-      setPhase("loading","Sending UID over Bluetooth");
-      showTag();
+    while (mode === 'playlist') {
+      showTag(position);
+      setPhase(
+        'loading',
+        'Preparing '+tags[position].name
+      );
 
-      await serial(() => applyProfile(profiles[position]));
-
-      if (!running) break;
-
-      if (paused) {
-        // Pause requested while a Bluetooth command
-        // was still running.
-        while (running && paused) {
-          await new Promise(resolve => {
-            const check = setInterval(() => {
-              if (!running || !paused) {
-                clearInterval(check);
-                resolve();
-              }
-            },100);
-          });
-        }
-        if (!running) break;
+      if ($('rfReset').checked) {
+        await serial(()=>setHF(false));
       }
 
-      const duration = Number($('duration').value);
-      const gap = Number($('gap').value);
+      await serial(()=>writeTag(position));
 
-      log(
-        "Emulating "+profiles[position].name+
-        " for "+duration+" seconds"
+      if (mode !== 'playlist') break;
+
+      if ($('rfReset').checked) {
+        await serial(()=>setHF(true));
+      }
+
+      if (mode !== 'playlist') break;
+
+      log('Presenting '+tags[position].name);
+
+      let result = await wait(
+        Number($('duration').value)*1000,
+        'emulating',
+        'UID loaded and verified'
       );
 
-      const result = await timedWait(
-        duration*1000,"emulating"
-      );
+      if (mode !== 'playlist') break;
 
-      if (!running) break;
+      if (result !== 'skip') {
+        done++;
+        $('completed').textContent = done;
+      }
 
-      if (result === "skip") {
-        skip = false;
-      } else {
-        completedCount++;
-        $('completed').textContent = completedCount;
+      if (
+        result !== 'skip' &&
+        position === tags.length-1 &&
+        !$('loop').checked
+      ) {
+        mode = 'idle';
+        setPhase(
+          'finished',
+          'All 28 identities presented'
+        );
+        log('Playlist finished');
+        break;
+      }
 
-        if (
-          position === profiles.length-1 &&
-          !$('loop').checked
-        ) {
-          running = false;
-          setPhase("finished","All tags processed");
-          $('countdown').textContent = "00:00";
-          $('phaseProgress').style.width = "100%";
-          $('percentage').textContent = "100%";
-          log("Playlist completed.");
-          break;
+      if (result !== 'skip') {
+        if ($('rfReset').checked) {
+          await serial(()=>setHF(false));
         }
 
-        if (gap>0) {
-          log("Delay: "+gap+" seconds");
+        if (mode !== 'playlist') break;
 
-          const delayResult = await timedWait(
-            gap*1000,"delay"
+        const gap = Number($('gap').value);
+
+        if (gap > 0) {
+          result = await wait(
+            gap*1000,
+            'delay',
+            $('rfReset').checked
+              ? 'HF slot disabled'
+              : 'Software delay (HF stays enabled)'
           );
 
-          if (!running) break;
-
-          if (delayResult === "skip") {
-            skip = false;
-          }
+          if (mode !== 'playlist') break;
         }
       }
 
-      if (!running) break;
-
-      position = (position+1)%profiles.length;
+      skipRequested = false;
+      position = (position+1)%tags.length;
     }
+
   } catch(e) {
-    log("ERROR: "+(e.message||e));
-    setPhase("error",e.message||String(e));
-    running = false;
+    log('PLAYLIST ERROR: '+(e.message||e));
+    setPhase('error',e.message||String(e));
+
   } finally {
-    running = false;
+    mode = 'idle';
     paused = false;
-    skip = false;
-    loopPromise = null;
-    updateControls();
+    skipRequested = false;
+    endWait('stop');
+    $('pause').textContent = '⏸ Pause';
+    updateButtons();
+  }
+}
+
+async function runManual(index,seconds) {
+  try {
+    await serial(snapshot);
+    showTag(index);
+    setPhase('loading','Loading selected tag');
+
+    if ($('rfReset').checked) {
+      await serial(()=>setHF(false));
+    }
+
+    await serial(()=>writeTag(index));
+
+    if (mode !== 'manual') return;
+
+    if ($('rfReset').checked) {
+      await serial(()=>setHF(true));
+    }
+
+    if (mode !== 'manual') return;
+
+    log('Manual presentation: '+tags[index].name);
+
+    await wait(
+      seconds*1000,
+      'emulating',
+      'Manual presentation'
+    );
+
+    if (mode === 'manual') {
+      log('Manual timer completed');
+
+      if ($('rfReset').checked) {
+        await serial(()=>setHF(false));
+      }
+
+      setPhase(
+        'finished',
+        'Manual presentation complete'
+      );
+    }
+
+  } catch(e) {
+    log('MANUAL ERROR: '+(e.message||e));
+    setPhase('error',e.message||String(e));
+
+  } finally {
+    mode = 'idle';
+    endWait('stop');
+    updateButtons();
   }
 }
 
 $('connect').onclick = async () => {
   if (connected || busy) return;
+
   busy = true;
-  updateControls();
+  updateButtons();
 
   try {
-    if (!sdk.ChameleonUltra || !sdk.WebbleAdapter) {
-      throw new Error("SDK not loaded");
+    if (
+      !sdk.ChameleonUltra ||
+      !sdk.WebbleAdapter ||
+      !BufferType?.from
+    ) {
+      throw Error(
+        'Required SDK/Buffer script unavailable'
+      );
     }
-    if (!BufferClass?.from) {
-      throw new Error("Buffer library unavailable");
-    }
-
-    $('deviceInfo').textContent = "Connecting...";
 
     ultra = new sdk.ChameleonUltra();
 
-    // Keep the Bluetooth sequence proven on v0.2.
     await ultra.use(new sdk.WebbleAdapter());
     await ultra.connect();
 
-    const firmware = await ultra.cmdGetAppVersion();
+    const version = await ultra.cmdGetAppVersion();
 
     connected = true;
-    $('connectionBadge').textContent = "Connected";
-    $('connectionBadge').className =
-      "badge connected";
-    $('deviceInfo').textContent =
-      "Connected · Firmware "+firmware;
+    $('connection').textContent = 'Connected';
+    $('connection').className = 'pill good';
+    $('device').textContent = 'Firmware '+version;
 
-    log("Bluetooth connected. Firmware "+firmware);
+    log('Connected · Firmware '+version);
 
     await serial(inspect);
 
   } catch(e) {
-    log("Connection error: "+(e.message||e));
+    log('CONNECT ERROR: '+(e.message||e));
 
-    try { await ultra?.disconnect(); } catch(_) {}
+    try {
+      await ultra?.disconnect();
+    } catch(_) {}
 
     ultra = null;
     connected = false;
+    $('device').textContent = 'Connection failed';
 
-    $('connectionBadge').textContent = "Disconnected";
-    $('connectionBadge').className = "badge";
-    $('deviceInfo').textContent = "Connection failed";
   } finally {
     busy = false;
-    updateControls();
+    updateButtons();
   }
 };
 
 $('disconnect').onclick = async () => {
-  if (running || busy) return;
-  busy = true;
-  updateControls();
+  if (!connected || mode !== 'idle' || busy) return;
 
-  try { await ultra?.disconnect(); }
-  catch(e) { log("Disconnect: "+e.message); }
+  busy = true;
+  updateButtons();
+
+  try {
+    await ultra.disconnect();
+  } catch(e) {
+    log('Disconnect warning: '+e.message);
+  }
 
   ultra = null;
   connected = false;
-  originalIdentity = null;
+  original = null;
   originalSlot = null;
-  sessionIdentity = null;
+  originalHFEnabled = null;
 
-  $('connectionBadge').textContent = "Disconnected";
-  $('connectionBadge').className = "badge";
-  $('deviceInfo').textContent = "Not connected";
-  $('slotInfo').textContent = "No active device";
+  $('connection').textContent = 'Disconnected';
+  $('connection').className = 'pill';
+  $('device').textContent = 'Not connected';
 
   busy = false;
-  updateControls();
+  updateButtons();
 };
 
 $('inspect').onclick = async () => {
-  if (!connected || running || busy) return;
+  if (!connected || busy || mode !== 'idle') return;
+
   busy = true;
-  updateControls();
+  updateButtons();
 
-  try { await serial(inspect); }
-  catch(e) { log("Inspect error: "+e.message); }
-
-  busy = false;
-  updateControls();
+  try {
+    await serial(inspect);
+  } catch(e) {
+    log('INSPECT ERROR: '+e.message);
+  } finally {
+    busy = false;
+    updateButtons();
+  }
 };
 
-$('start').onclick = () => {
-  if (!connected || running || busy) return;
-
-  const duration = Number($('duration').value);
-  const gap = Number($('gap').value);
+function validNumber(id,min,max) {
+  const n = Number($(id).value);
 
   if (
-    !Number.isInteger(duration) ||
-    duration<1 || duration>3600 ||
-    !Number.isInteger(gap) ||
-    gap<0 || gap>3600
+    !Number.isInteger(n) ||
+    n < min ||
+    n > max
   ) {
-    log("Invalid playback settings.");
+    throw Error(
+      id+' must be between '+min+' and '+max
+    );
+  }
+
+  return n;
+}
+
+$('start').onclick = () => {
+  if (!connected || busy || mode !== 'idle') return;
+
+  try {
+    validNumber('duration',1,3600);
+    validNumber('gap',0,3600);
+  } catch(e) {
+    log(e.message);
     return;
   }
 
+  mode = 'playlist';
   position = 0;
-  completedCount = 0;
-  running = true;
+  done = 0;
   paused = false;
-  skip = false;
+  skipRequested = false;
 
-  $('completed').textContent = "0";
-  log("Starting playlist.");
+  $('completed').textContent = '0';
 
-  updateControls();
-  loopPromise = playback();
+  updateButtons();
+  worker = runPlaylist();
+};
+
+$('stop').onclick = () => {
+  if (mode !== 'playlist') return;
+
+  mode = 'idle';
+  paused = false;
+  endWait('stop');
+
+  setPhase(
+    'idle',
+    'Stopped by user; current HF state unchanged'
+  );
+
+  log('Playlist stop requested');
+  updateButtons();
+};
+
+$('next').onclick = () => {
+  if (mode !== 'playlist') return;
+
+  paused = false;
+  skipRequested = true;
+  endWait('skip');
+
+  $('pause').textContent = '⏸ Pause';
+  log('Next requested');
 };
 
 $('pause').onclick = () => {
-  if (!running) return;
+  if (mode !== 'playlist') return;
 
   paused = !paused;
 
   if (paused) {
-    pauseWait();
-    setPhase("paused","Playlist timer paused");
-    $('pause').textContent = "▶ Resume";
-    log("Playlist paused.");
-  } else {
-    resumeWait();
+    if (activeWait) {
+      phaseRemaining = Math.max(
+        0,phaseDeadline-performance.now()
+      );
+      clearTimeout(activeWait.timer);
+    }
+
     setPhase(
-      activeWait && phaseTotalMs ===
-        Number($('gap').value)*1000
-        ? "delay" : "emulating",
-      "Playback resumed"
+      'paused',
+      'NFC hardware remains in its current state'
     );
-    $('pause').textContent = "⏸ Pause";
-    log("Playlist resumed.");
+
+    $('pause').textContent = '▶ Resume';
+
+  } else {
+    if (activeWait) {
+      phaseDeadline = performance.now()+phaseRemaining;
+      activeWait.schedule();
+    }
+
+    setPhase(
+      activeWait?.kind || 'emulating',
+      'Timer resumed'
+    );
+
+    $('pause').textContent = '⏸ Pause';
   }
+
+  log(paused?'Paused':'Resumed');
 };
 
-$('stop').onclick = () => {
-  if (!running) return;
+$('manualStart').onclick = () => {
+  if (!connected || busy || mode !== 'idle') return;
 
-  running = false;
-  paused = false;
+  let seconds;
 
-  finishWait("stop");
-  setPhase("idle","Stopped by user");
+  try {
+    seconds = validNumber('manualSeconds',1,3600);
+  } catch(e) {
+    log(e.message);
+    return;
+  }
 
-  $('pause').textContent = "⏸ Pause";
-  log("Stop requested.");
+  const index = Number($('manualTag').value);
 
-  updateControls();
+  mode = 'manual';
+  updateButtons();
+
+  worker = runManual(index,seconds);
 };
 
-$('next').onclick = () => {
-  if (!running) return;
+$('manualStop').onclick = () => {
+  if (mode !== 'manual') return;
 
-  skip = true;
-  paused = false;
-  $('pause').textContent = "⏸ Pause";
+  mode = 'idle';
+  endWait('stop');
 
-  finishWait("skip");
+  setPhase(
+    'idle',
+    'Manual presentation stopped'
+  );
 
-  log("Next tag requested.");
+  log('Manual stop requested');
+  updateButtons();
 };
 
 $('restore').onclick = async () => {
-  if (!connected || running || busy ||
-      !originalIdentity) return;
+  if (
+    !connected ||
+    busy ||
+    mode !== 'idle' ||
+    !original
+  ) return;
 
   busy = true;
-  updateControls();
+  updateButtons();
 
   try {
-    const slot = Number(
-      await serial(() => ultra.cmdSlotGetActive())
-    );
+    await serial(async()=>{
+      await assertSlot();
 
-    if (slot !== originalSlot) {
-      throw new Error("Active slot changed");
-    }
+      await ultra.cmdHf14aSetAntiCollData({
+        uid:bytes(original.uid),
+        atqa:bytes(original.atqa),
+        sak:bytes(original.sak),
+        ats:bytes(original.ats || '')
+      });
 
-    await serial(
-      () => writeIdentity(originalIdentity)
-    );
+      const x = await identity();
 
-    log("Original identity restored.");
+      if (x.uid !== original.uid) {
+        throw Error(
+          'Restore UID verification failed'
+        );
+      }
 
-    originalIdentity = null;
-    originalSlot = null;
-    sessionIdentity = null;
+      if (
+        originalHFEnabled !== null &&
+        typeof ultra.cmdSlotSetEnable === 'function'
+      ) {
+        await ultra.cmdSlotSetEnable(
+          originalSlot,
+          sdk.FreqType.HF,
+          originalHFEnabled
+        );
+      }
+
+      log('Restored original identity '+x.uid);
+
+      original = null;
+      originalSlot = null;
+      originalHFEnabled = null;
+    });
 
     await serial(inspect);
 
+    setPhase(
+      'idle',
+      'Original identity restored'
+    );
+
   } catch(e) {
-    log("Restore failed: "+e.message);
+    log('RESTORE ERROR: '+(e.message||e));
   } finally {
     busy = false;
-    updateControls();
+    updateButtons();
   }
 };
 
-$('clearLog').onclick = () => {
-  $('log').textContent = "Activity log cleared.";
+$('clear').onclick = () => {
+  $('log').textContent = 'Log cleared.';
 };
 
-setInterval(updateCountdown,100);
-
-renderPlaylist();
-$('totalTags').textContent = profiles.length;
-$('tagCounter').textContent = "0 / "+profiles.length;
-$('nextTag').textContent = "Next: "+profiles[0].name;
-updateControls();
+setInterval(tick,100);
+render();
+updateButtons();
 
 </script>
 </body>
