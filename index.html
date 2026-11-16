@@ -1,1027 +1,532 @@
 
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0b1020">
-<title>NFC Playlist Plus — Manual v1.2</title>
+<title>NFC Controller · Mobile</title>
 <style>
-:root{
-  color-scheme:dark;
-  font-family:Inter,system-ui,-apple-system,sans-serif;
-  background:#0b1020;color:#f5f7ff
-}
+:root{color-scheme:dark;font-family:system-ui,-apple-system,Segoe UI,sans-serif;background:#090f1c;color:#f4f7ff}
 *{box-sizing:border-box}
-body{
-  margin:0;padding:16px 12px 60px;
-  background:radial-gradient(ellipse at top,#233d62,transparent 65%),#0b1020
-}
-main{max-width:780px;margin:auto}
-header{text-align:center;padding:20px 0}
-.logo{
-  width:64px;height:64px;margin:auto;
-  display:grid;place-items:center;
-  border-radius:20px;font-size:32px;
-  background:linear-gradient(135deg,#418aff,#7953ed)
-}
-h1{font-size:27px;margin:12px 0 4px}
-h2{font-size:18px;margin:0 0 13px}
-.muted{color:#9eafca;font-size:13px}
-.card{
-  background:#151f33;border:1px solid #30415e;
-  border-radius:20px;padding:19px;margin:15px 0
-}
-.row{
-  display:flex;align-items:center;
-  justify-content:space-between;
-  flex-wrap:wrap;gap:10px
-}
-.buttons{
-  display:flex;gap:9px;flex-wrap:wrap;
-  margin-top:15px
-}
-button{
-  border:0;border-radius:12px;
-  padding:13px 16px;background:#304360;
-  color:white;font:inherit;font-size:14px;
-  font-weight:750;cursor:pointer
-}
-button:disabled{opacity:.35;cursor:not-allowed}
-button.primary{background:linear-gradient(120deg,#3d83ff,#7654ee)}
-button.green{background:#187b58}
-button.red{background:#a43d50}
-button.orange{background:#98651e}
-button.large{flex:1;font-size:16px;padding:16px}
-.pill{
-  background:#2a3a53;border-radius:40px;
-  padding:7px 12px;font-size:12px;font-weight:800
-}
-.pill.good{background:#164a38;color:#85f4b9}
-.pill.warn{background:#58411e;color:#ffdf96}
-.pill.bad{background:#562633;color:#ffb0bc}
-.player{
-  text-align:center;
-  background:radial-gradient(circle at 50% 12%,#25496f,transparent 65%),#151f33
-}
-.signal{
-  width:80px;height:80px;margin:17px auto;
-  display:grid;place-items:center;
-  background:#203d5a;border:2px solid #547cae;
-  border-radius:50%;font-size:36px
-}
-.signal.live{
-  border-color:#6be9b0;
-  box-shadow:0 0 25px #56dca655
-}
-.eyebrow{
-  color:#b2c9ff;letter-spacing:2px;
-  font-size:12px;font-weight:800
-}
-.tagName{
-  font-size:80px;font-weight:850;
-  letter-spacing:-3px;margin:12px 0
-}
-.clock{
-  font-size:66px;font-weight:850;
-  font-variant-numeric:tabular-nums;
-  margin:17px 0 2px
-}
-.bar{
-  height:10px;background:#2a3d58;
-  border-radius:40px;overflow:hidden;
-  margin:20px 0 12px
-}
-.fill{
-  height:100%;width:0;
-  background:linear-gradient(90deg,#488aff,#69e7b3)
-}
-.settings{
-  display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:12px
-}
-.field{
-  background:#0e192b;
-  border:1px solid #354c6a;
-  border-radius:12px;padding:12px
-}
-.field label{
-  display:block;font-size:12px;
-  color:#a6b8d3;margin-bottom:8px
-}
-input[type=number],select{
-  width:100%;padding:11px;
-  border:1px solid #486080;border-radius:9px;
-  background:#1d2d46;color:white;font:inherit
-}
-.check{
-  display:flex;align-items:center;gap:10px;
-  margin:14px 0;font-size:14px
-}
+body{margin:0;background:radial-gradient(ellipse at top,#21385d 0,transparent 65%),#090f1c}
+main{max-width:650px;margin:auto;padding:12px 12px calc(30px + env(safe-area-inset-bottom))}
+.top{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:5px 0 12px}
+.brand{font-weight:800;letter-spacing:-.4px;font-size:19px}
+.small{font-size:12px;color:#a7b6d0}
+.pill{border-radius:30px;background:#2c3a51;padding:7px 11px;font-size:12px;font-weight:750}
+.pill.good{background:#164c38;color:#86f2b9}
+.pill.warn{background:#62471d;color:#ffdd8b}
+.pill.bad{background:#632838;color:#ffb1c2}
+.card{border:1px solid #30415b;background:#141e31;border-radius:18px;padding:14px;margin:10px 0}
+.row{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.buttons{display:flex;gap:8px;flex-wrap:wrap}
+button{min-height:44px;border:0;border-radius:12px;background:#30425e;color:#fff;padding:11px 12px;font:inherit;font-size:14px;font-weight:750;touch-action:manipulation;cursor:pointer}
+button:disabled{opacity:.38;cursor:not-allowed}
+.primary{background:linear-gradient(120deg,#3c81f6,#7652e5)}
+.green{background:#16805b}
+.red{background:#a13e52}
+.amber{background:#92611f}
+.device{display:flex;gap:8px;align-items:center;justify-content:space-between}
+.device .buttons button{min-height:38px;padding:8px 11px;font-size:12px}
+.hero{text-align:center;padding:14px 14px 13px;background:radial-gradient(circle at 50% 10%,#254a70,transparent 70%),#141e31}
+.hero .label{font-size:11px;color:#b4c9e9;letter-spacing:1.5px;font-weight:800}
+.tag{font-size:clamp(50px,14vw,76px);font-weight:850;line-height:1.13;letter-spacing:-2px;margin:7px 0}
+.time{font-size:clamp(30px,8vw,42px);font-weight:800;font-variant-numeric:tabular-nums;margin:5px 0}
+.state{font-size:13px;color:#adc0dd}
+.control-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:11px}
+.control-grid button{min-height:54px;font-size:15px}
+.utility{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:8px}
+.utility button{font-size:12px;padding:9px 5px}
+.heading{font-size:14px;font-weight:800;margin-bottom:9px}
+.taggrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}
+.taggrid button{min-height:43px;padding:8px 2px;background:#243550;border:1px solid #3d5476;font-size:14px}
+.taggrid button.selected{background:#255944;border-color:#71e5ad}
+.taggrid button.loaded{box-shadow:inset 0 0 0 2px #83a8ff}
+.taggrid button.pending{background:#6b4a22;border-color:#edba63}
+.meta{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px}
+details summary{font-weight:750;cursor:pointer;padding:3px 0}
+details .inner{margin-top:14px}
+.settings{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.field{background:#0c1728;border:1px solid #334966;border-radius:11px;padding:10px}
+.field label{display:block;color:#b0c0d8;font-size:12px;margin-bottom:6px}
+.field input{width:100%;font:inherit;color:#fff;background:#1c2d45;border:1px solid #4b6383;border-radius:9px;padding:10px}
+.check{display:flex;gap:9px;align-items:center;font-size:13px;margin:12px 0}
 .check input{width:18px;height:18px}
-.hint{
-  color:#97aac7;font-size:12px;
-  line-height:1.65
+.hint{color:#9db0ce;font-size:12px;line-height:1.55}
+pre{background:#0b1423;border-radius:10px;padding:10px;max-height:190px;overflow:auto;white-space:pre-wrap;color:#adc1df;font-size:11px}
+.sticky{position:sticky;bottom:calc(7px + env(safe-area-inset-bottom));z-index:5;background:#17243aef;border:1px solid #4b6385;backdrop-filter:blur(14px);border-radius:15px;padding:8px;display:none;grid-template-columns:1fr 1fr;gap:8px;box-shadow:0 7px 35px #0009}
+.sticky.show{display:grid}
+.sticky button{min-height:49px}
+@media(min-width:700px){
+ main{padding-top:20px}
+ .taggrid{grid-template-columns:repeat(7,1fr)}
+ .sticky{display:none!important}
 }
-.grid{
-  display:grid;grid-template-columns:repeat(4,1fr);
-  gap:8px;margin-top:14px
-}
-.tagButton{
-  padding:14px 4px;background:#22334e;
-  border:1px solid #3b5070
-}
-.tagButton.selected{
-  background:#205540;border-color:#78e6ae
-}
-.tagButton.loaded{
-  box-shadow:inset 0 0 0 2px #6a9fff
-}
-.stats{
-  display:grid;grid-template-columns:repeat(3,1fr);
-  gap:9px
-}
-.stat{
-  background:#151f33;border:1px solid #30415e;
-  border-radius:13px;padding:14px 5px;text-align:center
-}
-.stat strong{display:block;font-size:25px}
-.stat span{color:#9aacca;font-size:12px}
-pre{
-  white-space:pre-wrap;max-height:200px;
-  overflow:auto;background:#0a1323;
-  padding:14px;border-radius:12px;
-  font-size:12px;color:#b3c6e2
-}
-footer{
-  text-align:center;color:#788ba8;
-  font-size:12px;margin-top:25px
-}
-@media(max-width:430px){
-  .card{padding:15px}
-  .tagName{font-size:65px}
-  .clock{font-size:56px}
-  button{padding:12px}
+@media(max-width:350px){
+ .device{align-items:flex-start}
+ .device .buttons{justify-content:flex-end}
+ .device .buttons button{padding:8px}
+ .brand{font-size:17px}
 }
 </style>
 </head>
 <body>
 <main>
-
-<header>
-  <div class="logo">📡</div>
-  <h1>NFC Playlist Plus</h1>
-  <div class="muted">Chameleon Ultra · Manual v1.2</div>
-</header>
-
-<section class="card">
-  <div class="row">
-    <div>
-      <strong>Chameleon Ultra</strong>
-      <div class="muted" id="device">Not connected</div>
-    </div>
-    <span class="pill" id="connection">Disconnected</span>
-  </div>
-
-  <div class="buttons">
-    <button class="primary" id="connect">Connect</button>
-    <button id="disconnect" disabled>Disconnect</button>
-    <button id="restore" disabled>Restore Original</button>
-  </div>
-
-  <p class="hint" id="slotInfo">
-    Connect using Chrome Web Bluetooth.
-  </p>
-</section>
-
-<section class="card player">
-
-  <div class="row">
-    <span class="pill" id="badge">READY</span>
-    <span class="muted" id="position">Tag 1 of 28</span>
-  </div>
-
-  <div class="signal" id="signal">◉</div>
-
-  <div class="eyebrow">MANUAL NFC CONTROL</div>
-  <div class="tagName" id="tagName">1f1</div>
-
-  <div class="muted" id="description">
-    Press Start to load this tag
-  </div>
-
-  <div class="clock" id="timer">00:00</div>
-  <div class="muted" id="timerLabel">
-    Elapsed emulation time
-  </div>
-
-  <div class="bar">
-    <div class="fill" id="progress"></div>
-  </div>
-
-  <div class="row">
-    <span class="muted" id="status">Ready</span>
-    <span class="muted" id="nextName">Next: 1f2</span>
-  </div>
-
-  <div class="buttons">
-    <button class="green large" id="start" disabled>
-      ▶ Start
-    </button>
-    <button class="red large" id="stop" disabled>
-      ■ Stop
-    </button>
-  </div>
-
-  <div class="buttons">
-    <button class="primary large" id="previous" disabled>
-      ⏮ Previous
-    </button>
-    <button class="primary large" id="next" disabled>
-      Next ⏭
-    </button>
-  </div>
-
-  <div class="buttons">
-    <button class="orange" id="repeat" disabled>
-      ↻ Repeat Current
-    </button>
-    <button id="skip" disabled>
-      ⏩ Skip Delay
-    </button>
-  </div>
-</section>
-
-<section class="card">
-  <h2>Random Delay Settings</h2>
-
-  <div class="settings">
-    <div class="field">
-      <label for="minDelay">Minimum delay (sec)</label>
-      <input type="number" id="minDelay"
-             value="15" min="0" max="3600">
-    </div>
-
-    <div class="field">
-      <label for="maxDelay">Maximum delay (sec)</label>
-      <input type="number" id="maxDelay"
-             value="25" min="0" max="3600">
-    </div>
-  </div>
-
-  <label class="check">
-    <input type="checkbox" id="useDelay" checked>
-    Apply random delay on Next / Previous
-  </label>
-
-  <p class="hint">
-    Each Next or Previous click chooses a fresh random
-    delay between 15 and 25 seconds, inclusive.
-    The next tag loads after the countdown.
-    Emulation has no automatic timeout.
-  </p>
-
-  <p class="hint">
-    During a delay, the previously loaded NFC identity
-    remains active. The delay separates Bluetooth
-    updates; it does not itself simulate tag removal.
-  </p>
-</section>
-
-<div class="stats">
-  <div class="stat">
-    <strong>28</strong>
-    <span>Total tags</span>
-  </div>
-  <div class="stat">
-    <strong id="loads">0</strong>
-    <span>Tag loads</span>
-  </div>
-  <div class="stat">
-    <strong id="currentNumber">1</strong>
-    <span>Selected tag</span>
-  </div>
+<div class="top">
+ <div>
+  <div class="brand">📡 NFC Controller <span class="small">v1.3</span></div>
+  <div class="small">Manual · 28 tags</div>
+ </div>
+ <span id="connection" class="pill">Offline</span>
 </div>
 
-<section class="card">
-  <h2>Quick Tag Selection</h2>
+<section class="card device">
+ <div>
+  <strong style="font-size:13px">Chameleon Ultra</strong>
+  <div id="device" class="small">Not connected</div>
+ </div>
+ <div class="buttons">
+  <button id="connect" class="primary">Connect</button>
+  <button id="disconnect" disabled>Disconnect</button>
+ </div>
+</section>
 
-  <p class="hint">
-    Tap a tag to select it. Press Load Selected to
-    emulate it immediately without a delay.
-  </p>
+<section class="card hero">
+ <div class="row">
+  <span id="badge" class="pill">READY</span>
+  <span id="position" class="small">1 / 28</span>
+ </div>
+ <div class="label" style="margin-top:12px">CURRENT TAG</div>
+ <div id="tagName" class="tag">1f1</div>
+ <div id="description" class="state">Choose a tag or press Start</div>
+ <div id="timer" class="time">00:00</div>
+ <div id="timerLabel" class="small">Elapsed time</div>
 
-  <div class="field">
-    <label for="jump">Choose tag</label>
-    <select id="jump"></select>
-  </div>
+ <div class="control-grid">
+  <button id="previous" class="primary" disabled>‹ Previous</button>
+  <button id="next" class="primary" disabled>Next ›</button>
+  <button id="start" class="green" disabled>▶ Start</button>
+  <button id="stop" class="red" disabled>■ Stop</button>
+ </div>
 
-  <div class="buttons">
-    <button class="primary" id="load" disabled>
-      Load Selected
-    </button>
-  </div>
-
-  <div class="grid" id="grid"></div>
+ <div class="utility">
+  <button id="repeat" disabled>↻ Reload</button>
+  <button id="skip" disabled>⏩ Skip delay</button>
+  <button id="restore" disabled>Restore</button>
+ </div>
 </section>
 
 <section class="card">
-  <div class="row">
-    <h2>Activity Log</h2>
+ <div class="meta">
+  <div class="heading" style="margin:0">
+   Quick select <span class="small">· tap to load</span>
+  </div>
+  <span id="selectedStatus" class="small">28 tags</span>
+ </div>
+ <div class="taggrid" id="grid"></div>
+ <p class="hint" style="margin-bottom:0">
+  Tap a tag to load it immediately. Previous/Next use the
+  random delay. The loaded tag stays active indefinitely.
+ </p>
+</section>
+
+<section class="card">
+ <details>
+  <summary>⚙ Delay settings & advanced</summary>
+  <div class="inner">
+   <div class="settings">
+    <div class="field">
+     <label for="minDelay">Min delay (sec)</label>
+     <input id="minDelay" type="number" value="15" min="0" max="3600">
+    </div>
+    <div class="field">
+     <label for="maxDelay">Max delay (sec)</label>
+     <input id="maxDelay" type="number" value="25" min="0" max="3600">
+    </div>
+   </div>
+   <label class="check">
+    <input id="useDelay" type="checkbox" checked>
+    Random delay for Previous / Next
+   </label>
+   <p class="hint">
+    During the countdown, the previously loaded tag remains
+    active. Stop ends controller sequencing, not the hardware's
+    NFC transmission. Restore returns the original saved identity.
+   </p>
+   <div class="row">
+    <span id="slotInfo" class="small">Connect to view slot</span>
+    <span id="loads" class="small">0 loads</span>
+   </div>
+  </div>
+ </details>
+</section>
+
+<section class="card">
+ <details>
+  <summary>Activity log</summary>
+  <div class="inner">
+   <div class="row">
+    <span class="small">Commands and errors</span>
     <button id="clearLog">Clear</button>
+   </div>
+   <pre id="log">Mobile controller ready.</pre>
   </div>
-  <pre id="log">Manual NFC Controller v1.2 ready.</pre>
+ </details>
 </section>
 
-<footer>
-  28 tags · Unlimited emulation · Random delay
-</footer>
-
+<div id="sticky" class="sticky">
+ <button id="stickyPrevious" class="primary">‹ Previous</button>
+ <button id="stickyNext" class="primary">Next ›</button>
+</div>
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/buffer@6.0.3/index.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chameleon-ultra.js@0/dist/index.global.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chameleon-ultra.js@0/dist/plugin/WebbleAdapter.global.js"></script>
-
 <script>
 'use strict';
 
 const RAW=[
-['1f1','04 73 71 2F 37 02 89'],
-['1f2','04 B3 57 F2 36 02 89'],
-['1f3','04 01 AB 45 46 02 89'],
-['2f1','04 83 BC 07 35 02 89'],
-['2f2','04 A1 F6 E7 45 02 89'],
-['2f3','04 E1 99 4B 46 02 89'],
-['3f1','04 11 08 22 46 02 89'],
-['3f2','04 73 FE EF 36 02 89'],
-['3f3','04 A3 92 A3 36 02 89'],
-['4f1','04 01 59 69 46 02 89'],
-['4f2','04 11 F7 D6 45 02 89'],
-['4f3','04 01 BA 07 46 02 89'],
-['5f1','04 83 47 0A 37 02 89'],
-['5f2','04 13 0D 16 37 02 89'],
-['5f3','04 73 2F 07 35 02 89'],
-['6f1','04 B3 C5 A2 36 02 89'],
-['6f2','04 B1 B8 2E 46 02 89'],
-['6f3','04 A1 3C 55 46 02 89'],
-['7f1','04 53 10 9E 36 02 89'],
-['7f2','04 B3 82 31 37 02 89'],
-['7f3','04 93 5A 42 34 02 89'],
-['8f1','04 33 BA 0C 35 02 89'],
-['8f2','04 43 1C F3 36 02 89'],
-['8f3','04 F1 A3 4F 46 02 89'],
-['Lg1','04 73 9B 0F 35 02 89'],
-['Lg2','04 11 51 DD 45 02 89'],
-['Lg3','04 93 85 CC 36 02 89'],
-['Lg4','04 73 FB AD 36 02 89']
+ ['1f1','04 73 71 2F 37 02 89'],
+ ['1f2','04 B3 57 F2 36 02 89'],
+ ['1f3','04 01 AB 45 46 02 89'],
+ ['2f1','04 83 BC 07 35 02 89'],
+ ['2f2','04 A1 F6 E7 45 02 89'],
+ ['2f3','04 E1 99 4B 46 02 89'],
+ ['3f1','04 11 08 22 46 02 89'],
+ ['3f2','04 73 FE EF 36 02 89'],
+ ['3f3','04 A3 92 A3 36 02 89'],
+ ['4f1','04 01 59 69 46 02 89'],
+ ['4f2','04 11 F7 D6 45 02 89'],
+ ['4f3','04 01 BA 07 46 02 89'],
+ ['5f1','04 83 47 0A 37 02 89'],
+ ['5f2','04 13 0D 16 37 02 89'],
+ ['5f3','04 73 2F 07 35 02 89'],
+ ['6f1','04 B3 C5 A2 36 02 89'],
+ ['6f2','04 B1 B8 2E 46 02 89'],
+ ['6f3','04 A1 3C 55 46 02 89'],
+ ['7f1','04 53 10 9E 36 02 89'],
+ ['7f2','04 B3 82 31 37 02 89'],
+ ['7f3','04 93 5A 42 34 02 89'],
+ ['8f1','04 33 BA 0C 35 02 89'],
+ ['8f2','04 43 1C F3 36 02 89'],
+ ['8f3','04 F1 A3 4F 46 02 89'],
+ ['Lg1','04 73 9B 0F 35 02 89'],
+ ['Lg2','04 11 51 DD 45 02 89'],
+ ['Lg3','04 93 85 CC 36 02 89'],
+ ['Lg4','04 73 FB AD 36 02 89']
 ];
 
 const tags=RAW.map(([name,uid])=>({name,uid}));
 const $=id=>document.getElementById(id);
-
 const sdk=window.ChameleonUltraJS||{};
 const Buf=sdk.Buffer||window.buffer?.Buffer||window.Buffer;
 
-let ultra=null;
-let connected=false;
-let busy=false;
-
-let mode='idle';
-let selected=0;
-let active=-1;
-let loads=0;
-
-let original=null;
-let slot=null;
-
-let operation=0;
-let delayTimer=null;
-let delayFinish=null;
-let delayDeadline=0;
-let delayDuration=0;
-let delayTarget=-1;
-
-let emulationStarted=0;
+let ultra=null,connected=false,busy=false,mode='idle';
+let selected=0,active=-1,loads=0,original=null,slot=null;
+let operation=0,delayTimer=null,delayDeadline=0;
+let delayDuration=0,delayTarget=-1,emulationStarted=0;
 let queue=Promise.resolve();
 
-function log(message){
-  const el=$('log');
-  el.textContent+='\n'+
-    new Date().toLocaleTimeString()+
-    '  '+message;
-  el.scrollTop=el.scrollHeight;
+function log(s){
+ const el=$('log');
+ el.textContent+='\n'+new Date().toLocaleTimeString()+'  '+s;
+ el.scrollTop=el.scrollHeight;
 }
-
 function serial(fn){
-  const result=queue.then(fn);
-  queue=result.catch(()=>{});
-  return result;
+ const p=queue.then(fn);
+ queue=p.catch(()=>{});
+ return p;
 }
-
-function hex(buffer){
-  return Array.from(buffer||[])
-    .map(v=>Number(v).toString(16).padStart(2,'0'))
-    .join(' ').toUpperCase();
+function hex(b){
+ return Array.from(b||[])
+  .map(v=>Number(v).toString(16).padStart(2,'0'))
+  .join(' ').toUpperCase();
 }
-
-function normalizeHex(value){
-  return String(value||'')
-    .replace(/\s/g,'').toUpperCase();
+function normalizeHex(v){
+ return String(v||'').replace(/\s/g,'').toUpperCase();
 }
-
-function toBuffer(value){
-  if(!Buf?.from){
-    throw Error('Buffer library unavailable');
-  }
-
-  const h=normalizeHex(value);
-
-  if(h.length%2||!/^[0-9A-F]*$/.test(h)){
-    throw Error('Invalid hex data');
-  }
-
-  return Buf.from(
-    (h.match(/../g)||[]).map(v=>parseInt(v,16))
-  );
+function toBuffer(v){
+ if(!Buf?.from)throw Error('Buffer library unavailable');
+ const h=normalizeHex(v);
+ if(h.length%2||!/^[0-9A-F]*$/.test(h))
+  throw Error('Invalid hex');
+ return Buf.from((h.match(/../g)||[]).map(v=>parseInt(v,16)));
 }
-
-function clock(ms){
-  const sec=Math.max(0,Math.floor(ms/1000));
-  const min=Math.floor(sec/60);
-
-  return String(min).padStart(2,'0')+
-    ':'+String(sec%60).padStart(2,'0');
+function clock(ms,ceil=false){
+ const s=Math.max(0,ceil?Math.ceil(ms/1000):Math.floor(ms/1000));
+ return String(Math.floor(s/60)).padStart(2,'0')+
+  ':'+String(s%60).padStart(2,'0');
 }
-
-function remainingClock(ms){
-  const sec=Math.max(0,Math.ceil(ms/1000));
-  const min=Math.floor(sec/60);
-
-  return String(min).padStart(2,'0')+
-    ':'+String(sec%60).padStart(2,'0');
+function phase(name,message){
+ const b=$('badge');
+ b.textContent=name.toUpperCase();
+ b.className='pill'+
+  (name==='emulating'?' good':
+   name==='delay'?' warn':
+   name==='error'?' bad':'');
+ $('description').textContent=message;
 }
-
-function setPhase(name,message){
-  const badge=$('badge');
-
-  badge.textContent=name.toUpperCase();
-  badge.className='pill';
-
-  if(name==='emulating'){
-    badge.classList.add('good');
-  }else if(name==='delay'){
-    badge.classList.add('warn');
-  }else if(name==='error'){
-    badge.classList.add('bad');
-  }
-
-  $('signal').classList.toggle(
-    'live',name==='emulating'
-  );
-
-  $('status').textContent=message;
+function selectTag(i){
+ selected=(i+tags.length)%tags.length;
+ $('tagName').textContent=tags[selected].name;
+ $('position').textContent=(selected+1)+' / '+tags.length;
+ $('selectedStatus').textContent=active>=0
+  ?'Loaded: '+tags[active].name:'Not loaded';
+ document.querySelectorAll('.taggrid button').forEach((b,n)=>{
+  b.classList.toggle('selected',n===selected);
+  b.classList.toggle('loaded',n===active);
+  b.classList.toggle('pending',mode==='delay'&&n===delayTarget);
+ });
 }
-
-function selectTag(index){
-  selected=(index+tags.length)%tags.length;
-
-  $('tagName').textContent=tags[selected].name;
-  $('position').textContent=
-    'Tag '+(selected+1)+' of '+tags.length;
-
-  $('nextName').textContent=
-    'Next: '+tags[(selected+1)%tags.length].name;
-
-  $('currentNumber').textContent=selected+1;
-  $('jump').value=String(selected);
-
-  document.querySelectorAll('.tagButton')
-    .forEach((button,i)=>{
-      button.classList.toggle(
-        'selected',i===selected
-      );
-
-      button.classList.toggle(
-        'loaded',i===active
-      );
-    });
-}
-
-function buildTags(){
-  tags.forEach((tag,index)=>{
-    const option=document.createElement('option');
-
-    option.value=index;
-    option.textContent=tag.name;
-    $('jump').append(option);
-
-    const button=document.createElement('button');
-
-    button.className='tagButton';
-    button.textContent=tag.name;
-
-    button.onclick=()=>selectTag(index);
-
-    $('grid').append(button);
-  });
-
-  selectTag(0);
-}
-
-function updateButtons(){
-  const idle=connected&&!busy&&mode==='idle';
-  const manual=connected&&mode==='manual';
-  const delaying=mode==='delay';
-
-  $('connect').disabled=connected||busy;
-  $('disconnect').disabled=!idle;
-  $('restore').disabled=!idle||!original;
-
-  $('start').disabled=!idle;
-  $('stop').disabled=mode==='idle';
-
-  $('next').disabled=!manual||busy;
-  $('previous').disabled=!manual||busy;
-  $('repeat').disabled=!manual||busy;
-
-  $('skip').disabled=!delaying;
-  $('load').disabled=!connected||busy;
-
-  $('start').textContent='▶ Start';
-}
-
-async function readIdentity(){
-  const data=await ultra.cmdHf14aGetAntiCollData();
-
-  return {
-    uid:hex(data.uid),
-    atqa:hex(data.atqa),
-    sak:hex(data.sak),
-    ats:hex(data.ats)
+function build(){
+ tags.forEach((t,i)=>{
+  const b=document.createElement('button');
+  b.textContent=t.name;
+  b.onclick=()=>{
+   selectTag(i);
+   if(connected&&!busy){
+    const token=++operation;
+    cancelDelay();
+    loadNow(i,token);
+   }
   };
+  $('grid').append(b);
+ });
+ selectTag(0);
 }
-
-async function captureOriginal(){
-  if(original)return;
-
-  slot=Number(
-    await ultra.cmdSlotGetActive()
-  );
-
-  const info=await ultra.cmdSlotGetInfo();
-
-  if(Number(info[slot]?.hfTagType)!==1101){
-    throw Error(
-      'Active slot must use HF tag type 1101'
-    );
-  }
-
-  original=await readIdentity();
-
-  $('slotInfo').textContent=
-    'Active slot '+(slot+1)+' · HF type 1101';
-
-  log('Original identity saved');
+function buttons(){
+ const idle=connected&&!busy&&mode==='idle';
+ const manual=connected&&mode==='manual';
+ $('connect').disabled=connected||busy;
+ $('disconnect').disabled=!idle;
+ $('restore').disabled=!idle||!original;
+ $('start').disabled=!idle;
+ $('stop').disabled=mode==='idle'&&!busy;
+ $('next').disabled=!manual||busy;
+ $('previous').disabled=!manual||busy;
+ $('repeat').disabled=!manual||busy;
+ $('skip').disabled=mode!=='delay';
+ $('stickyNext').disabled=!manual||busy;
+ $('stickyPrevious').disabled=!manual||busy;
+ $('sticky').classList.toggle('show',connected&&mode==='manual');
 }
-
+async function readIdentity(){
+ const d=await ultra.cmdHf14aGetAntiCollData();
+ return {uid:hex(d.uid),atqa:hex(d.atqa),
+  sak:hex(d.sak),ats:hex(d.ats)};
+}
+async function capture(){
+ if(original)return;
+ slot=Number(await ultra.cmdSlotGetActive());
+ const info=await ultra.cmdSlotGetInfo();
+ if(Number(info[slot]?.hfTagType)!==1101)
+  throw Error('Active HF slot must be type 1101');
+ original=await readIdentity();
+ $('slotInfo').textContent='Slot '+(slot+1)+' · HF 1101';
+ log('Original identity saved');
+}
 async function checkSlot(){
-  const current=Number(
-    await ultra.cmdSlotGetActive()
-  );
-
-  if(current!==slot){
-    throw Error('Active slot changed');
-  }
+ if(Number(await ultra.cmdSlotGetActive())!==slot)
+  throw Error('Active slot changed');
+}
+async function writeTag(i){
+ await checkSlot();
+ await ultra.cmdHf14aSetAntiCollData({
+  uid:toBuffer(tags[i].uid),
+  atqa:toBuffer(original.atqa),
+  sak:toBuffer(original.sak),
+  ats:toBuffer(original.ats||'')
+ });
+ const d=await readIdentity();
+ if(normalizeHex(d.uid)!==normalizeHex(tags[i].uid))
+  throw Error('UID verification failed');
+ active=i;
+ loads++;
+ $('loads').textContent=loads+' loads';
+ selectTag(i);
+ log('Loaded '+tags[i].name+' · UID verified');
+}
+function beginEmulation(i){
+ selectTag(i);
+ emulationStarted=performance.now();
+ mode='manual';
+ $('timerLabel').textContent='Elapsed emulation time';
+ phase('emulating','Tag loaded · unlimited emulation');
+ buttons();
+}
+async function loadNow(i,token){
+ busy=true;
+ buttons();
+ try{
+  await serial(capture);
+  if(token!==operation)return;
+  await serial(()=>writeTag(i));
+  if(token!==operation)return;
+  beginEmulation(i);
+ }catch(e){
+  log('LOAD ERROR: '+e.message);
+  mode='idle';
+  phase('error',e.message);
+ }finally{
+  busy=false;
+  buttons();
+ }
+}
+function randomDelay(){
+ const min=Number($('minDelay').value);
+ const max=Number($('maxDelay').value);
+ if(!Number.isInteger(min)||!Number.isInteger(max)||
+    min<0||max>3600||min>max)
+  throw Error('Invalid delay range');
+ return min+Math.floor(Math.random()*(max-min+1));
+}
+function cancelDelay(){
+ if(delayTimer!==null)clearTimeout(delayTimer);
+ delayTimer=null;
+ delayTarget=-1;
+}
+function move(i){
+ if(mode!=='manual'||busy)return;
+ let seconds=0;
+ try{
+  if($('useDelay').checked)seconds=randomDelay();
+ }catch(e){
+  log(e.message);
+  return;
+ }
+ const token=++operation;
+ cancelDelay();
+ if(seconds===0){
+  loadNow(i,token);
+  return;
+ }
+ mode='delay';
+ delayTarget=i;
+ delayDuration=seconds*1000;
+ delayDeadline=performance.now()+delayDuration;
+ phase('delay','Next: '+tags[i].name+' · '+seconds+'s random delay');
+ $('timerLabel').textContent='Delay remaining';
+ log('Delay '+seconds+'s before '+tags[i].name);
+ selectTag(i);
+ delayTimer=setTimeout(()=>{
+  if(token!==operation||mode!=='delay')return;
+  cancelDelay();
+  loadNow(i,token);
+ },delayDuration);
+ buttons();
+}
+function stop(){
+ ++operation;
+ cancelDelay();
+ mode='idle';
+ $('timer').textContent='00:00';
+ $('timerLabel').textContent='Elapsed time';
+ phase('ready','Stopped · last NFC identity stays loaded');
+ log('Controller stopped');
+ buttons();
+}
+function tick(){
+ if(mode==='manual')
+  $('timer').textContent=clock(performance.now()-emulationStarted);
+ else if(mode==='delay')
+  $('timer').textContent=clock(
+   Math.max(0,delayDeadline-performance.now()),true);
 }
 
-async function writeTag(index){
-  await checkSlot();
+$('connect').onclick=async()=>{
+ if(connected||busy)return;
+ busy=true;buttons();
+ try{
+  if(!sdk.ChameleonUltra||!sdk.WebbleAdapter||!Buf?.from)
+   throw Error('SDK libraries unavailable');
+  ultra=new sdk.ChameleonUltra();
+  await ultra.use(new sdk.WebbleAdapter());
+  await ultra.connect();
+  const v=await ultra.cmdGetAppVersion();
+  connected=true;
+  $('connection').textContent='Connected';
+  $('connection').className='pill good';
+  $('device').textContent='Firmware '+v;
+  await serial(capture);
+  log('Connected · Firmware '+v);
+ }catch(e){
+  log('CONNECT ERROR: '+e.message);
+  try{await ultra?.disconnect()}catch(_){}
+  ultra=null;connected=false;original=null;slot=null;
+  $('connection').textContent='Offline';
+  $('connection').className='pill';
+  $('device').textContent='Connection failed';
+ }finally{
+  busy=false;buttons();
+ }
+};
 
-  await ultra.cmdHf14aSetAntiCollData({
-    uid:toBuffer(tags[index].uid),
+$('disconnect').onclick=async()=>{
+ if(!connected||busy||mode!=='idle')return;
+ busy=true;buttons();
+ try{await ultra.disconnect()}
+ catch(e){log('Disconnect: '+e.message)}
+ ultra=null;connected=false;original=null;slot=null;active=-1;
+ $('connection').textContent='Offline';
+ $('connection').className='pill';
+ $('device').textContent='Not connected';
+ selectTag(selected);
+ busy=false;buttons();
+};
+
+$('start').onclick=()=>{
+ if(connected&&!busy&&mode==='idle')
+  loadNow(selected,++operation);
+};
+$('stop').onclick=stop;
+$('next').onclick=()=>move((selected+1)%tags.length);
+$('previous').onclick=()=>move((selected-1+tags.length)%tags.length);
+$('stickyNext').onclick=()=>$('next').click();
+$('stickyPrevious').onclick=()=>$('previous').click();
+$('repeat').onclick=()=>{
+ if(mode==='manual'&&!busy)
+  loadNow(selected,++operation);
+};
+$('skip').onclick=()=>{
+ if(mode!=='delay'||delayTarget<0)return;
+ const i=delayTarget;
+ cancelDelay();
+ log('Delay skipped');
+ loadNow(i,++operation);
+};
+
+$('restore').onclick=async()=>{
+ if(!connected||busy||mode!=='idle'||!original)return;
+ busy=true;buttons();
+ try{
+  await serial(async()=>{
+   await checkSlot();
+   await ultra.cmdHf14aSetAntiCollData({
+    uid:toBuffer(original.uid),
     atqa:toBuffer(original.atqa),
     sak:toBuffer(original.sak),
     ats:toBuffer(original.ats||'')
+   });
+   const d=await readIdentity();
+   if(normalizeHex(d.uid)!==normalizeHex(original.uid))
+    throw Error('Restore verification failed');
   });
-
-  const actual=await readIdentity();
-
-  if(normalizeHex(actual.uid)!==
-     normalizeHex(tags[index].uid)){
-    throw Error(
-      'UID verification failed for '+
-      tags[index].name
-    );
-  }
-
-  active=index;
-  loads++;
-
-  $('loads').textContent=loads;
-
-  selectTag(index);
-
-  log('Loaded and verified '+tags[index].name);
-}
-
-function startEmulationDisplay(index){
-  selectTag(index);
-
-  emulationStarted=performance.now();
-
-  mode='manual';
-
-  $('description').textContent=
-    'Tag loaded · Unlimited emulation';
-
-  $('timerLabel').textContent=
-    'Elapsed emulation time';
-
-  $('progress').style.width='100%';
-
-  setPhase(
-    'emulating',
-    'Waiting for phone scan'
-  );
-
-  updateButtons();
-}
-
-async function loadNow(index,token){
-  busy=true;
-  updateButtons();
-
-  try{
-    await serial(captureOriginal);
-
-    if(token!==operation)return;
-
-    await serial(()=>writeTag(index));
-
-    if(token!==operation)return;
-
-    startEmulationDisplay(index);
-
-  }catch(error){
-    log('LOAD ERROR: '+error.message);
-
-    mode='idle';
-
-    setPhase('error',error.message);
-
-  }finally{
-    busy=false;
-    updateButtons();
-  }
-}
-
-function randomDelay(){
-  const min=Number($('minDelay').value);
-  const max=Number($('maxDelay').value);
-
-  if(!Number.isInteger(min)||
-     !Number.isInteger(max)||
-     min<0||max>3600||min>max){
-    throw Error(
-      'Invalid delay range: minimum must not exceed maximum'
-    );
-  }
-
-  // Uniform integer seconds, inclusive.
-  const range=max-min+1;
-  const values=new Uint32Array(1);
-  const limit=Math.floor(4294967296/range)*range;
-  let value;
-
-  do{
-    crypto.getRandomValues(values);
-    value=values[0];
-  }while(value>=limit);
-
-  return min+(value%range);
-}
-
-function cancelDelay(){
-  if(delayTimer!==null){
-    clearTimeout(delayTimer);
-    delayTimer=null;
-  }
-
-  delayFinish=null;
-  delayTarget=-1;
-}
-
-function startDelay(target,seconds,token){
-  cancelDelay();
-
-  if(seconds===0){
-    loadNow(target,token);
-    return;
-  }
-
-  mode='delay';
-  delayTarget=target;
-  delayDuration=seconds*1000;
-  delayDeadline=performance.now()+delayDuration;
-
-  $('description').textContent=
-    'Preparing '+tags[target].name;
-
-  $('timerLabel').textContent=
-    'Random delay remaining';
-
-  setPhase(
-    'delay',
-    'Next tag loads after countdown'
-  );
-
-  log(
-    'Random delay '+seconds+'s before '+
-    tags[target].name
-  );
-
-  delayFinish=()=>{
-    if(token!==operation||mode!=='delay')return;
-
-    cancelDelay();
-    loadNow(target,token);
-  };
-
-  delayTimer=setTimeout(
-    delayFinish,delayDuration
-  );
-
-  updateButtons();
-}
-
-function moveTo(index){
-  if(mode!=='manual'||busy)return;
-
-  let seconds=0;
-
-  try{
-    if($('useDelay').checked){
-      seconds=randomDelay();
-    }
-  }catch(error){
-    log('DELAY ERROR: '+error.message);
-    return;
-  }
-
-  const token=++operation;
-
-  cancelDelay();
-
-  startDelay(index,seconds,token);
-}
-
-function stopPlayback(){
-  ++operation;
-  cancelDelay();
-
-  mode='idle';
-
-  $('description').textContent=
-    'Stopped · Press Start to load a tag';
-
-  $('timerLabel').textContent=
-    'Elapsed emulation time';
-
-  $('timer').textContent='00:00';
-  $('progress').style.width='0%';
-
-  setPhase(
-    'ready',
-    'Controller stopped'
-  );
-
-  log(
-    'Stopped (last NFC identity remains loaded)'
-  );
-
-  updateButtons();
-}
-
-function updateTimer(){
-  if(mode==='manual'){
-    $('timer').textContent=clock(
-      performance.now()-emulationStarted
-    );
-
-    $('progress').style.width='100%';
-  }
-
-  if(mode==='delay'){
-    const remaining=Math.max(
-      0,delayDeadline-performance.now()
-    );
-
-    $('timer').textContent=
-      remainingClock(remaining);
-
-    $('progress').style.width=
-      (100*(1-remaining/delayDuration))+'%';
-  }
-}
-
-// Connect
-
-$('connect').onclick=async()=>{
-  if(connected||busy)return;
-
-  busy=true;
-  updateButtons();
-
-  try{
-    if(!sdk.ChameleonUltra||
-       !sdk.WebbleAdapter||
-       !Buf?.from){
-      throw Error('SDK libraries unavailable');
-    }
-
-    ultra=new sdk.ChameleonUltra();
-
-    await ultra.use(new sdk.WebbleAdapter());
-    await ultra.connect();
-
-    const firmware=await ultra.cmdGetAppVersion();
-
-    connected=true;
-
-    $('connection').textContent='Connected';
-    $('connection').className='pill good';
-
-    $('device').textContent=
-      'Firmware '+firmware;
-
-    await serial(captureOriginal);
-
-    log('Connected · Firmware '+firmware);
-
-  }catch(error){
-    log('CONNECT ERROR: '+error.message);
-
-    try{
-      await ultra?.disconnect();
-    }catch(_){}
-
-    ultra=null;
-    connected=false;
-    original=null;
-    slot=null;
-
-    $('connection').textContent='Disconnected';
-    $('connection').className='pill';
-
-    $('device').textContent='Connection failed';
-
-  }finally{
-    busy=false;
-    updateButtons();
-  }
-};
-
-// Disconnect
-
-$('disconnect').onclick=async()=>{
-  if(!connected||busy||mode!=='idle')return;
-
-  busy=true;
-  updateButtons();
-
-  try{
-    await ultra.disconnect();
-  }catch(error){
-    log('DISCONNECT: '+error.message);
-  }
-
-  ultra=null;
-  connected=false;
-  original=null;
-  slot=null;
   active=-1;
-
-  $('connection').textContent='Disconnected';
-  $('connection').className='pill';
-
-  $('device').textContent='Not connected';
-
-  busy=false;
-  updateButtons();
+  selectTag(selected);
+  log('Original identity restored');
+ }catch(e){
+  log('RESTORE ERROR: '+e.message);
+ }finally{
+  busy=false;buttons();
+ }
 };
 
-// Main controls
-
-$('start').onclick=()=>{
-  if(!connected||busy||mode!=='idle')return;
-
-  const token=++operation;
-
-  loadNow(selected,token);
-};
-
-$('next').onclick=()=>{
-  moveTo((selected+1)%tags.length);
-};
-
-$('previous').onclick=()=>{
-  moveTo(
-    (selected-1+tags.length)%tags.length
-  );
-};
-
-$('repeat').onclick=()=>{
-  if(mode!=='manual'||busy)return;
-
-  const token=++operation;
-
-  cancelDelay();
-  loadNow(selected,token);
-};
-
-$('skip').onclick=()=>{
-  if(mode!=='delay'||delayTarget<0)return;
-
-  const target=delayTarget;
-  const token=++operation;
-
-  cancelDelay();
-
-  log('Delay skipped');
-
-  loadNow(target,token);
-};
-
-$('stop').onclick=stopPlayback;
-
-// Direct tag selection
-
-$('jump').onchange=()=>{
-  selectTag(Number($('jump').value));
-};
-
-$('load').onclick=()=>{
-  if(!connected||busy)return;
-
-  const token=++operation;
-
-  cancelDelay();
-
-  loadNow(selected,token);
-};
-
-// Restore original identity
-
-$('restore').onclick=async()=>{
-  if(!connected||busy||
-     mode!=='idle'||!original)return;
-
-  busy=true;
-  updateButtons();
-
-  try{
-    await serial(async()=>{
-      await checkSlot();
-
-      await ultra.cmdHf14aSetAntiCollData({
-        uid:toBuffer(original.uid),
-        atqa:toBuffer(original.atqa),
-        sak:toBuffer(original.sak),
-        ats:toBuffer(original.ats||'')
-      });
-
-      const actual=await readIdentity();
-
-      if(normalizeHex(actual.uid)!==
-         normalizeHex(original.uid)){
-        throw Error('Restore verification failed');
-      }
-    });
-
-    active=-1;
-    selectTag(selected);
-
-    log('Original identity restored');
-
-  }catch(error){
-    log('RESTORE ERROR: '+error.message);
-
-  }finally{
-    busy=false;
-    updateButtons();
-  }
-};
-
-$('clearLog').onclick=()=>{
-  $('log').textContent='Log cleared.';
-};
-
-buildTags();
-updateButtons();
-setInterval(updateTimer,100);
-
+$('clearLog').onclick=()=>$('log').textContent='Log cleared.';
+build();
+buttons();
+setInterval(tick,100);
 </script>
 </body>
 </html>
