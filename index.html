@@ -1,221 +1,374 @@
 
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0b1020">
-<title>NFC Controller · Mobile</title>
+<title>NFC Controller v1.4</title>
 <style>
-:root{color-scheme:dark;font-family:system-ui,-apple-system,Segoe UI,sans-serif;background:#090f1c;color:#f4f7ff}
-*{box-sizing:border-box}
-body{margin:0;background:radial-gradient(ellipse at top,#21385d 0,transparent 65%),#090f1c}
-main{max-width:650px;margin:auto;padding:12px 12px calc(30px + env(safe-area-inset-bottom))}
-.top{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:5px 0 12px}
-.brand{font-weight:800;letter-spacing:-.4px;font-size:19px}
-.small{font-size:12px;color:#a7b6d0}
-.pill{border-radius:30px;background:#2c3a51;padding:7px 11px;font-size:12px;font-weight:750}
-.pill.good{background:#164c38;color:#86f2b9}
-.pill.warn{background:#62471d;color:#ffdd8b}
-.pill.bad{background:#632838;color:#ffb1c2}
-.card{border:1px solid #30415b;background:#141e31;border-radius:18px;padding:14px;margin:10px 0}
-.row{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
-.buttons{display:flex;gap:8px;flex-wrap:wrap}
-button{min-height:44px;border:0;border-radius:12px;background:#30425e;color:#fff;padding:11px 12px;font:inherit;font-size:14px;font-weight:750;touch-action:manipulation;cursor:pointer}
-button:disabled{opacity:.38;cursor:not-allowed}
-.primary{background:linear-gradient(120deg,#3c81f6,#7652e5)}
-.green{background:#16805b}
-.red{background:#a13e52}
-.amber{background:#92611f}
-.device{display:flex;gap:8px;align-items:center;justify-content:space-between}
-.device .buttons button{min-height:38px;padding:8px 11px;font-size:12px}
-.hero{text-align:center;padding:14px 14px 13px;background:radial-gradient(circle at 50% 10%,#254a70,transparent 70%),#141e31}
-.hero .label{font-size:11px;color:#b4c9e9;letter-spacing:1.5px;font-weight:800}
-.tag{font-size:clamp(50px,14vw,76px);font-weight:850;line-height:1.13;letter-spacing:-2px;margin:7px 0}
-.time{font-size:clamp(30px,8vw,42px);font-weight:800;font-variant-numeric:tabular-nums;margin:5px 0}
-.state{font-size:13px;color:#adc0dd}
-.control-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:11px}
-.control-grid button{min-height:54px;font-size:15px}
-.utility{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:8px}
-.utility button{font-size:12px;padding:9px 5px}
-.heading{font-size:14px;font-weight:800;margin-bottom:9px}
-.taggrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}
-.taggrid button{min-height:43px;padding:8px 2px;background:#243550;border:1px solid #3d5476;font-size:14px}
-.taggrid button.selected{background:#255944;border-color:#71e5ad}
-.taggrid button.loaded{box-shadow:inset 0 0 0 2px #83a8ff}
-.taggrid button.pending{background:#6b4a22;border-color:#edba63}
-.meta{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px}
-details summary{font-weight:750;cursor:pointer;padding:3px 0}
-details .inner{margin-top:14px}
-.settings{display:grid;grid-template-columns:1fr 1fr;gap:9px}
-.field{background:#0c1728;border:1px solid #334966;border-radius:11px;padding:10px}
-.field label{display:block;color:#b0c0d8;font-size:12px;margin-bottom:6px}
-.field input{width:100%;font:inherit;color:#fff;background:#1c2d45;border:1px solid #4b6383;border-radius:9px;padding:10px}
-.check{display:flex;gap:9px;align-items:center;font-size:13px;margin:12px 0}
-.check input{width:18px;height:18px}
-.hint{color:#9db0ce;font-size:12px;line-height:1.55}
-pre{background:#0b1423;border-radius:10px;padding:10px;max-height:190px;overflow:auto;white-space:pre-wrap;color:#adc1df;font-size:11px}
-.sticky{position:sticky;bottom:calc(7px + env(safe-area-inset-bottom));z-index:5;background:#17243aef;border:1px solid #4b6385;backdrop-filter:blur(14px);border-radius:15px;padding:8px;display:none;grid-template-columns:1fr 1fr;gap:8px;box-shadow:0 7px 35px #0009}
-.sticky.show{display:grid}
-.sticky button{min-height:49px}
-@media(min-width:700px){
- main{padding-top:20px}
- .taggrid{grid-template-columns:repeat(7,1fr)}
- .sticky{display:none!important}
+:root{
+  color-scheme:dark;
+  font-family:system-ui,-apple-system,Segoe UI,sans-serif;
+  background:#090f1c;color:#f5f7ff
 }
-@media(max-width:350px){
- .device{align-items:flex-start}
- .device .buttons{justify-content:flex-end}
- .device .buttons button{padding:8px}
- .brand{font-size:17px}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:radial-gradient(ellipse at top,#21395c,transparent 65%),#090f1c
+}
+main{
+  max-width:650px;margin:auto;
+  padding:12px 12px calc(35px + env(safe-area-inset-bottom))
+}
+.top,.row{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:9px;flex-wrap:wrap
+}
+.top{margin:6px 0 12px}
+.brand{font-size:19px;font-weight:850}
+.muted{color:#a1b3ce;font-size:12px}
+.card{
+  background:#141e31;border:1px solid #30425e;
+  border-radius:18px;padding:14px;margin:10px 0
+}
+.pill{
+  display:inline-block;border-radius:30px;
+  padding:7px 11px;background:#2b3b53;
+  font-size:12px;font-weight:800
+}
+.good{background:#164d38;color:#8cf3ba}
+.warn{background:#59421d;color:#ffdd91}
+.bad{background:#5d2937;color:#ffb7c5}
+button{
+  border:0;border-radius:12px;min-height:44px;
+  padding:11px 13px;background:#30435e;
+  color:#fff;font:inherit;font-size:14px;font-weight:750;
+  touch-action:manipulation;cursor:pointer
+}
+button:disabled{opacity:.38;cursor:not-allowed}
+.primary{background:linear-gradient(120deg,#3c83ff,#7654e8)}
+.green{background:#187d59}
+.red{background:#a53e53}
+.amber{background:#98651e}
+.buttons{display:flex;gap:8px;flex-wrap:wrap}
+.device .buttons button{font-size:12px;padding:8px 10px;min-height:39px}
+.tabs{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:7px;background:#111b2d;padding:5px;
+  border-radius:14px
+}
+.tabs button{background:transparent}
+.tabs button.active{
+  background:#355b94;
+  box-shadow:0 2px 8px #0005
+}
+.hero{
+  text-align:center;
+  background:radial-gradient(circle at 50% 10%,#264b70,transparent 70%),#141e31
+}
+.label{
+  color:#b7c9e7;font-size:11px;
+  font-weight:800;letter-spacing:1.5px
+}
+.tag{
+  font-size:clamp(52px,14vw,78px);
+  font-weight:850;letter-spacing:-2px;
+  margin:8px 0;line-height:1.15
+}
+.clock{
+  font-size:clamp(36px,9vw,48px);
+  font-weight:850;font-variant-numeric:tabular-nums;
+  margin:10px 0 3px
+}
+.bar{
+  height:9px;border-radius:30px;overflow:hidden;
+  background:#2a3d59;margin:13px 0
+}
+.fill{
+  width:0;height:100%;
+  background:linear-gradient(90deg,#488aff,#6be5b3)
+}
+.controls{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:8px;margin-top:12px
+}
+.controls button{min-height:53px;font-size:15px}
+.utility{
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:8px;margin-top:8px
+}
+.utility button{font-size:12px;padding:8px 5px}
+.taggrid{
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:7px;margin-top:11px
+}
+.taggrid button{
+  background:#243550;border:1px solid #3c5374;
+  padding:8px 2px;min-height:43px
+}
+.taggrid button.selected{
+  background:#245740;border-color:#73e6ac
+}
+.taggrid button.loaded{
+  box-shadow:inset 0 0 0 2px #7da9ff
+}
+.taggrid button.done{border-color:#69b998}
+.field{
+  background:#0e192b;border:1px solid #354b69;
+  border-radius:11px;padding:10px
+}
+.field label{
+  display:block;color:#a7bad5;font-size:12px;margin-bottom:7px
+}
+input,select{
+  width:100%;background:#1c2c45;
+  border:1px solid #4a6282;border-radius:9px;
+  padding:10px;color:#fff;font:inherit
+}
+.settings{
+  display:grid;grid-template-columns:1fr 1fr;gap:9px
+}
+.check{
+  display:flex;align-items:center;gap:9px;
+  margin:12px 0;font-size:13px
+}
+.check input{width:18px;height:18px}
+.hint{color:#9eb1cd;font-size:12px;line-height:1.6}
+details summary{cursor:pointer;font-weight:750}
+details .inner{margin-top:14px}
+pre{
+  white-space:pre-wrap;max-height:210px;overflow:auto;
+  background:#0a1424;border-radius:10px;
+  padding:12px;color:#b6c9e3;font-size:11px
+}
+.hidden{display:none!important}
+.sticky{
+  position:sticky;bottom:calc(7px + env(safe-area-inset-bottom));
+  z-index:5;display:none;grid-template-columns:1fr 1fr;
+  gap:8px;padding:8px;border-radius:15px;
+  background:#17243aef;border:1px solid #4b6385;
+  backdrop-filter:blur(12px)
+}
+.sticky.show{display:grid}
+@media(min-width:700px){
+  .taggrid{grid-template-columns:repeat(7,1fr)}
+  .sticky{display:none!important}
 }
 </style>
 </head>
 <body>
 <main>
+
 <div class="top">
- <div>
-  <div class="brand">📡 NFC Controller <span class="small">v1.3</span></div>
-  <div class="small">Manual · 28 tags</div>
- </div>
- <span id="connection" class="pill">Offline</span>
+  <div>
+    <div class="brand">📡 NFC Controller <span class="muted">v1.4</span></div>
+    <div class="muted">Chameleon Ultra · 28 tags</div>
+  </div>
+  <span id="connection" class="pill">Offline</span>
 </div>
 
 <section class="card device">
- <div>
-  <strong style="font-size:13px">Chameleon Ultra</strong>
-  <div id="device" class="small">Not connected</div>
- </div>
- <div class="buttons">
-  <button id="connect" class="primary">Connect</button>
-  <button id="disconnect" disabled>Disconnect</button>
- </div>
+  <div class="row">
+    <div>
+      <strong>Chameleon Ultra</strong>
+      <div class="muted" id="device">Not connected</div>
+    </div>
+    <div class="buttons">
+      <button class="primary" id="connect">Connect</button>
+      <button id="disconnect" disabled>Disconnect</button>
+    </div>
+  </div>
 </section>
+
+<div class="tabs">
+  <button id="manualTab" class="active">✋ Manual</button>
+  <button id="autoTab">⚡ Auto Playlist</button>
+</div>
 
 <section class="card hero">
- <div class="row">
-  <span id="badge" class="pill">READY</span>
-  <span id="position" class="small">1 / 28</span>
- </div>
- <div class="label" style="margin-top:12px">CURRENT TAG</div>
- <div id="tagName" class="tag">1f1</div>
- <div id="description" class="state">Choose a tag or press Start</div>
- <div id="timer" class="time">00:00</div>
- <div id="timerLabel" class="small">Elapsed time</div>
-
- <div class="control-grid">
-  <button id="previous" class="primary" disabled>‹ Previous</button>
-  <button id="next" class="primary" disabled>Next ›</button>
-  <button id="start" class="green" disabled>▶ Start</button>
-  <button id="stop" class="red" disabled>■ Stop</button>
- </div>
-
- <div class="utility">
-  <button id="repeat" disabled>↻ Reload</button>
-  <button id="skip" disabled>⏩ Skip delay</button>
-  <button id="restore" disabled>Restore</button>
- </div>
-</section>
-
-<section class="card">
- <div class="meta">
-  <div class="heading" style="margin:0">
-   Quick select <span class="small">· tap to load</span>
+  <div class="row">
+    <span class="pill" id="badge">READY</span>
+    <span class="muted" id="position">1 / 28</span>
   </div>
-  <span id="selectedStatus" class="small">28 tags</span>
- </div>
- <div class="taggrid" id="grid"></div>
- <p class="hint" style="margin-bottom:0">
-  Tap a tag to load it immediately. Previous/Next use the
-  random delay. The loaded tag stays active indefinitely.
- </p>
+
+  <div class="label" style="margin-top:13px" id="modeLabel">
+    MANUAL NFC CONTROL
+  </div>
+
+  <div class="tag" id="tagName">1f1</div>
+  <div class="muted" id="description">Choose a tag or press Start</div>
+
+  <div class="clock" id="timer">00:00</div>
+  <div class="muted" id="timerLabel">Elapsed emulation time</div>
+
+  <div class="bar"><div class="fill" id="progress"></div></div>
+
+  <div class="row">
+    <span class="muted" id="status">Ready</span>
+    <span class="muted" id="nextName">Next: 1f2</span>
+  </div>
+
+  <div id="manualControls">
+    <div class="controls">
+      <button class="primary" id="previous" disabled>‹ Previous</button>
+      <button class="primary" id="next" disabled>Next ›</button>
+      <button class="green" id="manualStart" disabled>▶ Start</button>
+      <button class="red" id="manualStop" disabled>■ Stop</button>
+    </div>
+    <div class="utility">
+      <button id="repeat" disabled>↻ Reload</button>
+      <button id="manualSkip" disabled>⏩ Skip delay</button>
+      <button id="restore" disabled>Restore</button>
+    </div>
+  </div>
+
+  <div id="autoControls" class="hidden">
+    <div class="controls">
+      <button class="green" id="autoStart" disabled>▶ Start Auto</button>
+      <button class="amber" id="autoPause" disabled>⏸ Pause</button>
+      <button class="red" id="autoStop" disabled>■ Stop Auto</button>
+      <button id="autoSkip" disabled>⏩ Skip Delay</button>
+    </div>
+    <p class="hint" id="autoInfo">
+      Ready to run 28 tags automatically
+    </p>
+  </div>
 </section>
 
-<section class="card">
- <details>
-  <summary>⚙ Delay settings & advanced</summary>
-  <div class="inner">
-   <div class="settings">
+<section class="card" id="manualTags">
+  <div class="row">
+    <strong style="font-size:14px">Quick Select</strong>
+    <span class="muted">Tap to load immediately</span>
+  </div>
+  <div class="taggrid" id="grid"></div>
+</section>
+
+<section class="card hidden" id="autoSettings">
+  <div class="row">
+    <strong>Auto Playlist Settings</strong>
+    <span class="pill warn">Experimental</span>
+  </div>
+
+  <div class="settings" style="margin-top:13px">
     <div class="field">
-     <label for="minDelay">Min delay (sec)</label>
-     <input id="minDelay" type="number" value="15" min="0" max="3600">
+      <label for="emulationSeconds">Emulation (seconds)</label>
+      <input id="emulationSeconds" type="number"
+             min="1" max="3600" value="5">
     </div>
     <div class="field">
-     <label for="maxDelay">Max delay (sec)</label>
-     <input id="maxDelay" type="number" value="25" min="0" max="3600">
+      <label for="autoMin">Min delay (seconds)</label>
+      <input id="autoMin" type="number"
+             min="0" max="3600" value="15">
     </div>
-   </div>
-   <label class="check">
-    <input id="useDelay" type="checkbox" checked>
-    Random delay for Previous / Next
-   </label>
-   <p class="hint">
-    During the countdown, the previously loaded tag remains
-    active. Stop ends controller sequencing, not the hardware's
-    NFC transmission. Restore returns the original saved identity.
-   </p>
-   <div class="row">
-    <span id="slotInfo" class="small">Connect to view slot</span>
-    <span id="loads" class="small">0 loads</span>
-   </div>
+    <div class="field">
+      <label for="autoMax">Max delay (seconds)</label>
+      <input id="autoMax" type="number"
+             min="0" max="3600" value="25">
+    </div>
+    <div class="field">
+      <label for="startFrom">Start from tag</label>
+      <select id="startFrom"></select>
+    </div>
   </div>
- </details>
+
+  <label class="check">
+    <input id="resetHF" type="checkbox" checked>
+    Turn HF off between tags (experimental)
+  </label>
+
+  <p class="hint">
+    The browser loads each UID, verifies its readback,
+    and moves to the next tag after the countdown.
+    It cannot confirm that the scanning phone detected
+    the tag. HF reset requires firmware/SDK support.
+  </p>
+</section>
+
+<section class="card" id="manualSettings">
+  <details>
+    <summary>⚙ Manual Delay Settings</summary>
+    <div class="inner">
+      <div class="settings">
+        <div class="field">
+          <label for="manualMin">Minimum seconds</label>
+          <input id="manualMin" type="number"
+                 value="15" min="0" max="3600">
+        </div>
+        <div class="field">
+          <label for="manualMax">Maximum seconds</label>
+          <input id="manualMax" type="number"
+                 value="25" min="0" max="3600">
+        </div>
+      </div>
+      <label class="check">
+        <input id="manualDelay" type="checkbox" checked>
+        Random delay on Previous / Next
+      </label>
+      <p class="hint">
+        Manual emulation is unlimited. During a manual
+        delay, the previous tag remains loaded.
+      </p>
+    </div>
+  </details>
 </section>
 
 <section class="card">
- <details>
-  <summary>Activity log</summary>
-  <div class="inner">
-   <div class="row">
-    <span class="small">Commands and errors</span>
-    <button id="clearLog">Clear</button>
-   </div>
-   <pre id="log">Mobile controller ready.</pre>
-  </div>
- </details>
+  <details>
+    <summary>Activity Log & Device Information</summary>
+    <div class="inner">
+      <div class="row">
+        <span class="muted" id="slotInfo">Not connected</span>
+        <button id="clearLog">Clear log</button>
+      </div>
+      <pre id="log">NFC Controller v1.4 ready.</pre>
+    </div>
+  </details>
 </section>
 
-<div id="sticky" class="sticky">
- <button id="stickyPrevious" class="primary">‹ Previous</button>
- <button id="stickyNext" class="primary">Next ›</button>
+<div class="sticky" id="sticky">
+  <button class="primary" id="stickyPrevious">‹ Previous</button>
+  <button class="primary" id="stickyNext">Next ›</button>
 </div>
+
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/buffer@6.0.3/index.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chameleon-ultra.js@0/dist/index.global.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chameleon-ultra.js@0/dist/plugin/WebbleAdapter.global.js"></script>
+
 <script>
 'use strict';
 
 const RAW=[
- ['1f1','04 73 71 2F 37 02 89'],
- ['1f2','04 B3 57 F2 36 02 89'],
- ['1f3','04 01 AB 45 46 02 89'],
- ['2f1','04 83 BC 07 35 02 89'],
- ['2f2','04 A1 F6 E7 45 02 89'],
- ['2f3','04 E1 99 4B 46 02 89'],
- ['3f1','04 11 08 22 46 02 89'],
- ['3f2','04 73 FE EF 36 02 89'],
- ['3f3','04 A3 92 A3 36 02 89'],
- ['4f1','04 01 59 69 46 02 89'],
- ['4f2','04 11 F7 D6 45 02 89'],
- ['4f3','04 01 BA 07 46 02 89'],
- ['5f1','04 83 47 0A 37 02 89'],
- ['5f2','04 13 0D 16 37 02 89'],
- ['5f3','04 73 2F 07 35 02 89'],
- ['6f1','04 B3 C5 A2 36 02 89'],
- ['6f2','04 B1 B8 2E 46 02 89'],
- ['6f3','04 A1 3C 55 46 02 89'],
- ['7f1','04 53 10 9E 36 02 89'],
- ['7f2','04 B3 82 31 37 02 89'],
- ['7f3','04 93 5A 42 34 02 89'],
- ['8f1','04 33 BA 0C 35 02 89'],
- ['8f2','04 43 1C F3 36 02 89'],
- ['8f3','04 F1 A3 4F 46 02 89'],
- ['Lg1','04 73 9B 0F 35 02 89'],
- ['Lg2','04 11 51 DD 45 02 89'],
- ['Lg3','04 93 85 CC 36 02 89'],
- ['Lg4','04 73 FB AD 36 02 89']
+['1f1','04 73 71 2F 37 02 89'],
+['1f2','04 B3 57 F2 36 02 89'],
+['1f3','04 01 AB 45 46 02 89'],
+['2f1','04 83 BC 07 35 02 89'],
+['2f2','04 A1 F6 E7 45 02 89'],
+['2f3','04 E1 99 4B 46 02 89'],
+['3f1','04 11 08 22 46 02 89'],
+['3f2','04 73 FE EF 36 02 89'],
+['3f3','04 A3 92 A3 36 02 89'],
+['4f1','04 01 59 69 46 02 89'],
+['4f2','04 11 F7 D6 45 02 89'],
+['4f3','04 01 BA 07 46 02 89'],
+['5f1','04 83 47 0A 37 02 89'],
+['5f2','04 13 0D 16 37 02 89'],
+['5f3','04 73 2F 07 35 02 89'],
+['6f1','04 B3 C5 A2 36 02 89'],
+['6f2','04 B1 B8 2E 46 02 89'],
+['6f3','04 A1 3C 55 46 02 89'],
+['7f1','04 53 10 9E 36 02 89'],
+['7f2','04 B3 82 31 37 02 89'],
+['7f3','04 93 5A 42 34 02 89'],
+['8f1','04 33 BA 0C 35 02 89'],
+['8f2','04 43 1C F3 36 02 89'],
+['8f3','04 F1 A3 4F 46 02 89'],
+['Lg1','04 73 9B 0F 35 02 89'],
+['Lg2','04 11 51 DD 45 02 89'],
+['Lg3','04 93 85 CC 36 02 89'],
+['Lg4','04 73 FB AD 36 02 89']
 ];
 
 const tags=RAW.map(([name,uid])=>({name,uid}));
@@ -223,309 +376,645 @@ const $=id=>document.getElementById(id);
 const sdk=window.ChameleonUltraJS||{};
 const Buf=sdk.Buffer||window.buffer?.Buffer||window.Buffer;
 
-let ultra=null,connected=false,busy=false,mode='idle';
-let selected=0,active=-1,loads=0,original=null,slot=null;
-let operation=0,delayTimer=null,delayDeadline=0;
-let delayDuration=0,delayTarget=-1,emulationStarted=0;
-let queue=Promise.resolve();
+let ultra=null;
+let connected=false;
+let busy=false;
+let mode='manual';
+let running=false;
+let paused=false;
+let phase='ready';
+let selected=0;
+let active=-1;
+let original=null;
+let slot=null;
+let hfOff=false;
+let runToken=0;
+let commandQueue=Promise.resolve();
+
+let elapsedStart=0;
+let countdownEnd=0;
+let countdownLeft=0;
+let countdownTotal=0;
+let manualTarget=-1;
+let autoIndex=0;
+let autoCompleted=new Set();
 
 function log(s){
  const el=$('log');
  el.textContent+='\n'+new Date().toLocaleTimeString()+'  '+s;
  el.scrollTop=el.scrollHeight;
 }
+
 function serial(fn){
- const p=queue.then(fn);
- queue=p.catch(()=>{});
+ const p=commandQueue.then(fn);
+ commandQueue=p.catch(()=>{});
  return p;
 }
+
 function hex(b){
  return Array.from(b||[])
   .map(v=>Number(v).toString(16).padStart(2,'0'))
   .join(' ').toUpperCase();
 }
-function normalizeHex(v){
- return String(v||'').replace(/\s/g,'').toUpperCase();
+
+function normalized(s){
+ return String(s||'').replace(/\s/g,'').toUpperCase();
 }
-function toBuffer(v){
- if(!Buf?.from)throw Error('Buffer library unavailable');
- const h=normalizeHex(v);
+
+function bytes(s){
+ if(!Buf?.from)throw Error('Buffer unavailable');
+ const h=normalized(s);
  if(h.length%2||!/^[0-9A-F]*$/.test(h))
-  throw Error('Invalid hex');
- return Buf.from((h.match(/../g)||[]).map(v=>parseInt(v,16)));
+  throw Error('Invalid hex data');
+ return Buf.from((h.match(/../g)||[])
+  .map(v=>parseInt(v,16)));
 }
-function clock(ms,ceil=false){
- const s=Math.max(0,ceil?Math.ceil(ms/1000):Math.floor(ms/1000));
- return String(Math.floor(s/60)).padStart(2,'0')+
-  ':'+String(s%60).padStart(2,'0');
+
+function time(ms,up=false){
+ const n=Math.max(0,up?Math.floor(ms/1000):Math.ceil(ms/1000));
+ return String(Math.floor(n/60)).padStart(2,'0')+
+  ':'+String(n%60).padStart(2,'0');
 }
-function phase(name,message){
- const b=$('badge');
- b.textContent=name.toUpperCase();
- b.className='pill'+
-  (name==='emulating'?' good':
-   name==='delay'?' warn':
-   name==='error'?' bad':'');
+
+function number(id,min,max){
+ const n=Number($(id).value);
+ if(!Number.isInteger(n)||n<min||n>max)
+  throw Error(id+' must be '+min+'–'+max);
+ return n;
+}
+
+function randomSeconds(minId,maxId){
+ const min=number(minId,0,3600);
+ const max=number(maxId,0,3600);
+ if(min>max)throw Error('Minimum delay exceeds maximum');
+ return min+Math.floor(Math.random()*(max-min+1));
+}
+
+function setPhase(name,message){
+ phase=name;
+ $('badge').textContent=name.toUpperCase();
+ $('badge').className='pill'+(
+  name==='emulating'?' good':
+  name==='delay'||name==='paused'?' warn':
+  name==='error'?' bad':''
+ );
  $('description').textContent=message;
+ $('timerLabel').textContent=
+  name==='emulating'
+   ?(mode==='manual'?'Elapsed emulation time':'Emulation remaining')
+   :name==='delay'?'Delay remaining'
+   :name==='paused'?'Paused':'Timer';
 }
+
 function selectTag(i){
  selected=(i+tags.length)%tags.length;
  $('tagName').textContent=tags[selected].name;
- $('position').textContent=(selected+1)+' / '+tags.length;
- $('selectedStatus').textContent=active>=0
-  ?'Loaded: '+tags[active].name:'Not loaded';
+ $('position').textContent=(selected+1)+' / 28';
+ $('nextName').textContent='Next: '+tags[(selected+1)%28].name;
+
  document.querySelectorAll('.taggrid button').forEach((b,n)=>{
   b.classList.toggle('selected',n===selected);
   b.classList.toggle('loaded',n===active);
-  b.classList.toggle('pending',mode==='delay'&&n===delayTarget);
+  b.classList.toggle('done',autoCompleted.has(n));
  });
 }
+
 function build(){
- tags.forEach((t,i)=>{
+ tags.forEach((tag,i)=>{
   const b=document.createElement('button');
-  b.textContent=t.name;
+  b.textContent=tag.name;
   b.onclick=()=>{
+   if(mode!=='manual'||running||busy)return;
    selectTag(i);
-   if(connected&&!busy){
-    const token=++operation;
-    cancelDelay();
-    loadNow(i,token);
-   }
+   if(connected)startManual(i);
   };
   $('grid').append(b);
+
+  const option=document.createElement('option');
+  option.value=i;
+  option.textContent=tag.name;
+  $('startFrom').append(option);
  });
  selectTag(0);
 }
-function buttons(){
- const idle=connected&&!busy&&mode==='idle';
- const manual=connected&&mode==='manual';
+
+function controls(){
+ const idle=connected&&!running&&!busy;
+ const manual=mode==='manual';
+ const auto=mode==='auto';
+
  $('connect').disabled=connected||busy;
  $('disconnect').disabled=!idle;
+ $('manualStart').disabled=!idle||!manual;
+ $('manualStop').disabled=!manual||!running;
+ $('next').disabled=!manual||!running||busy||phase==='delay';
+ $('previous').disabled=$('next').disabled;
+ $('repeat').disabled=!manual||!running||busy||phase==='delay';
+ $('manualSkip').disabled=!manual||phase!=='delay';
  $('restore').disabled=!idle||!original;
- $('start').disabled=!idle;
- $('stop').disabled=mode==='idle'&&!busy;
- $('next').disabled=!manual||busy;
- $('previous').disabled=!manual||busy;
- $('repeat').disabled=!manual||busy;
- $('skip').disabled=mode!=='delay';
- $('stickyNext').disabled=!manual||busy;
- $('stickyPrevious').disabled=!manual||busy;
- $('sticky').classList.toggle('show',connected&&mode==='manual');
+
+ $('autoStart').disabled=!auto||!idle;
+ $('autoPause').disabled=!auto||!running||busy;
+ $('autoStop').disabled=!auto||!running;
+ $('autoSkip').disabled=!auto||!running||phase!=='delay';
+
+ $('autoPause').textContent=paused?'▶ Resume':'⏸ Pause';
+
+ $('manualTab').classList.toggle('active',manual);
+ $('autoTab').classList.toggle('active',auto);
+ $('manualControls').classList.toggle('hidden',!manual);
+ $('autoControls').classList.toggle('hidden',!auto);
+ $('manualTags').classList.toggle('hidden',!manual);
+ $('manualSettings').classList.toggle('hidden',!manual);
+ $('autoSettings').classList.toggle('hidden',!auto);
+
+ $('modeLabel').textContent=manual
+  ?'MANUAL NFC CONTROL':'AUTOMATIC PLAYLIST';
+
+ $('sticky').classList.toggle(
+  'show',manual&&running&&phase==='emulating'
+ );
+
+ document.querySelectorAll('#autoSettings input,#autoSettings select')
+  .forEach(el=>el.disabled=running||busy);
 }
+
 async function readIdentity(){
  const d=await ultra.cmdHf14aGetAntiCollData();
  return {uid:hex(d.uid),atqa:hex(d.atqa),
   sak:hex(d.sak),ats:hex(d.ats)};
 }
+
 async function capture(){
  if(original)return;
  slot=Number(await ultra.cmdSlotGetActive());
  const info=await ultra.cmdSlotGetInfo();
+
  if(Number(info[slot]?.hfTagType)!==1101)
   throw Error('Active HF slot must be type 1101');
+
  original=await readIdentity();
  $('slotInfo').textContent='Slot '+(slot+1)+' · HF 1101';
  log('Original identity saved');
 }
+
 async function checkSlot(){
  if(Number(await ultra.cmdSlotGetActive())!==slot)
   throw Error('Active slot changed');
 }
+
 async function writeTag(i){
  await checkSlot();
+
  await ultra.cmdHf14aSetAntiCollData({
-  uid:toBuffer(tags[i].uid),
-  atqa:toBuffer(original.atqa),
-  sak:toBuffer(original.sak),
-  ats:toBuffer(original.ats||'')
+  uid:bytes(tags[i].uid),
+  atqa:bytes(original.atqa),
+  sak:bytes(original.sak),
+  ats:bytes(original.ats||'')
  });
+
  const d=await readIdentity();
- if(normalizeHex(d.uid)!==normalizeHex(tags[i].uid))
-  throw Error('UID verification failed');
+
+ if(normalized(d.uid)!==normalized(tags[i].uid))
+  throw Error('UID readback mismatch for '+tags[i].name);
+
  active=i;
- loads++;
- $('loads').textContent=loads+' loads';
  selectTag(i);
  log('Loaded '+tags[i].name+' · UID verified');
 }
-function beginEmulation(i){
- selectTag(i);
- emulationStarted=performance.now();
- mode='manual';
- $('timerLabel').textContent='Elapsed emulation time';
- phase('emulating','Tag loaded · unlimited emulation');
- buttons();
+
+async function setHF(on){
+ if(typeof ultra.cmdSlotSetEnable!=='function'||
+    sdk.FreqType?.HF===undefined)
+  throw Error('HF reset unsupported by SDK');
+
+ await checkSlot();
+ await ultra.cmdSlotSetEnable(slot,sdk.FreqType.HF,on);
+ hfOff=!on;
+ log('HF '+(on?'ON':'OFF')+' command sent');
 }
-async function loadNow(i,token){
- busy=true;
- buttons();
+
+async function loadTag(i,token){
+ busy=true;controls();
  try{
   await serial(capture);
-  if(token!==operation)return;
+  if(token!==runToken)return false;
+
   await serial(()=>writeTag(i));
-  if(token!==operation)return;
-  beginEmulation(i);
- }catch(e){
-  log('LOAD ERROR: '+e.message);
-  mode='idle';
-  phase('error',e.message);
+  if(token!==runToken)return false;
+
+  return true;
  }finally{
-  busy=false;
-  buttons();
+  busy=false;controls();
  }
 }
-function randomDelay(){
- const min=Number($('minDelay').value);
- const max=Number($('maxDelay').value);
- if(!Number.isInteger(min)||!Number.isInteger(max)||
-    min<0||max>3600||min>max)
-  throw Error('Invalid delay range');
- return min+Math.floor(Math.random()*(max-min+1));
+
+// Countdown that supports Pause, Resume, Stop and Skip.
+// Pausing stops the timer, not the RF hardware.
+async function waitSeconds(seconds,name,token){
+ countdownTotal=seconds*1000;
+ countdownLeft=countdownTotal;
+ countdownEnd=performance.now()+countdownLeft;
+ paused=false;
+
+ setPhase(name,name==='delay'?'Waiting for next tag':'Presenting tag');
+ controls();
+
+ while(token===runToken&&running){
+  if(!paused){
+   countdownLeft=Math.max(0,countdownEnd-performance.now());
+   if(countdownLeft<=0)return true;
+  }
+  await new Promise(resolve=>setTimeout(resolve,100));
+ }
+
+ return false;
 }
-function cancelDelay(){
- if(delayTimer!==null)clearTimeout(delayTimer);
- delayTimer=null;
- delayTarget=-1;
+
+function pauseAuto(){
+ if(!running||mode!=='auto'||busy)return;
+
+ if(!paused){
+  countdownLeft=Math.max(0,countdownEnd-performance.now());
+  paused=true;
+  $('badge').textContent='PAUSED';
+  $('badge').className='pill warn';
+  $('description').textContent='Countdown paused';
+  $('timerLabel').textContent='Paused';
+ }else{
+  paused=false;
+  countdownEnd=performance.now()+countdownLeft;
+  setPhase(phase,phase==='delay'?'Delay resumed':'Emulation resumed');
+ }
+ controls();
 }
-function move(i){
- if(mode!=='manual'||busy)return;
+
+function skipDelay(){
+ if(!running||phase!=='delay')return;
+ countdownLeft=0;
+ countdownEnd=performance.now();
+ paused=false;
+ log('Delay skipped');
+ controls();
+}
+
+async function startManual(i){
+ if(!connected||busy||mode!=='manual')return;
+
+ const token=++runToken;
+ running=true;
+ paused=false;
+ controls();
+
+ try{
+  if(hfOff)await serial(()=>setHF(true));
+  if(!await loadTag(i,token))return;
+  if(token!==runToken)return;
+
+  elapsedStart=performance.now();
+  setPhase('emulating','Unlimited emulation · waiting for scan');
+  controls();
+
+ }catch(e){
+  log('MANUAL ERROR: '+e.message);
+  running=false;
+  setPhase('error',e.message);
+  controls();
+ }
+}
+
+async function manualMove(i){
+ if(mode!=='manual'||!running||busy||phase==='delay')return;
+
  let seconds=0;
  try{
-  if($('useDelay').checked)seconds=randomDelay();
+  if($('manualDelay').checked)
+   seconds=randomSeconds('manualMin','manualMax');
  }catch(e){
-  log(e.message);
-  return;
+  log(e.message);return;
  }
- const token=++operation;
- cancelDelay();
- if(seconds===0){
-  loadNow(i,token);
-  return;
+
+ const token=++runToken;
+ manualTarget=i;
+
+ try{
+  if(seconds>0){
+   const ok=await waitSeconds(seconds,'delay',token);
+   if(!ok)return;
+  }
+  if(token!==runToken)return;
+
+  if(!await loadTag(i,token))return;
+  if(token!==runToken)return;
+
+  elapsedStart=performance.now();
+  setPhase('emulating','Unlimited emulation · waiting for scan');
+  controls();
+
+ }catch(e){
+  log('MANUAL ERROR: '+e.message);
+  running=false;
+  setPhase('error',e.message);
+  controls();
  }
- mode='delay';
- delayTarget=i;
- delayDuration=seconds*1000;
- delayDeadline=performance.now()+delayDuration;
- phase('delay','Next: '+tags[i].name+' · '+seconds+'s random delay');
- $('timerLabel').textContent='Delay remaining';
- log('Delay '+seconds+'s before '+tags[i].name);
- selectTag(i);
- delayTimer=setTimeout(()=>{
-  if(token!==operation||mode!=='delay')return;
-  cancelDelay();
-  loadNow(i,token);
- },delayDuration);
- buttons();
 }
-function stop(){
- ++operation;
- cancelDelay();
- mode='idle';
+
+async function stopRun(){
+ ++runToken;
+ running=false;
+ paused=false;
+ controls();
+
+ // Ensure a previously disabled HF slot is re-enabled.
+ // Do not claim that this stops NFC transmission.
+ if(hfOff&&connected){
+  busy=true;controls();
+  try{
+   await serial(()=>setHF(true));
+  }catch(e){
+   log('HF RESTORE ERROR: '+e.message);
+   setPhase('error','HF may still be disabled');
+  }finally{
+   busy=false;
+  }
+ }
+
+ if(phase!=='error')
+  setPhase('ready','Stopped · last tag identity remains loaded');
+
  $('timer').textContent='00:00';
- $('timerLabel').textContent='Elapsed time';
- phase('ready','Stopped · last NFC identity stays loaded');
- log('Controller stopped');
- buttons();
+ $('progress').style.width='0%';
+ controls();
 }
+
+async function startAuto(){
+ if(!connected||busy||running||mode!=='auto')return;
+
+ let duration,min,max,start;
+ try{
+  duration=number('emulationSeconds',1,3600);
+  min=number('autoMin',0,3600);
+  max=number('autoMax',0,3600);
+  if(min>max)throw Error('Minimum delay exceeds maximum');
+  start=Number($('startFrom').value);
+
+  if($('resetHF').checked&&
+    (typeof ultra.cmdSlotSetEnable!=='function'||
+     sdk.FreqType?.HF===undefined)){
+   throw Error('HF reset unsupported. Disable that option to test without it.');
+  }
+ }catch(e){
+  log('SETTINGS ERROR: '+e.message);
+  return;
+ }
+
+ const token=++runToken;
+ running=true;
+ paused=false;
+ autoCompleted.clear();
+ controls();
+
+ log('Auto started from '+tags[start].name);
+
+ try{
+  for(let i=start;i<tags.length;i++){
+   if(token!==runToken||!running)return;
+
+   autoIndex=i;
+
+   // Switch off HF before changing identity, if enabled.
+   if($('resetHF').checked&&!hfOff){
+    busy=true;controls();
+    try{await serial(()=>setHF(false))}
+    finally{busy=false;controls()}
+   }
+
+   if(token!==runToken||!running)return;
+
+   if(!await loadTag(i,token))return;
+   if(token!==runToken||!running)return;
+
+   if($('resetHF').checked&&hfOff){
+    busy=true;controls();
+    try{await serial(()=>setHF(true))}
+    finally{busy=false;controls()}
+   }
+
+   if(token!==runToken||!running)return;
+
+   $('autoInfo').textContent=
+    'Tag '+(i+1)+' of 28 · '+tags[i].name;
+
+   const shown=await waitSeconds(duration,'emulating',token);
+   if(!shown)return;
+
+   autoCompleted.add(i);
+   selectTag(i);
+
+   if(i===tags.length-1)break;
+
+   // HF off during delay to encourage fresh detection.
+   if($('resetHF').checked){
+    busy=true;controls();
+    try{await serial(()=>setHF(false))}
+    finally{busy=false;controls()}
+   }
+
+   if(token!==runToken||!running)return;
+
+   const seconds=randomSeconds('autoMin','autoMax');
+   log('Delay '+seconds+'s');
+
+   if(seconds>0){
+    const waited=await waitSeconds(seconds,'delay',token);
+    if(!waited)return;
+   }
+  }
+
+  if(token!==runToken)return;
+
+  running=false;
+  $('autoInfo').textContent=
+   'All remaining tags presented · scans not verified';
+  setPhase('ready','Playlist finished');
+  log('Auto playlist completed');
+  controls();
+
+ }catch(e){
+  log('AUTO ERROR: '+e.message);
+  running=false;
+  setPhase('error',e.message);
+  controls();
+
+ }finally{
+  // On failure/cancellation, try to restore HF.
+  // If a command is still running, serial() waits for it.
+  if(hfOff&&connected){
+   try{await serial(()=>setHF(true))}
+   catch(e){log('HF RESTORE ERROR: '+e.message)}
+  }
+  controls();
+ }
+}
+
 function tick(){
- if(mode==='manual')
-  $('timer').textContent=clock(performance.now()-emulationStarted);
- else if(mode==='delay')
-  $('timer').textContent=clock(
-   Math.max(0,delayDeadline-performance.now()),true);
+ if(mode==='manual'&&running&&phase==='emulating'){
+  $('timer').textContent=time(performance.now()-elapsedStart,true);
+  $('progress').style.width='100%';
+ }else if(running&&(phase==='delay'||phase==='emulating')){
+  const remaining=paused
+   ?countdownLeft
+   :Math.max(0,countdownEnd-performance.now());
+
+  $('timer').textContent=time(remaining);
+  $('progress').style.width=countdownTotal
+   ?Math.max(0,Math.min(100,
+      100*(1-remaining/countdownTotal)))+'%'
+   :'100%';
+ }
 }
+
+// Connection
 
 $('connect').onclick=async()=>{
  if(connected||busy)return;
- busy=true;buttons();
+ busy=true;controls();
+
  try{
   if(!sdk.ChameleonUltra||!sdk.WebbleAdapter||!Buf?.from)
    throw Error('SDK libraries unavailable');
+
   ultra=new sdk.ChameleonUltra();
   await ultra.use(new sdk.WebbleAdapter());
   await ultra.connect();
-  const v=await ultra.cmdGetAppVersion();
+
+  const version=await ultra.cmdGetAppVersion();
   connected=true;
+
   $('connection').textContent='Connected';
   $('connection').className='pill good';
-  $('device').textContent='Firmware '+v;
+  $('device').textContent='Firmware '+version;
+
   await serial(capture);
-  log('Connected · Firmware '+v);
+  log('Connected · Firmware '+version);
+
  }catch(e){
   log('CONNECT ERROR: '+e.message);
   try{await ultra?.disconnect()}catch(_){}
-  ultra=null;connected=false;original=null;slot=null;
+
+  ultra=null;connected=false;
+  original=null;slot=null;hfOff=false;
+
   $('connection').textContent='Offline';
   $('connection').className='pill';
   $('device').textContent='Connection failed';
+
  }finally{
-  busy=false;buttons();
+  busy=false;controls();
  }
 };
 
 $('disconnect').onclick=async()=>{
- if(!connected||busy||mode!=='idle')return;
- busy=true;buttons();
- try{await ultra.disconnect()}
- catch(e){log('Disconnect: '+e.message)}
- ultra=null;connected=false;original=null;slot=null;active=-1;
- $('connection').textContent='Offline';
- $('connection').className='pill';
- $('device').textContent='Not connected';
- selectTag(selected);
- busy=false;buttons();
+ if(!connected||running||busy)return;
+ busy=true;controls();
+
+ try{
+  if(hfOff)await serial(()=>setHF(true));
+  await ultra.disconnect();
+
+  connected=false;
+  ultra=null;original=null;slot=null;active=-1;hfOff=false;
+
+  $('connection').textContent='Offline';
+  $('connection').className='pill';
+  $('device').textContent='Not connected';
+
+ }catch(e){
+  log('DISCONNECT ERROR: '+e.message);
+ }finally{
+  busy=false;controls();
+ }
 };
 
-$('start').onclick=()=>{
- if(connected&&!busy&&mode==='idle')
-  loadNow(selected,++operation);
+// Mode switching
+
+function switchMode(next){
+ if(running||busy)return;
+ mode=next;
+ setPhase('ready',next==='manual'
+  ?'Choose a tag or press Start'
+  :'Ready for automatic playlist');
+ $('timer').textContent='00:00';
+ $('progress').style.width='0%';
+ controls();
+}
+
+$('manualTab').onclick=()=>switchMode('manual');
+$('autoTab').onclick=()=>switchMode('auto');
+
+// Manual controls
+
+$('manualStart').onclick=()=>startManual(selected);
+$('manualStop').onclick=stopRun;
+
+$('next').onclick=()=>manualMove((selected+1)%28);
+$('previous').onclick=()=>manualMove((selected+27)%28);
+
+$('repeat').onclick=()=>{
+ if(mode==='manual'&&running&&!busy&&phase==='emulating')
+  startManual(selected);
 };
-$('stop').onclick=stop;
-$('next').onclick=()=>move((selected+1)%tags.length);
-$('previous').onclick=()=>move((selected-1+tags.length)%tags.length);
+
+$('manualSkip').onclick=skipDelay;
 $('stickyNext').onclick=()=>$('next').click();
 $('stickyPrevious').onclick=()=>$('previous').click();
-$('repeat').onclick=()=>{
- if(mode==='manual'&&!busy)
-  loadNow(selected,++operation);
-};
-$('skip').onclick=()=>{
- if(mode!=='delay'||delayTarget<0)return;
- const i=delayTarget;
- cancelDelay();
- log('Delay skipped');
- loadNow(i,++operation);
-};
+
+// Auto controls
+
+$('autoStart').onclick=startAuto;
+$('autoPause').onclick=pauseAuto;
+$('autoStop').onclick=stopRun;
+$('autoSkip').onclick=skipDelay;
+
+// Restore original identity
 
 $('restore').onclick=async()=>{
- if(!connected||busy||mode!=='idle'||!original)return;
- busy=true;buttons();
+ if(!connected||running||busy||!original)return;
+
+ busy=true;controls();
  try{
   await serial(async()=>{
    await checkSlot();
    await ultra.cmdHf14aSetAntiCollData({
-    uid:toBuffer(original.uid),
-    atqa:toBuffer(original.atqa),
-    sak:toBuffer(original.sak),
-    ats:toBuffer(original.ats||'')
+    uid:bytes(original.uid),
+    atqa:bytes(original.atqa),
+    sak:bytes(original.sak),
+    ats:bytes(original.ats||'')
    });
    const d=await readIdentity();
-   if(normalizeHex(d.uid)!==normalizeHex(original.uid))
+   if(normalized(d.uid)!==normalized(original.uid))
     throw Error('Restore verification failed');
   });
+
+  if(hfOff)await serial(()=>setHF(true));
+
   active=-1;
   selectTag(selected);
   log('Original identity restored');
+
  }catch(e){
   log('RESTORE ERROR: '+e.message);
  }finally{
-  busy=false;buttons();
+  busy=false;controls();
  }
 };
 
-$('clearLog').onclick=()=>$('log').textContent='Log cleared.';
+$('clearLog').onclick=()=>{
+ $('log').textContent='Log cleared.';
+};
+
 build();
-buttons();
+controls();
 setInterval(tick,100);
 </script>
 </body>
